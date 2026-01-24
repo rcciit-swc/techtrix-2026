@@ -52,8 +52,8 @@ export default function AboutSection() {
           </div>
 
           {/* STATS */}
-          <div className="flex gap-6 mb-8">
-            <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-black/40 backdrop-blur border border-white/20">
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-8">
+            <div className="flex items-center gap-3 px-4 sm:px-6 py-3 rounded-full bg-black/40 backdrop-blur border border-white/20">
               <span className="text-yellow-400 text-lg">⚡</span>
               <div>
                 <div className="font-bold text-xl">3000+</div>
@@ -61,7 +61,7 @@ export default function AboutSection() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-black/40 backdrop-blur border border-white/20">
+            <div className="flex items-center gap-3 px-4 sm:px-6 py-3 rounded-full bg-black/40 backdrop-blur border border-white/20">
               <span className="text-blue-400 text-lg">🛡</span>
               <div>
                 <div className="font-bold text-xl">50+</div>
@@ -71,12 +71,12 @@ export default function AboutSection() {
           </div>
 
           {/* CTA + STATUS */}
-          <div className="flex items-center gap-6 mb-8">
-            <button className="font-orbitron font-bold text-base tracking-wider px-8 py-4 rounded-full bg-yellow-400 text-black hover:bg-yellow-300 transition-all duration-300 hover:scale-105 whitespace-nowrap">
+          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-8">
+            <button className="font-orbitron font-bold text-base sm:text-base tracking-wider px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-yellow-400 text-black hover:bg-yellow-300 transition-all duration-300 hover:scale-105 whitespace-nowrap">
               JOIN THE ALLIANCE →
             </button>
 
-            <span className="text-xs text-green-400 font-mono tracking-widest">
+            <span className="text-xs sm:text-xs text-green-400 font-mono tracking-widest mt-2 sm:mt-0">
               ● SYSTEMS ONLINE
             </span>
           </div>
