@@ -2,22 +2,22 @@
 
 import Image from 'next/image';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 const categories = [
-  { name: 'Automata', logo: '/events/logo1.png', image: '/events/hero1.png' },
-  { name: 'Robotics', logo: '/events/logo2.png', image: '/events/hero2.png' },
-  {
-    name: 'Out of the box',
-    logo: '/events/logo3.png',
-    image: '/events/hero3.png',
-  },
-  { name: 'Flagship', logo: '/events/logo4.png', image: '/events/hero4.png' },
-  { name: 'Gaming', logo: '/events/logo5.png', image: '/events/hero5.png' },
+  { id:"a1bb62c8-fd3d-485a-959e-be8cc528cc43", name: 'Automata', logo: '/events/logo1.png', image: '/events/hero1.png' },
+  { id:"0f947f04-f7bc-45f7-a66c-789b2bbe2b53", name: 'Robotics', logo: '/events/logo2.png', image: '/events/hero2.png' },
+  { id:"0f52d7d3-a9e7-454a-bff0-979de725e51a", name: 'Out of the box', logo: '/events/logo3.png', image: '/events/hero3.png'},
+  { id:"4ff0cd32-079f-43fd-84b0-b9147f74eaca", name: 'Flagship', logo: '/events/logo4.png', image: '/events/hero4.png' },
+  { id:"43c36d73-7e86-4c5b-a580-cecda4b14281", name: 'Gaming', logo: '/events/logo5.png', image: '/events/hero5.png' },
 ];
 
-export default function EventsPage() {
+export default function EventsSection() {
+  const router = useRouter();
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] py-8 md:py-12 relative overflow-hidden flex flex-col">
+    <section id="events">
+      <div className="min-h-screen bg-[#0a0a0a] py-8 md:py-12 relative overflow-hidden flex flex-col">
       {/* Header */}
       <div className="text-center mb-16 px-4">
         <h1
@@ -76,6 +76,7 @@ export default function EventsPage() {
               <div
                 key={category.name}
                 className="relative flex-1 h-[95%] group cursor-pointer"
+                onClick={() => router.push(`/events/${category.id}`)}
               >
                 <div
                   className="absolute inset-0 w-full h-full bg-gradient-to-b from-black via-[#EDF526] to-black opacity-90"
@@ -186,5 +187,6 @@ export default function EventsPage() {
         </div>
       </div>
     </div>
-  );
+  </section>
+ );
 }
