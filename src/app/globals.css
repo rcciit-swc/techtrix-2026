@@ -122,3 +122,13 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+@font-face {
+  font-family: 'KungFuMaster';
+  src: url('/fonts/kungfumaster.ttf') format('truetype');
+}
+
+@font-face {
+  font-family: 'MetalMania';
+  src: url('/fonts/MetalMania.ttf') format('truetype');
+}
