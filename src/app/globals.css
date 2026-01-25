@@ -149,6 +149,13 @@ body {
   font-style: normal;
 }
 
+@font-face {
+  font-family: 'Exo-Black';
+  src: url('/fonts/Exo-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
+
 /* Glitch animation for hero title */
 @keyframes glitch {
   0% {
