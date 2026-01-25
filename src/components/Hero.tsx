@@ -4,98 +4,161 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-// Countdown Timer with flip card design matching reference
-const CountdownTimer = ({
-  timeLeft,
-}: {
-  timeLeft: { days: number; hours: number; minutes: number };
-}) => {
+const cinematicEase: [number, number, number, number] = [0.16, 1, 0.3, 1];
+
+// Background fade + slow settle
+const bgReveal = {
+  hidden: {
+    opacity: 0,
+    scale: 1.12,
+    filter: 'blur(8px)',
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 2.8,
+      ease: cinematicEase,
+    },
+  },
+};
+
+// Hero images (characters)
+const imageReveal = {
+  hidden: {
+    opacity: 0,
+    y: 120,
+    scale: 0.82,
+    rotateX: 22,
+    filter: 'blur(10px)',
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    rotateX: 0,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 2.2,
+      ease: cinematicEase,
+    },
+  },
+};
+
+// Floating effect (after entry)
+const floating = {
+  animate: {
+    y: [0, -12, 0],
+    transition: {
+      duration: 6,
+      repeat: Infinity,
+      ease: 'easeInOut' as const,
+    },
+  },
+};
+
+// TECHTRIX title reveal
+const titleReveal = {
+  hidden: {
+    opacity: 0,
+    scale: 0.55,
+    rotateZ: -14,
+    y: 80,
+    filter: 'blur(18px)',
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    rotateZ: 0,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 2.4,
+      ease: cinematicEase,
+    },
+  },
+};
+
+// Text fade (tagline, description)
+const textReveal = {
+  hidden: {
+    opacity: 0,
+    y: 40,
+    scale: 0.96,
+    filter: 'blur(6px)',
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 1.6,
+      ease: cinematicEase,
+    },
+  },
+};
+
+// Buttons reveal
+const buttonReveal = {
+  hidden: {
+    opacity: 0,
+    scale: 0.85,
+    y: 30,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: {
+      duration: 1.4,
+      ease: cinematicEase,
+    },
+  },
+};
+
+const CountdownTimer = ({ timeLeft }: any) => {
   const formatNumber = (num: number) => String(num).padStart(2, '0');
 
   const FlipCard = ({ digit }: { digit: string }) => (
-    <div className="w-11.25 h-[60px] bg-linear-to-b from-[#2a1f4e] to-[#1a0f3e] rounded-lg flex items-center justify-center relative overflow-hidden shadow-lg">
-      <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-black/30" />
-      <span className="text-4xl font-bold text-white drop-shadow-md">
-        {digit}
-      </span>
-    </div>
+    <motion.div
+      initial={{ opacity: 0, scale: 0.5 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8, ease: cinematicEase }}
+      className="w-11.25 h-15 bg-linear-to-b from-[#2a1f4e] to-[#1a0f3e] rounded-lg flex items-center justify-center shadow-lg"
+    >
+      <span className="text-4xl font-bold text-white">{digit}</span>
+    </motion.div>
   );
 
-  const TimeUnit = ({ value, label }: { value: number; label: string }) => (
+  const Unit = ({ value, label }: any) => (
     <div className="flex flex-col items-center gap-2">
       <div className="flex gap-1">
-        <FlipCard digit={formatNumber(value).charAt(0)} />
-        <FlipCard digit={formatNumber(value).charAt(1)} />
+        <FlipCard digit={formatNumber(value)[0]} />
+        <FlipCard digit={formatNumber(value)[1]} />
       </div>
-      <div className="text-[10px] font-semibold tracking-[0.15em] text-white/80 uppercase">
-        {label}
-      </div>
+      <span className="text-[10px] text-white/80 tracking-widest">{label}</span>
     </div>
   );
 
   return (
-    <div className="hidden lg:flex absolute top-[20px] right-[40px] bg-linear-to-br from-[#7c3aed] via-[#a855f7] to-[#ec4899] rounded-2xl p-5 gap-4 z-20 shadow-2xl shadow-purple-500/30">
-      <TimeUnit value={timeLeft.days} label="DAYS" />
-      <TimeUnit value={timeLeft.hours} label="HOURS" />
-      <TimeUnit value={timeLeft.minutes} label="MINUTES" />
-    </div>
+    <motion.div
+      initial={{ opacity: 0, x: 120, scale: 0.9 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
+      transition={{ duration: 2, ease: cinematicEase }}
+      className="hidden lg:flex absolute top-5 right-10 bg-linear-to-br from-[#7c3aed] via-[#a855f7] to-[#ec4899] rounded-2xl p-5 gap-4 z-20 shadow-2xl"
+    >
+      <Unit value={timeLeft.days} label="DAYS" />
+      <Unit value={timeLeft.hours} label="HOURS" />
+      <Unit value={timeLeft.minutes} label="MINUTES" />
+    </motion.div>
   );
 };
 
-// Mobile Countdown Timer with flip card design
-const MobileCountdownTimer = ({
-  timeLeft,
-}: {
-  timeLeft: { days: number; hours: number; minutes: number };
-}) => {
-  const formatNumber = (num: number) => String(num).padStart(2, '0');
-
-  const FlipCard = ({ digit }: { digit: string }) => (
-    <div className="w-[35px] h-[48px] bg-gradient-to-b from-[#2a1f4e] to-[#1a0f3e] rounded-md flex items-center justify-center relative overflow-hidden shadow-lg">
-      <div className="absolute top-1/2 left-0 right-0 h-[1px] bg-black/30" />
-      <span className="text-2xl font-bold text-white drop-shadow-md">
-        {digit}
-      </span>
-    </div>
-  );
-
-  return (
-    <div className="lg:hidden relative z-20 flex justify-center mt-4">
-      <div className="flex bg-gradient-to-br from-[#7c3aed] via-[#a855f7] to-[#ec4899] rounded-xl p-4 gap-3 shadow-2xl shadow-purple-500/30">
-        <div className="flex flex-col items-center gap-1">
-          <div className="flex gap-1">
-            <FlipCard digit={formatNumber(timeLeft.days).charAt(0)} />
-            <FlipCard digit={formatNumber(timeLeft.days).charAt(1)} />
-          </div>
-          <div className="text-[8px] font-semibold tracking-wider text-white/80 uppercase">
-            DAYS
-          </div>
-        </div>
-        <div className="flex flex-col items-center gap-1">
-          <div className="flex gap-1">
-            <FlipCard digit={formatNumber(timeLeft.hours).charAt(0)} />
-            <FlipCard digit={formatNumber(timeLeft.hours).charAt(1)} />
-          </div>
-          <div className="text-[8px] font-semibold tracking-wider text-white/80 uppercase">
-            HOURS
-          </div>
-        </div>
-        <div className="flex flex-col items-center gap-1">
-          <div className="flex gap-1">
-            <FlipCard digit={formatNumber(timeLeft.minutes).charAt(0)} />
-            <FlipCard digit={formatNumber(timeLeft.minutes).charAt(1)} />
-          </div>
-          <div className="text-[8px] font-semibold tracking-wider text-white/80 uppercase">
-            MINUTES
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-const Hero = () => {
+export default function Hero() {
   const [timeLeft, setTimeLeft] = useState({
     days: 0,
     hours: 12,
@@ -103,26 +166,17 @@ const Hero = () => {
   });
 
   useEffect(() => {
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + 0);
-    targetDate.setHours(targetDate.getHours() + 12);
-    targetDate.setMinutes(targetDate.getMinutes() + 30);
+    const target = new Date();
+    target.setHours(target.getHours() + 12);
+    target.setMinutes(target.getMinutes() + 30);
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
-      const distance = targetDate.getTime() - now;
+      const diff = target.getTime() - now;
 
-      if (distance < 0) {
-        clearInterval(timer);
-        setTimeLeft({ days: 0, hours: 0, minutes: 0 });
-        return;
-      }
-
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor(
-        (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
 
       setTimeLeft({ days, hours, minutes });
     }, 1000);
@@ -131,164 +185,192 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative w-full min-h-screen bg-[#050816] overflow-hidden">
-      {/* Background Image Layer - hero7.png */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-45 overflow-hidden pointer-events-none">
+    <motion.section
+      initial="hidden"
+      animate="visible"
+      className="relative w-full min-h-screen bg-[#050816] overflow-hidden"
+    >
+      {/* Background */}
+      <motion.div variants={bgReveal} className="absolute inset-0 opacity-40">
         <Image
           src="/hero/hero7.png"
-          alt="Hero background"
+          alt="Background"
           fill
           className="object-cover"
           priority
-          sizes="100vw"
         />
-      </div>
+      </motion.div>
 
-      {/* Gradient Overlay */}
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-black/20 via-[#1a0d0d]/10 to-black/20 pointer-events-none" />
-
-      {/* Countdown Timer - Top Right */}
+      {/* Countdown */}
       <CountdownTimer timeLeft={timeLeft} />
 
-      {/* RCC Logo with Text - Centered at top */}
-      <div className="relative z-50 flex flex-col items-center pt-4">
-        <div className="relative w-[80px] h-[80px] mb-1">
-          <Image
-            src="/hero/hero6.png"
-            alt="RCC Institute of Information Technology"
-            fill
-            className="object-contain"
-            sizes="80px"
-          />
-        </div>
-        <p className="text-white/80 text-xs tracking-[0.25em] uppercase">
-          <span className="text-purple-400">Info</span>rmation Technology
-        </p>
-        <h2
-          className="text-4xl md:text-5xl text-white mt-1 tracking-[5px] font-bold"
-          style={{ fontFamily: 'KungFuMaster' }}
+      {/* Left Characters */}
+      <motion.div
+        variants={imageReveal}
+        className="absolute top-25 left-0 w-150 h-200 z-10"
+      >
+        <motion.div
+          {...floating}
+          className="absolute left-30 top-5 w-105 h-105 rounded-xl overflow-hidden"
         >
-          2026
-        </h2>
-      </div>
-
-      {/* Character Images - Left Side */}
-      <div className="absolute top-[88px] left-0 w-[600px] h-[800px] pointer-events-none z-[5]">
-        {/* hero1 - Rectangle 18 */}
-        <div
-          className="absolute w-[420px] h-[420px] rounded-2xl overflow-hidden shadow-2xl"
-          style={{ left: '129px', top: '22px' }}
+          <Image src="/hero/hero1.png" alt="" fill />
+        </motion.div>
+        <motion.div
+          {...floating}
+          className="absolute left-87.5 top-0 w-105 h-105 rounded-xl overflow-hidden opacity-40"
         >
-          <Image src="/hero/hero1.png" alt="" fill className="object-cover" />
-        </div>
-
-        {/* hero2 - Rectangle 20 */}
-        <div
-          className="absolute w-[420px] h-[420px] rounded-2xl overflow-hidden shadow-2xl opacity-40"
-          style={{ left: '347px', top: '0px' }}
+          <Image src="/hero/hero2.png" alt="" fill />
+        </motion.div>
+        <motion.div
+          {...floating}
+          className="absolute left-45 top-75 w-105 h-105 rounded-xl overflow-hidden opacity-60"
         >
-          <Image src="/hero/hero2.png" alt="" fill className="object-cover" />
-        </div>
+          <Image src="/hero/hero4.png" alt="" fill />
+        </motion.div>
+      </motion.div>
 
-        {/* hero4 - Rectangle 21 */}
-        <div
-          className="absolute w-[420px] h-[420px] rounded-2xl overflow-hidden shadow-2xl opacity-55"
-          style={{ left: '181px', top: '291px' }}
+      {/* Right Characters */}
+      <motion.div
+        variants={imageReveal}
+        transition={{ delay: 0.3 }}
+        className="absolute top-25 right-0 w-150] h-200 z-10"
+      >
+        <motion.div
+          {...floating}
+          className="absolute -right-15 top-0 w-105 h-105 rounded-xl overflow-hidden opacity-70"
         >
-          <Image src="/hero/hero4.png" alt="" fill className="object-cover" />
-        </div>
-      </div>
-
-      {/* Character Images - Right Side */}
-      <div className="absolute top-[88px] right-0 w-[600px] h-[800px] pointer-events-none z-[5]">
-        {/* hero3 - Rectangle 19 */}
-        <div
-          className="absolute w-[420px] h-[420px] rounded-2xl overflow-hidden shadow-2xl opacity-65"
-          style={{ right: '-55px', top: '2px' }}
+          <Image src="/hero/hero3.png" alt="" fill />
+        </motion.div>
+        <motion.div
+          {...floating}
+          className="absolute -right-25 top-75 w-105 h-105 rounded-xl overflow-hidden opacity-70"
         >
-          <Image src="/hero/hero3.png" alt="" fill className="object-cover" />
-        </div>
+          <Image src="/hero/hero5.png" alt="" fill />
+        </motion.div>
+      </motion.div>
 
-        {/* hero5 - Rectangle 17 */}
-        <div
-          className="absolute w-[420px] h-[420px] rounded-2xl overflow-hidden shadow-2xl opacity-65"
-          style={{ right: '-103px', top: '291px' }}
+      {/* Center Content */}
+      <div className="relative z-30 flex flex-col items-center justify-center text-center pt-4">
+        {/* RCC Institute Structure */}
+        <motion.div
+          variants={textReveal}
+          initial="hidden"
+          animate="visible"
+          transition={{ delay: 0.2 }}
+          className="flex flex-col items-center gap-4 mb-2"
         >
-          <Image src="/hero/hero5.png" alt="" fill className="object-cover" />
-        </div>
-      </div>
-
-      {/* Main Hero Content - Centered */}
-      <div className="relative z-10 flex flex-col items-center justify-center px-4 md:px-8 pt-2 pb-12">
-        <div className="max-w-5xl mx-auto text-center w-full">
-          {/* Main Title - TECHTRIX - Using Golden Sentry font from Figma */}
-          <h1
-            className="text-6xl md:text-8xl lg:text-[240px] font-medium text-[#F9FAFB] uppercase mb-4 tracking-tight leading-none text-center"
-            style={{ fontFamily: '"Golden Sentry", sans-serif' }}
+          {/* hero6.png image - contains RCC INSTITUTE OF and INFORMATION TECHNOLOGY */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.3 }}
+            className="relative w-59.75 h-33.5"
           >
-            TECHTRIX
-          </h1>
+            <Image
+              src="/hero/hero6.png"
+              alt="RCC Institute of Information Technology"
+              fill
+              className="object-contain"
+              sizes="239px"
+            />
+          </motion.div>
 
-          {/* Tagline - Italic style */}
-          <p
-            className="text-xl md:text-2xl lg:text-3xl text-[#d4a847] mb-6 tracking-wide italic font-medium"
-            style={{ fontFamily: 'Georgia, serif' }}
+          {/* 2026 text */}
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1, delay: 0.5 }}
+            className="text-white font-bold"
+            style={{
+              fontFamily: 'Metal Mania',
+              fontSize: '50px',
+              textAlign: 'center',
+              fontWeight: 400,
+              lineHeight: 'normal',
+              letterSpacing: '7px',
+              color: 'var(--Text, #F9FAFB)',
+            }}
           >
-            Assemble. Innovate. Conquer.
-          </p>
+            2026
+          </motion.h2>
+        </motion.div>
 
-          {/* Description - Using Maname font from Figma */}
-          <p
-            className="text-base md:text-lg lg:text-[20px] text-[#F9FAFB] mb-8 max-w-2xl mx-auto leading-normal text-center font-normal"
-            style={{ fontFamily: 'Maname, sans-serif' }}
+        <motion.h1
+          variants={titleReveal}
+          className="text-[120px] lg:text-[240px] font-medium text-white leading-none"
+          style={{ fontFamily: 'Golden Sentry' }}
+        >
+          TECHTRIX
+        </motion.h1>
+
+        <motion.p
+          variants={textReveal}
+          transition={{ delay: 0.4 }}
+          className="text-[#d4a847] text-2xl italic mt-4"
+        >
+          Assemble. Innovate. Conquer.
+        </motion.p>
+
+        <motion.p
+          variants={textReveal}
+          transition={{ delay: 0.6 }}
+          className="max-w-xl mt-4"
+          style={{
+            fontFamily: 'Maname',
+            fontSize: '20px',
+            color: 'var(--Text, #F9FAFB)',
+            fontWeight: 400,
+            lineHeight: 'normal',
+          }}
+        >
+          Join the ultimate technical fest where innovation meets heroism.
+          Complete in cutting-edge challenges and become a legend.
+        </motion.p>
+
+        <motion.div
+          variants={buttonReveal}
+          transition={{ delay: 0.9 }}
+          className="flex gap-4 mt-10"
+        >
+          <Link
+            href="#register"
+            className="flex items-center gap-[10px] px-[20px] py-[16px] rounded-[20px] bg-[#EDF526] shadow-[0_8px_15px_0_rgba(0,0,0,0.25)] hover:scale-110 transition-all duration-300"
+            style={{
+              color: 'var(--Backgroud, #050816)',
+              fontFamily: '"Metal Mania"',
+              fontSize: '20px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: 'normal',
+              letterSpacing: '1px',
+            }}
           >
-            Join the ultimate technical fest where innovation meets heroism.
-            Complete in cutting-challenges, showcase your superpowers, and
-            become a legend in the tech universe.
-          </p>
+            Register Now
+            <Image
+              src="/hero/registerr.svg"
+              alt="icon"
+              width={20}
+              height={20}
+            />
+          </Link>
 
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            {/* Register Now Button - Yellow with rounded style */}
-            <Link
-              href="#register"
-              className="group relative bg-[#EEFF00] text-black px-6 py-3 rounded-full font-bold tracking-wider text-sm flex items-center gap-3 hover:bg-[#EDF526] transition-all duration-300 hover:scale-105 shadow-lg shadow-[#EEFF00]/20"
-              style={{ fontFamily: 'MetalMania' }}
-            >
-              Register Now
-              <span className="w-7 h-7 rounded-full bg-black/20 flex items-center justify-center">
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <path d="M7 17L17 7M17 7H7M17 7V17" />
-                </svg>
-              </span>
-            </Link>
-
-            {/* More Details Button - Dark with white border */}
-            <Link
-              href="#details"
-              className="group relative bg-transparent border-2 border-white text-white px-6 py-3 rounded-full font-bold tracking-wider text-sm flex items-center gap-3 hover:bg-white/10 transition-all duration-300 hover:scale-105"
-              style={{ fontFamily: 'MetalMania' }}
-            >
-              More Details
-              <span className="w-7 h-7 rounded-full bg-white flex items-center justify-center">
-                <ArrowRight size={14} className="text-black" />
-              </span>
-            </Link>
-          </div>
-        </div>
+          <Link
+            href="#details"
+            className="border border-white px-6 py-3 rounded-[20px] hover:scale-110 transition-all duration-300 flex items-center gap-2"
+            style={{
+              color: '#FFF',
+              fontFamily: '"Metal Mania"',
+              fontSize: '20px',
+              fontStyle: 'normal',
+              fontWeight: 400,
+              lineHeight: 'normal',
+              letterSpacing: '1px',
+            }}
+          >
+            More Details <ArrowRight size={16} />
+          </Link>
+        </motion.div>
       </div>
-
-      {/* Mobile Countdown Timer */}
-      <MobileCountdownTimer timeLeft={timeLeft} />
-    </section>
+    </motion.section>
   );
-};
-
-export default Hero;
+}
