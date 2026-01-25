@@ -68,9 +68,17 @@ export function HeroContent() {
         animate="visible"
         variants={textReveal}
         transition={{ delay: 0.4 }}
-        className="text-[#d4a847] text-2xl italic mt-4"
+        className="text-2xl mt-8 tracking-[0.3em] uppercase font-bold px-4"
+        style={{
+          fontFamily: '"Metal Mania"',
+          background:
+            'linear-gradient(to right, #FFF 20%, #EDF526 50%, #d4a847 80%)',
+          WebkitBackgroundClip: 'text',
+          WebkitTextFillColor: 'transparent',
+          filter: 'drop-shadow(0px 0px 15px rgba(237, 245, 38, 0.4))',
+        }}
       >
-        Assemble. Innovate. Conquer.
+        Survive the Fall. Engineer the Future.
       </motion.p>
 
       <motion.p
@@ -78,13 +86,15 @@ export function HeroContent() {
         animate="visible"
         variants={textReveal}
         transition={{ delay: 0.6 }}
-        className="max-w-xl mt-4"
+        className="max-w-2xl mt-6 px-4"
         style={{
           fontFamily: 'Maname',
           fontSize: '20px',
-          color: 'var(--Text, #F9FAFB)',
+          color: '#F9FAFB',
+          opacity: 0.8,
           fontWeight: 400,
-          lineHeight: 'normal',
+          lineHeight: '1.6',
+          letterSpacing: '0.05em',
         }}
       >
         Join the ultimate technical fest where innovation meets heroism.
@@ -96,39 +106,48 @@ export function HeroContent() {
         animate="visible"
         variants={buttonReveal}
         transition={{ delay: 0.9 }}
-        className="flex gap-4 mt-10"
+        className="flex flex-wrap justify-center gap-6 mt-12"
       >
         <Link
           href="#register"
-          className="flex items-center gap-[10px] px-[20px] py-[16px] rounded-[20px] bg-[#EDF526] shadow-[0_8px_15px_0_rgba(0,0,0,0.25)] hover:scale-110 transition-all duration-300"
+          className="group relative flex items-center gap-[12px] px-[32px] py-[18px] rounded-[24px] bg-[#EDF526] shadow-[0_10px_30px_-10px_rgba(237,245,38,0.5)] hover:scale-105 transition-all duration-300 overflow-hidden"
           style={{
-            color: 'var(--Backgroud, #050816)',
+            color: '#050816',
             fontFamily: '"Metal Mania"',
-            fontSize: '20px',
-            fontStyle: 'normal',
+            fontSize: '22px',
             fontWeight: 400,
-            lineHeight: 'normal',
             letterSpacing: '1px',
           }}
         >
-          Register Now
-          <Image src="/hero/registerr.svg" alt="icon" width={20} height={20} />
+          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+          <span className="relative z-10 flex items-center gap-3">
+            Register Now
+            <Image
+              src="/hero/registerr.svg"
+              alt="icon"
+              width={22}
+              height={22}
+              className="group-hover:rotate-12 transition-transform"
+            />
+          </span>
         </Link>
 
         <Link
           href="#details"
-          className="border border-white px-6 py-3 rounded-[20px] hover:scale-110 transition-all duration-300 flex items-center gap-2"
+          className="group flex items-center gap-3 border-2 border-white/30 px-8 py-4 rounded-[24px] hover:border-white hover:scale-105 transition-all duration-300"
           style={{
             color: '#FFF',
             fontFamily: '"Metal Mania"',
-            fontSize: '20px',
-            fontStyle: 'normal',
+            fontSize: '22px',
             fontWeight: 400,
-            lineHeight: 'normal',
             letterSpacing: '1px',
           }}
         >
-          More Details <ArrowRight size={16} />
+          More Details{' '}
+          <ArrowRight
+            size={20}
+            className="group-hover:translate-x-1 transition-transform"
+          />
         </Link>
       </motion.div>
     </div>

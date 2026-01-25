@@ -42,9 +42,34 @@ export const imageReveal = {
 
 export const floating = {
   animate: {
-    y: [0, -12, 0],
+    y: [0, -15, 0],
+    rotate: [0, 2, 0],
     transition: {
-      duration: 6,
+      duration: 5,
+      repeat: Infinity,
+      ease: 'easeInOut' as const,
+    },
+  },
+};
+
+export const floatingSubtle = {
+  animate: {
+    y: [0, -8, 0],
+    rotate: [0, -1, 0],
+    transition: {
+      duration: 7,
+      repeat: Infinity,
+      ease: 'easeInOut' as const,
+    },
+  },
+};
+
+export const floatingStrong = {
+  animate: {
+    y: [0, -20, 0],
+    rotate: [0, 3, 0],
+    transition: {
+      duration: 4,
       repeat: Infinity,
       ease: 'easeInOut' as const,
     },

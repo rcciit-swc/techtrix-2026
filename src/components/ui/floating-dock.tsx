@@ -44,7 +44,7 @@ const FloatingDockMobile = ({
         {open && (
           <motion.div
             layoutId="nav"
-            className="absolute inset-x-0 bottom-full mb-2 flex flex-col gap-2"
+            className="absolute inset-x-0 bottom-full mb-4 flex flex-col gap-3"
           >
             {items.map((item, idx) => (
               <motion.div
@@ -66,9 +66,12 @@ const FloatingDockMobile = ({
                 <a
                   href={item.href}
                   key={item.title}
-                  className="flex h-12 w-10 items-center justify-center rounded-full bg-transparent backdrop-blur-md dark:bg-transparent"
+                  className="flex h-12 items-center gap-3 px-4 rounded-full bg-neutral-900/80 backdrop-blur-xl border border-purple-500/30 whitespace-nowrap"
                 >
                   <div className="h-6 w-6">{item.icon}</div>
+                  <span className="text-white text-sm font-medium">
+                    {item.title}
+                  </span>
                 </a>
               </motion.div>
             ))}
@@ -77,9 +80,9 @@ const FloatingDockMobile = ({
       </AnimatePresence>
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-50 bg-gradient-to-br from-neutral-900 to-purple-900/20 border border-purple-500/20"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-neutral-900 border-2 border-purple-500 shadow-[0_0_20px_rgba(168,85,247,0.4)] transition-all hover:scale-110 active:scale-95"
       >
-        <IconLayoutNavbarCollapse className="h-6 w-6 text-neutral-500 dark:text-neutral-400" />
+        <IconLayoutNavbarCollapse className="h-7 w-7 text-white" />
       </button>
     </div>
   );
@@ -98,7 +101,7 @@ const FloatingDockDesktop = ({
       onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        'mx-auto hidden h-20 items-end gap-12 rounded-2xl bg-gray-50 px-12 pb-3 md:flex bg-gradient-to-br from-neutral-900 to-purple-900/20 border border-purple-500/20 shadow-lg shadow-purple-500/10',
+        'mx-auto hidden h-32 items-center gap-8 rounded-[2.5rem] px-10 md:flex bg-neutral-900/80 backdrop-blur-2xl border-2 border-purple-500/30 shadow-[0_0_50px_-15px_rgba(168,85,247,0.4)]',
         className
       )}
     >
@@ -128,68 +131,72 @@ function IconContainer({
     return val - bounds.x - bounds.width / 2;
   });
 
-  let widthTransform = useTransform(distance, [-150, 0, 150], [50, 90, 50]);
-  let heightTransform = useTransform(distance, [-150, 0, 150], [50, 90, 50]);
+  let widthTransform = useTransform(distance, [-150, 0, 150], [64, 100, 64]);
+  let heightTransform = useTransform(distance, [-150, 0, 150], [64, 100, 64]);
+  let yTransform = useTransform(distance, [-150, 0, 150], [0, -25, 0]);
 
-  let widthTransformIcon = useTransform(distance, [-150, 0, 150], [25, 45, 25]);
+  let widthTransformIcon = useTransform(distance, [-150, 0, 150], [28, 50, 28]);
   let heightTransformIcon = useTransform(
     distance,
     [-150, 0, 150],
-    [25, 45, 25]
+    [28, 50, 28]
   );
+
+  let opacityTransform = useTransform(distance, [-150, 0, 150], [0.5, 1, 0.5]);
 
   let width = useSpring(widthTransform, {
     mass: 0.1,
     stiffness: 150,
-    damping: 12,
+    damping: 15,
   });
   let height = useSpring(heightTransform, {
     mass: 0.1,
     stiffness: 150,
-    damping: 12,
+    damping: 15,
+  });
+  let y = useSpring(yTransform, {
+    mass: 0.1,
+    stiffness: 150,
+    damping: 15,
   });
 
   let widthIcon = useSpring(widthTransformIcon, {
     mass: 0.1,
     stiffness: 150,
-    damping: 12,
+    damping: 15,
   });
   let heightIcon = useSpring(heightTransformIcon, {
     mass: 0.1,
     stiffness: 150,
-    damping: 12,
+    damping: 15,
   });
 
-  const [hovered, setHovered] = useState(false);
+  let opacity = useSpring(opacityTransform, {
+    stiffness: 150,
+    damping: 15,
+  });
 
   return (
-    <a href={href}>
+    <a href={href} className="flex flex-col items-center gap-2 group">
       <motion.div
         ref={ref}
-        style={{ width, height }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        className="relative flex aspect-square items-center justify-center rounded-full bg-transparent backdrop-blur-md dark:bg-transparent"
+        style={{ width, height, y }}
+        className="relative flex aspect-square items-center justify-center rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors shadow-2xl"
       >
-        <AnimatePresence>
-          {hovered && (
-            <motion.div
-              initial={{ opacity: 0, y: 10, x: '-50%' }}
-              animate={{ opacity: 1, y: 0, x: '-50%' }}
-              exit={{ opacity: 0, y: 2, x: '-50%' }}
-              className="absolute -top-8 left-1/2 w-fit rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs whitespace-pre text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white"
-            >
-              {title}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity blur-xl rounded-full" />
         <motion.div
           style={{ width: widthIcon, height: heightIcon }}
-          className="flex items-center justify-center"
+          className="flex items-center justify-center text-white relative z-10"
         >
           {icon}
         </motion.div>
       </motion.div>
+      <motion.span
+        style={{ opacity, y }}
+        className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 group-hover:text-[#EDF526] transition-colors whitespace-nowrap"
+      >
+        {title}
+      </motion.span>
     </a>
   );
 }
