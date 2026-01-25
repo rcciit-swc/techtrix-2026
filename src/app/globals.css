@@ -129,6 +129,51 @@ body {
 }
 
 @font-face {
-  font-family: 'MetalMania';
-  src: url('/fonts/MetalMania.ttf') format('truetype');
+  font-family: 'Metal Mania';
+  src: url('/fonts/MetalMania-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Golden Sentry';
+  src: url('/fonts/GoldenSentry.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Maname';
+  src: url('/fonts/maname-latin-400-normal.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Exo-Black';
+  src: url('/fonts/Exo-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* Glitch animation for hero title */
+@keyframes glitch {
+  0% {
+    transform: translate(0);
+  }
+  20% {
+    transform: translate(-2px, 2px);
+  }
+  40% {
+    transform: translate(-2px, -2px);
+  }
+  60% {
+    transform: translate(2px, 2px);
+  }
+  80% {
+    transform: translate(2px, -2px);
+  }
+  100% {
+    transform: translate(0);
+  }
 }
