@@ -66,9 +66,9 @@ const FloatingDockMobile = ({
                 <a
                   href={item.href}
                   key={item.title}
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-900/50"
+                  className="flex h-12 w-10 items-center justify-center rounded-full bg-transparent backdrop-blur-md dark:bg-transparent"
                 >
-                  <div className="h-4 w-4">{item.icon}</div>
+                  <div className="h-6 w-6">{item.icon}</div>
                 </a>
               </motion.div>
             ))}
@@ -77,9 +77,9 @@ const FloatingDockMobile = ({
       </AnimatePresence>
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 bg-gradient-to-br from-neutral-900 to-purple-900/20 border border-purple-500/20"
+        className="flex h-12 w-12 items-center justify-center rounded-full bg-gray-50 bg-gradient-to-br from-neutral-900 to-purple-900/20 border border-purple-500/20"
       >
-        <IconLayoutNavbarCollapse className="h-5 w-5 text-neutral-500 dark:text-neutral-400" />
+        <IconLayoutNavbarCollapse className="h-6 w-6 text-neutral-500 dark:text-neutral-400" />
       </button>
     </div>
   );
@@ -98,7 +98,7 @@ const FloatingDockDesktop = ({
       onMouseMove={(e) => mouseX.set(e.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        'mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-gray-50 px-4 pb-3 md:flex bg-gradient-to-br from-neutral-900 to-purple-900/20 border border-purple-500/20 shadow-lg shadow-purple-500/10',
+        'mx-auto hidden h-20 items-end gap-12 rounded-2xl bg-gray-50 px-12 pb-3 md:flex bg-gradient-to-br from-neutral-900 to-purple-900/20 border border-purple-500/20 shadow-lg shadow-purple-500/10',
         className
       )}
     >
@@ -128,14 +128,14 @@ function IconContainer({
     return val - bounds.x - bounds.width / 2;
   });
 
-  let widthTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
-  let heightTransform = useTransform(distance, [-150, 0, 150], [40, 80, 40]);
+  let widthTransform = useTransform(distance, [-150, 0, 150], [50, 90, 50]);
+  let heightTransform = useTransform(distance, [-150, 0, 150], [50, 90, 50]);
 
-  let widthTransformIcon = useTransform(distance, [-150, 0, 150], [20, 40, 20]);
+  let widthTransformIcon = useTransform(distance, [-150, 0, 150], [25, 45, 25]);
   let heightTransformIcon = useTransform(
     distance,
     [-150, 0, 150],
-    [20, 40, 20]
+    [25, 45, 25]
   );
 
   let width = useSpring(widthTransform, {
@@ -169,7 +169,7 @@ function IconContainer({
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="relative flex aspect-square items-center justify-center rounded-full bg-gray-200 dark:bg-neutral-800/50"
+        className="relative flex aspect-square items-center justify-center rounded-full bg-transparent backdrop-blur-md dark:bg-transparent"
       >
         <AnimatePresence>
           {hovered && (
