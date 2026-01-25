@@ -1,8 +1,6 @@
-'use client';
-
 import Image from 'next/image';
 import { ChevronDown, ChevronUp } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 const categories = [
   { id:"a1bb62c8-fd3d-485a-959e-be8cc528cc43", name: 'Automata', logo: '/events/logo1.png', image: '/events/hero1.png' },
@@ -13,7 +11,6 @@ const categories = [
 ];
 
 export default function EventsSection() {
-  const router = useRouter();
 
   return (
     <section id="events">
@@ -73,10 +70,10 @@ export default function EventsSection() {
           {/* Inner content area */}
           <div className="relative h-full flex flex-row gap-4 px-6 py-10 items-center">
             {categories.map((category, index) => (
-              <div
+              <Link 
                 key={category.name}
+                href={`/events/${category.id}`}
                 className="relative flex-1 h-[95%] group cursor-pointer"
-                onClick={() => router.push(`/events/${category.id}`)}
               >
                 <div
                   className="absolute inset-0 w-full h-full bg-gradient-to-b from-black via-[#EDF526] to-black opacity-90"
@@ -133,7 +130,7 @@ export default function EventsSection() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
