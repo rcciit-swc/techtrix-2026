@@ -3,19 +3,20 @@ import Image from 'next/image';
 export default function AboutSection() {
   return (
     <section
-      className="relative w-full min-h-screen py-24 overflow-hidden bg-cover bg-center"
+      className="relative w-full min-h-screen py-12 md:py-24 overflow-hidden bg-cover bg-center"
       style={{
-        backgroundImage: "url('/about-bg.png')",
+        backgroundImage: "url('/about/about-bg.png')",
       }}
     >
       {/* Dark overlay */}
       <div className="absolute inset-0 bg-black/50" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+      {/* MAIN CONTENT */}
+      <div className="relative z-10 max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-16 items-start">
         {/* LEFT: POSTER */}
         <div className="flex justify-center">
           <Image
-            src="/poster.png"
+            src="/about/poster.png"
             alt="Techtrix 2026 Poster"
             width={520}
             height={650}
@@ -26,22 +27,30 @@ export default function AboutSection() {
 
         {/* RIGHT: CONTENT */}
         <div className="relative text-white">
-          {/* HEADING */}
+          {/* MOBILE HEADING */}
           <Image
-            src="/origin.png" // put your heading image here
+            src="/about/originmob.png"
+            alt="Our Origin Story"
+            width={360}
+            height={160}
+            className="mb-4 md:mb-8 mx-auto w-[90%] h-auto md:hidden"
+          />
+
+          {/* DESKTOP HEADING */}
+          <Image
+            src="/about/origin.png"
             alt="Our Origin Story"
             width={420}
             height={140}
-            className="mb-8 w-[300px] md:w-[420px] h-auto"
+            className="mb-8 hidden md:block w-[420px] h-auto"
           />
 
           {/* GLASS MORPHISM BOX */}
-          <div className="rounded-2xl bg-black/40 backdrop-blur-md border border-amber-300 p-8 mb-8 -mt-6">
-            <p className="text-base text-gray-100 leading-relaxed mb-4">
+          <div className="rounded-2xl bg-black/40 backdrop-blur-md border border-amber-300 p-5 mb-4 md:mb-8 -mt-2 md:-mt-6">
+            <p className="text-base text-gray-100 leading-relaxed mb-2 md:mb-4">
               Techtrix wasn't just built — it was engineered. Born from a
               collective of visionaries, coders, and creators, we set out to
-              assemble the ultimate gathering of technological might. Like the
-              heroes we admire, we believe that.
+              assemble the ultimate gathering of technological might.
             </p>
 
             <p className="text-base text-gray-100 leading-relaxed">
@@ -52,8 +61,8 @@ export default function AboutSection() {
           </div>
 
           {/* STATS */}
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-8">
-            <div className="flex items-center gap-3 px-4 sm:px-6 py-3 rounded-full bg-black/40 backdrop-blur border border-white/20">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-6 mb-3 md:mb-8">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 backdrop-blur border border-white/20">
               <span className="text-yellow-400 text-lg">⚡</span>
               <div>
                 <div className="font-bold text-xl">3000+</div>
@@ -61,7 +70,7 @@ export default function AboutSection() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 px-4 sm:px-6 py-3 rounded-full bg-black/40 backdrop-blur border border-white/20">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 backdrop-blur border border-white/20">
               <span className="text-blue-400 text-lg">🛡</span>
               <div>
                 <div className="font-bold text-xl">50+</div>
@@ -71,25 +80,37 @@ export default function AboutSection() {
           </div>
 
           {/* CTA + STATUS */}
-          <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-8">
-            <button className="font-orbitron font-bold text-base sm:text-base tracking-wider px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-yellow-400 text-black hover:bg-yellow-300 transition-all duration-300 hover:scale-105 whitespace-nowrap">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 mb-4 md:mb-10">
+            <button className="font-orbitron font-bold tracking-wider px-6 py-3 md:px-8 md:py-4 rounded-full bg-yellow-400 text-black hover:bg-yellow-300 transition-all duration-300 hover:scale-105">
               JOIN THE ALLIANCE →
             </button>
 
-            <span className="text-xs sm:text-xs text-green-400 font-mono tracking-widest mt-2 sm:mt-0">
+            <span className="text-xs text-green-400 font-mono tracking-widest">
               ● SYSTEMS ONLINE
             </span>
           </div>
 
-          {/* QUOTE */}
+          {/* SCRAPS IMAGE */}
           <Image
-            src="/scraps.png"
+            src="/about/scraps.png"
             alt="Inspirational quote"
             width={360}
             height={90}
-            className="-mt-12 w-[260px] md:w-[360px] h-auto opacity-80 mx-auto"
+            className="-mt-1 md:-mt-3 w-[260px] md:w-[360px] h-auto opacity-80 mx-auto"
           />
         </div>
+      </div>
+
+      {/* ABOUT END STRIP (BOTTOM OVERLAY) */}
+      <div className="absolute bottom-0 left-0 w-full z-10 pointer-events-none">
+        <Image
+          src="/about/aboutend.png"
+          alt="About section end HUD"
+          width={1440}
+          height={80}
+          className="w-full h-auto opacity-90"
+          priority
+        />
       </div>
     </section>
   );
