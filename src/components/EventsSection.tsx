@@ -39,7 +39,7 @@ export default function EventsSection() {
     <section id="events">
       <div className="min-h-screen md:min-h-0 md:bg-[#000000] py-8 md:py-12 relative overflow-hidden flex flex-col">
 
-        {/* Mobile Background Image */}
+        {/* Mobile Background Image 
         <div className="absolute inset-0 w-full h-full md:hidden z-0">
           <Image
             src="/events/background.jpg"
@@ -49,7 +49,7 @@ export default function EventsSection() {
             priority
           />
           <div className="absolute inset-0 bg-black/60" />
-        </div>
+        </div>*/}
 
         {/* Header */}
         <div className="text-center mb-16 px-4 relative z-10">
