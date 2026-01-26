@@ -1,6 +1,6 @@
 'use client';
-
-import { cn } from '@/lib/utils';
+/* eslint-disable */
+import { cn } from '@/lib/utils/cn';
 import { IconLayoutNavbarCollapse } from '@tabler/icons-react';
 import {
   AnimatePresence,
@@ -18,7 +18,12 @@ export const FloatingDock = ({
   desktopClassName,
   mobileClassName,
 }: {
-  items: { title: string; icon: React.ReactNode; href: string }[];
+  items: {
+    title: string;
+    icon: React.ReactNode;
+    href?: string;
+    onClick?: () => void;
+  }[];
   desktopClassName?: string;
   mobileClassName?: string;
 }) => {
@@ -34,7 +39,12 @@ const FloatingDockMobile = ({
   items,
   className,
 }: {
-  items: { title: string; icon: React.ReactNode; href: string }[];
+  items: {
+    title: string;
+    icon: React.ReactNode;
+    href?: string;
+    onClick?: () => void;
+  }[];
   className?: string;
 }) => {
   const [open, setOpen] = useState(false);
@@ -63,16 +73,29 @@ const FloatingDockMobile = ({
                 }}
                 transition={{ delay: (items.length - 1 - idx) * 0.05 }}
               >
-                <a
-                  href={item.href}
-                  key={item.title}
-                  className="flex h-12 items-center gap-3 px-4 rounded-full bg-neutral-900/80 backdrop-blur-xl border border-purple-500/30 whitespace-nowrap"
-                >
-                  <div className="h-6 w-6">{item.icon}</div>
-                  <span className="text-white text-sm font-medium">
-                    {item.title}
-                  </span>
-                </a>
+                {item.onClick ? (
+                  <button
+                    onClick={item.onClick}
+                    key={item.title}
+                    className="flex h-12 items-center gap-3 px-4 rounded-full bg-neutral-900/80 backdrop-blur-xl border border-purple-500/30 whitespace-nowrap"
+                  >
+                    <div className="h-6 w-6">{item.icon}</div>
+                    <span className="text-white text-sm font-medium">
+                      {item.title}
+                    </span>
+                  </button>
+                ) : (
+                  <a
+                    href={item.href}
+                    key={item.title}
+                    className="flex h-12 items-center gap-3 px-4 rounded-full bg-neutral-900/80 backdrop-blur-xl border border-purple-500/30 whitespace-nowrap"
+                  >
+                    <div className="h-6 w-6">{item.icon}</div>
+                    <span className="text-white text-sm font-medium">
+                      {item.title}
+                    </span>
+                  </a>
+                )}
               </motion.div>
             ))}
           </motion.div>
@@ -92,7 +115,12 @@ const FloatingDockDesktop = ({
   items,
   className,
 }: {
-  items: { title: string; icon: React.ReactNode; href: string }[];
+  items: {
+    title: string;
+    icon: React.ReactNode;
+    href?: string;
+    onClick?: () => void;
+  }[];
   className?: string;
 }) => {
   let mouseX = useMotionValue(Infinity);
@@ -117,11 +145,13 @@ function IconContainer({
   title,
   icon,
   href,
+  onClick,
 }: {
   mouseX: MotionValue;
   title: string;
   icon: React.ReactNode;
-  href: string;
+  href?: string;
+  onClick?: () => void;
 }) {
   let ref = useRef<HTMLDivElement>(null);
 
@@ -176,7 +206,32 @@ function IconContainer({
     damping: 15,
   });
 
-  return (
+  return onClick ? (
+    <button
+      onClick={onClick}
+      className="flex flex-col items-center gap-2 group"
+    >
+      <motion.div
+        ref={ref}
+        style={{ width, height, y }}
+        className="relative flex aspect-square items-center justify-center rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 transition-colors shadow-2xl"
+      >
+        <div className="absolute inset-0 bg-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity blur-xl rounded-full" />
+        <motion.div
+          style={{ width: widthIcon, height: heightIcon }}
+          className="flex items-center justify-center text-white relative z-10"
+        >
+          {icon}
+        </motion.div>
+      </motion.div>
+      <motion.span
+        style={{ opacity, y }}
+        className="text-[10px] font-black uppercase tracking-[0.2em] text-white/70 group-hover:text-[#EDF526] transition-colors whitespace-nowrap"
+      >
+        {title}
+      </motion.span>
+    </button>
+  ) : (
     <a href={href} className="flex flex-col items-center gap-2 group">
       <motion.div
         ref={ref}

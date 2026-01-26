@@ -1,8 +1,10 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { constructMetaData } from '@/utils/functions';
+import { constructMetaData } from '@/lib/utils';
 import { Orbitron } from 'next/font/google';
 import { Navbar } from '@/components/Navbar';
+import SessionProvider from '@/lib/providers/SessionProvider';
+import { Toaster } from 'sonner';
 
 export const metadata: Metadata = constructMetaData({
   title: 'Techtrix 2026',
@@ -25,6 +27,8 @@ export default function RootLayout({
       <body className={`${orbitron.className} antialiased`}>
         {children}
         <Navbar />
+        <Toaster position="bottom-right" richColors duration={5000} />
+        <SessionProvider />
       </body>
     </html>
   );
