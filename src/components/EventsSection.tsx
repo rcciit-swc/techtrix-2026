@@ -32,33 +32,69 @@ const categories = [
     name: 'Gaming',
     logo: '/events/logo5.png',
     image: '/events/hero5.png',
-  },
-];
+  }];
 
 export default function EventsSection() {
   return (
     <section id="events">
-      <div className="min-h-screen bg-[#0a0a0a] py-8 md:py-12 relative overflow-hidden flex flex-col">
+      <div className="min-h-screen md:min-h-0 md:bg-[#000000] py-8 md:py-12 relative overflow-hidden flex flex-col">
+
+        {/* Mobile Background Image 
+        <div className="absolute inset-0 w-full h-full md:hidden z-0">
+          <Image
+            src="/events/background.jpg"
+            alt="Background"
+            fill
+            className="w-full object-cover object-top opacity-100 scale-75 origin-top"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/60" />
+        </div>*/}
+
         {/* Header */}
-        <div className="text-center mb-16 px-4">
+        <div className="text-center mb-16 px-4 relative z-10">
           <h1
-            className="text-4xl md:text-5xl font-bold text-[#FFFFFF] tracking-wider uppercase"
+            className="text-6xl md:text-7xl font-bold text-[#FFFFFF] tracking-wider uppercase"
             style={{ fontFamily: 'KungFuMaster' }}
           >
             Events
           </h1>
           <p
-            className="text-white text-sm md:text-base mt-2 tracking-wide"
-            style={{ fontFamily: 'MetalMania' }}
+            className="text-white text-2xl md:text-3xl mt-4 tracking-wide"
+            style={{ fontFamily: 'Metal Mania' }}
           >
             Events Branch from the Tree of Innovation - Choose Your Destiny
           </p>
         </div>
 
+        {/* Mobile Text Content */}
+        <div className="md:hidden text-center mb-12 px-4 z-20 relative">
+          <p
+            className="text-white text-2xl tracking-widest uppercase mb-2"
+            style={{ fontFamily: 'Metal Mania' }}
+          >
+            Introducing
+          </p>
+          <h2
+            className="text-[#EEFF00] text-5xl uppercase leading-tight mb-2"
+            style={{ fontFamily: 'KungFuMaster' }}
+          >
+            Tech Heroes
+            <br />
+            Roster
+          </h2>
+          <p
+            className="text-gray-500 text-lg tracking-wide uppercase"
+            style={{ fontFamily: 'Metal Mania' }}
+          >
+            For Techtrix 2026
+          </p>
+        </div>
+
         {/* Main Container */}
-        <div className="relative w-full flex-1 flex flex-row">
+        <div className="relative w-full flex-1 flex flex-col md:flex-row z-10 bg-black md:bg-transparent">
           {/* Left Section - Yellow Box */}
-          <div className="relative w-[65%] h-[37.5rem] md:h-[46.875rem] lg:h-[53.125rem] flex flex-col">
+          <div className="relative w-full md:w-[65%] h-auto md:h-[46.875rem] lg:h-[53.125rem] flex flex-col">
             {/* Top left chevrons - Black */}
             <div className="absolute top-4 left-2 z-20">
               <div className="flex flex-col gap-0.5">
@@ -70,7 +106,7 @@ export default function EventsSection() {
 
             {/* Yellow frame container - Straight Rectangle */}
             <div
-              className="absolute inset-0 bg-[#EEFF00]"
+              className="hidden md:block absolute inset-0 bg-[#EEFF00]"
               style={{
                 clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)',
               }}
@@ -92,26 +128,30 @@ export default function EventsSection() {
             </div>
 
             {/* Inner content area */}
-            <div className="relative h-full flex flex-row gap-4 px-6 py-10 items-center">
+            <div className="relative h-full flex flex-col gap-4 px-4 pt-16 pb-0 md:flex-row md:gap-4 md:px-6 md:py-10 items-center w-full">
               {categories.map((category, index) => (
                 <Link
                   key={category.name}
                   href={`/events/${category.id}`}
-                  className="relative flex-1 h-[95%] group cursor-pointer"
+                  className="
+                    relative group cursor-pointer
+                    w-full aspect-[3/8] mb-0 last:mb-0
+                    md:flex-1 md:h-[95%] md:aspect-auto md:mb-0
+                  "
                 >
                   <div
-                    className="absolute inset-0 w-full h-full bg-gradient-to-b from-black via-[#EDF526] to-black opacity-90"
+                    className="
+                      absolute inset-0 w-full h-full bg-gradient-to-b from-black via-[#EDF526] to-black opacity-100
+                    "
                     style={{
                       clipPath: 'polygon(0% 10%, 100% 0%, 100% 90%, 0% 100%)',
+                      boxShadow: '0 -10px 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0)',
                     }}
                   />
 
                   {/* Image Layer */}
                   <div
-                    className="absolute -top-16 bottom-0 left-0 right-0 z-10 flex flex-col"
-                    style={{
-                      clipPath: 'polygon(0% 0%, 100% 0%, 100% 92%, 0% 100%)',
-                    }}
+                    className="absolute -top-16 bottom-0 z-10 flex flex-col -left-8 -right-8 md:left-0 md:right-0 md:[clip-path:polygon(0%_0%,_100%_0%,_100%_92%,_0%_100%)]"
                   >
                     {/* Image Container */}
                     <div className="relative flex-[4] w-full overflow-hidden">
@@ -134,15 +174,15 @@ export default function EventsSection() {
                         <div className="absolute inset-0 bg-[#EDF526] blur opacity-50"></div>
                         {/* Black Rectangle */}
                         <div className="relative z-10 bg-black w-full py-2 border-y border-[#EEFF00]/30">
-                          <h3 className="text-white text-[0.625rem] md:text-sm font-bold uppercase tracking-wider text-center">
+                          <h3 className="text-white text-2xl md:text-sm font-bold uppercase tracking-wider text-center">
                             {category.name}
                           </h3>
                         </div>
                       </div>
 
                       {/* Extended Region for Logo */}
-                      <div className="flex-1 flex items-center justify-center w-full pb-10">
-                        <div className="w-15 h-15 md:w-20 md:h-20 lg:w-23 lg:h-23 rounded-full group-hover:scale-110 bg-transparent flex items-center justify-center overflow-hidden">
+                      <div className="flex-1 flex items-center justify-center w-full pb-2 md:pb-10">
+                        <div className="w-12 h-12 md:w-20 md:h-20 lg:w-23 lg:h-23 rounded-full group-hover:scale-110 bg-transparent flex items-center justify-center overflow-hidden">
                           <Image
                             src={category.logo}
                             alt={category.name}
@@ -160,7 +200,7 @@ export default function EventsSection() {
           </div>
 
           {/* Right Section - Text Content*/}
-          <div className="w-[35%] px-4 md:px-8 flex flex-col justify-center items-center relative text-center">
+          <div className="hidden md:flex w-[35%] px-8 flex-col justify-center items-center relative text-center">
             {/* Top right slashes - Yellow */}
             <div className="absolute top-0 right-8 text-[#EEFF00] text-2xl md:text-2xl font-bold tracking-widest">
               / / / / / /
@@ -169,13 +209,13 @@ export default function EventsSection() {
             <div className="mb-8">
               <p
                 className="text-white text-base md:text-3xl tracking-widest uppercase mb-6"
-                style={{ fontFamily: 'MetalMania' }}
+                style={{ fontFamily: 'Metal Mania' }}
               >
                 Introducing
               </p>
               <p
                 className="text-gray-500 text-md md:text-lg tracking-wide uppercase mb-6"
-                style={{ fontFamily: 'MetalMania' }}
+                style={{ fontFamily: 'Metal Mania' }}
               >
                 For Techtrix 2026
               </p>
@@ -198,7 +238,6 @@ export default function EventsSection() {
               </div>
             </div>
 
-            {/* Corner Triangle */}
             <div
               className="absolute bottom-0 right-0 w-24 h-24 bg-[#EEFF00]"
               style={{
