@@ -132,3 +132,11 @@ body {
   font-family: 'MetalMania';
   src: url('/fonts/MetalMania.ttf') format('truetype');
 }
+@font-face {
+  font-family: 'Maname';
+  src: url('/fonts/Maname-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'VerveAlternate';
+  src: url('/fonts/VerveAlternate.ttf') format('truetype');
+}
