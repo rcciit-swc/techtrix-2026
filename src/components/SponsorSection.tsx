@@ -6,7 +6,7 @@ const SponsorSection = () => {
     <div className="relative w-full py-12 md:py-16 overflow-hidden">
       <div className="absolute inset-0 -z-10">
         <Image
-          src="/SponsorSection/SponsorBg.png"
+          src="/SponsorSection/SponsorBG.png"
           alt="Background"
           fill
           className="object-cover opacity-90"

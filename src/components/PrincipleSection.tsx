@@ -1,4 +1,3 @@
-'use client';
 import Image from 'next/image';
 
 export default function PrincipalDesk() {
@@ -27,9 +26,9 @@ export default function PrincipalDesk() {
 
         <div className="flex flex-col lg:flex-row gap-[39px] items-start justify-between">
           {/* Left*/}
-          <div className="order-2 lg:order-1 flex-1 lg:w-[890px] lg:-ml-43 ">
+          <div className="order-2 lg:order-1 flex-1 lg:w-[890px] lg:-ml-[25px] ">
             <div className="p-6 md:p-8 rounded-lg text-justify text-sm md:text-base leading-relaxed shadow-lg">
-              <p className="mb-4 text-[#F9FAFB] text-center font-normal text-[20px] leading-normal font-['Maname']">
+              <p className="mb-4 text-[#F9FAFB] text-center font-normal  text-[20px] leading-normal font-['Maname']">
                 Life is big – achieving perfection in academic or technical
                 domain is important for professional success in life. But that
                 is not all; one must look for opportunities to explore life
@@ -73,8 +72,8 @@ export default function PrincipalDesk() {
           </div>
 
           {/* Right  */}
-          <div className=" lg:mt-12 lg:-mr-24 order-1 lg:order-2 flex-1 lg:max-w-[466px] flex flex-col items-center">
-            <div className="relative w-full h-[500px] md:h-[600px] lg:h-[604px] overflow-hidden rounded-xl ">
+          <div className=" lg:mt-20  lg:-mr-15 order-1 lg:order-2 flex-1 lg:max-w-[466px] flex flex-col items-center">
+            <div className="relative w-full h-[55vh] md:h-[600px] lg:h-[604px] overflow-hidden rounded-xl ">
               <Image
                 src="/principlesection/Principle-Img.png"
                 alt="Dr. Anirban Mukherjee"
@@ -91,7 +90,7 @@ export default function PrincipalDesk() {
                 Prof.(Dr.) Anirban Mukherjee
               </h3>
 
-              <p className="text-[#EDF526] font-['Metal_Mania'] text-[18px] font-normal leading-[151.689%] text-center">
+              <p className="text-[#EDF526]  text-[18px] font-normal leading-[151.689%] text-center">
                 PRINCIPAL (OFFICIATING) RCCIIT & PROFESSOR, IT, RCCIIT
               </p>
             </div>
@@ -101,7 +100,7 @@ export default function PrincipalDesk() {
         <div className="flex justify-center w-full  lg:mt-16 pb-16">
           <button className="relative w-[580px] h-[330px] transition-transform hover:scale-105 active:scale-95">
             <Image
-              src="/principlesection/button.svg"
+              src="/principlesection/Button.svg"
               alt="Register Now"
               fill
               className="object-contain"
