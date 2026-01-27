@@ -28,7 +28,7 @@ export default function PrincipalDesk() {
           {/* Left*/}
           <div className="order-2 lg:order-1 flex-1 lg:w-[890px] lg:-ml-[25px] ">
             <div className="p-6 md:p-8 rounded-lg text-justify text-sm md:text-base leading-relaxed shadow-lg">
-              <p className="mb-4 text-[#F9FAFB] text-center font-normal  text-[20px] leading-normal font-['Maname']">
+              <p className="mb-4 text-[#F9FAFB] text-center font-normal  text-[20px] leading-normal font-['ManameALT']">
                 Life is big – achieving perfection in academic or technical
                 domain is important for professional success in life. But that
                 is not all; one must look for opportunities to explore life
