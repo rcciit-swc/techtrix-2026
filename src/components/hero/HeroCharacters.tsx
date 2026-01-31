@@ -17,7 +17,7 @@ export function HeroCharacters() {
         initial="hidden"
         animate="visible"
         variants={imageReveal}
-        className="absolute top-25 left-0 w-150 h-200 z-10 pointer-events-none"
+        className="hidden lg:block absolute top-25 left-0 w-150 h-200 z-10 pointer-events-none"
       >
         <motion.div
           {...floating}
@@ -48,7 +48,7 @@ export function HeroCharacters() {
         animate="visible"
         variants={imageReveal}
         transition={{ delay: 0.3 }}
-        className="absolute top-25 right-0 w-150 h-200 z-10 pointer-events-none"
+        className="hidden lg:block absolute top-25 right-0 w-150 h-200 z-10 pointer-events-none"
       >
         <motion.div
           {...floating}

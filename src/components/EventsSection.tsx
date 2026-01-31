@@ -32,13 +32,13 @@ const categories = [
     name: 'Gaming',
     logo: '/events/logo5.png',
     image: '/events/hero5.png',
-  }];
+  },
+];
 
 export default function EventsSection() {
   return (
     <section id="events">
       <div className="min-h-screen md:min-h-0 md:bg-[#000000] py-8 md:py-12 relative overflow-hidden flex flex-col">
-
         {/* Mobile Background Image 
         <div className="absolute inset-0 w-full h-full md:hidden z-0">
           <Image
@@ -145,14 +145,13 @@ export default function EventsSection() {
                     "
                     style={{
                       clipPath: 'polygon(0% 10%, 100% 0%, 100% 90%, 0% 100%)',
-                      boxShadow: '0 -10px 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0)',
+                      boxShadow:
+                        '0 -10px 20px rgba(0,0,0,0.8), 0 10px 20px rgba(0,0,0,0)',
                     }}
                   />
 
                   {/* Image Layer */}
-                  <div
-                    className="absolute -top-16 bottom-0 z-10 flex flex-col -left-8 -right-8 md:left-0 md:right-0 md:[clip-path:polygon(0%_0%,_100%_0%,_100%_92%,_0%_100%)]"
-                  >
+                  <div className="absolute -top-16 bottom-0 z-10 flex flex-col -left-8 -right-8 md:left-0 md:right-0 md:[clip-path:polygon(0%_0%,_100%_0%,_100%_92%,_0%_100%)]">
                     {/* Image Container */}
                     <div className="relative flex-[4] w-full overflow-hidden">
                       <div className="absolute inset-0 w-full h-full">
