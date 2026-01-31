@@ -16,7 +16,11 @@ interface Particle {
   isStar: boolean;
 }
 
-export const Sparkles = () => {
+interface SparklesProps {
+  colors?: string[];
+}
+
+export const Sparkles = ({ colors }: SparklesProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
 
@@ -50,11 +54,13 @@ export const Sparkles = () => {
 
     const createParticles = () => {
       particles = [];
-      const colors = [
+      const defaultColors = [
         'rgba(255, 255, 255,', // White
         'rgba(212, 168, 71,', // Gold
         'rgba(237, 245, 38,', // Neon Yellow
       ];
+      const selectedColors =
+        colors && colors.length > 0 ? colors : defaultColors;
 
       for (let i = 0; i < particleCount; i++) {
         const x = Math.random() * window.innerWidth;
@@ -67,7 +73,8 @@ export const Sparkles = () => {
           size: Math.random() * 1.5 + 0.5,
           speedX: (Math.random() - 0.5) * 0.2,
           speedY: (Math.random() - 0.5) * 0.2,
-          color: colors[Math.floor(Math.random() * colors.length)],
+          color:
+            selectedColors[Math.floor(Math.random() * selectedColors.length)],
           opacity: Math.random(),
           opacitySpeed: Math.random() * 0.01 + 0.002,
           isStar: Math.random() > 0.8,
@@ -165,7 +172,7 @@ export const Sparkles = () => {
       window.removeEventListener('mousemove', handleMouseMove);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [colors]);
 
   return (
     <canvas
