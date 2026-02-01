@@ -177,3 +177,11 @@ body {
     transform: translate(0);
   }
 }
+@font-face {
+  font-family: 'ManameALT';
+  src: url('/fonts/Maname-Regular.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'VerveAlternate';
+  src: url('/fonts/VerveAlternate.ttf') format('truetype');
+}
