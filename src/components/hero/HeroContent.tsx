@@ -22,7 +22,7 @@ export function HeroContent() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
-          className="relative w-59.75 h-33.5"
+          className="relative w-40 h-24 md:w-59.75 md:h-33.5"
         >
           <Image
             src="/hero/hero6.png"
@@ -38,10 +38,9 @@ export function HeroContent() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="text-white font-bold"
+          className="text-white font-bold text-[32px] md:text-[50px]"
           style={{
             fontFamily: 'Metal Mania',
-            fontSize: '50px',
             textAlign: 'center',
             fontWeight: 400,
             lineHeight: 'normal',
@@ -57,7 +56,7 @@ export function HeroContent() {
         initial="hidden"
         animate="visible"
         variants={titleReveal}
-        className="text-[120px] lg:text-[240px] font-medium text-white leading-none"
+        className="text-[90px] sm:text-[100px] md:text-[120px] lg:text-[240px] font-medium text-white leading-none"
         style={{ fontFamily: 'Golden Sentry' }}
       >
         TECHTRIX
@@ -68,7 +67,7 @@ export function HeroContent() {
         animate="visible"
         variants={textReveal}
         transition={{ delay: 0.4 }}
-        className="text-2xl mt-8 tracking-[0.3em] uppercase font-bold px-4"
+        className="text-base md:text-2xl mt-4 md:mt-8 tracking-[0.3em] uppercase font-bold px-4"
         style={{
           fontFamily: '"Metal Mania"',
           background:
@@ -86,10 +85,9 @@ export function HeroContent() {
         animate="visible"
         variants={textReveal}
         transition={{ delay: 0.6 }}
-        className="max-w-2xl mt-6 px-4"
+        className="max-w-2xl mt-4 md:mt-6 px-4 text-sm md:text-[20px]"
         style={{
           fontFamily: 'Maname',
-          fontSize: '20px',
           color: '#F9FAFB',
           opacity: 0.8,
           fontWeight: 400,
@@ -97,8 +95,7 @@ export function HeroContent() {
           letterSpacing: '0.05em',
         }}
       >
-        Join the ultimate technical fest where innovation meets heroism.
-        Complete in cutting-edge challenges and become a legend.
+        RCCIIT's Annual Inter-College National Level Techno-Management Fest
       </motion.p>
 
       <motion.div
@@ -106,15 +103,14 @@ export function HeroContent() {
         animate="visible"
         variants={buttonReveal}
         transition={{ delay: 0.9 }}
-        className="flex flex-wrap justify-center gap-6 mt-12"
+        className="flex flex-wrap justify-center gap-4 md:gap-6 mt-6 md:mt-12"
       >
         <Link
           href="#register"
-          className="group relative flex items-center gap-[12px] px-[32px] py-[18px] rounded-[24px] bg-[#EDF526] shadow-[0_10px_30px_-10px_rgba(237,245,38,0.5)] hover:scale-105 transition-all duration-300 overflow-hidden"
+          className="group relative flex items-center gap-[12px] px-[32px] py-[18px] rounded-[24px] bg-[#EDF526] shadow-[0_10px_30px_-10px_rgba(237,245,38,0.5)] hover:scale-105 transition-all duration-300 overflow-hidden text-lg md:text-[22px]"
           style={{
             color: '#050816',
             fontFamily: '"Metal Mania"',
-            fontSize: '22px',
             fontWeight: 400,
             letterSpacing: '1px',
           }}
@@ -134,11 +130,10 @@ export function HeroContent() {
 
         <Link
           href="#details"
-          className="group flex items-center gap-3 border-2 border-white/30 px-8 py-4 rounded-[24px] hover:border-white hover:scale-105 transition-all duration-300"
+          className="group flex items-center gap-3 border-2 border-white/30 px-8 py-4 rounded-[24px] hover:border-white hover:scale-105 transition-all duration-300 text-lg md:text-[22px]"
           style={{
             color: '#FFF',
             fontFamily: '"Metal Mania"',
-            fontSize: '22px',
             fontWeight: 400,
             letterSpacing: '1px',
           }}
