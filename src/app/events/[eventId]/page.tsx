@@ -8,7 +8,7 @@ const page = () => {
       event={{
         title: 'CODE AND SEEK',
         description:
-          'Lorem Ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie eleifend commodo. Sed euismod lorem in ipsum vestibulum posuere. Phasellus sit amet congue sapien, et maximus arcu. Curabitur a fermentum augue, a fringilla erat. Nulla fermentum orci posuere lectus lacinia, a tristique erat porta. Aliquam sollicitudin felis ac mi varius molestie. Suspendisse sodales urna sit amet ex tempus mollis. Nunc lacus libero, commodo et porttitor lacinia, sagittis sit amet velit. Praesent ut pellentesque libero. Phasellus eu urna maximus, varius libero id, volutpat leo. Duis auctor, ex in facilisis hendrerit, justo ex facilisis quam, sit amet bibendum risus sem eget nibh.',
+          'Lorem Ipsum dolor sit amet, consectetur adipiscing elit. Donec molestie eleifend commodo.',
         rules:
           'Rule 1: All participants must register before the deadline.\nRule 2: Teams can have a maximum of 4 members.\nRule 3: The decision of the judges will be final.\nRule 4: No plagiarism or unfair means allowed.\nRule 5: Participants must carry valid college ID.',
         moreDetails:

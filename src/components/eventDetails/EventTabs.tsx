@@ -14,7 +14,7 @@ export default function EventTabs({ activeTab, setActiveTab }: Props) {
   ];
 
   return (
-    <div className="flex gap-10 justify-center">
+    <div className="flex gap-4 lg:gap-10 justify-center">
       {tabs.map((tab) => (
         <button
           key={tab.id}

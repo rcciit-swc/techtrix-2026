@@ -47,24 +47,24 @@ export default function EventDetails({ event }: Props) {
         style={{ zIndex: 10 }}
       >
         {/* Main Content Panel */}
-        <div className="ml-[160px] mr-[240px] w-full max-w-[1400px] min-h-[85vh] rounded-[40px] border border-white/10 bg-black/40 backdrop-blur-md">
+        <div className="w-full max-w-[1400px] min-h-[75vh] lg:min-h-[85vh] rounded-[40px] border border-white/10 bg-black/40 backdrop-blur-md mx-4 lg:mx-0 lg:ml-[160px] lg:mr-[240px] mt-24 lg:mt-0">
           {/* Inner Content */}
-          <div className="flex flex-col items-center py-12 px-12">
+          <div className="flex flex-col items-center py-8 px-6 lg:py-12 lg:px-12">
             {/* Header Row: Title + Buttons */}
-            <div className="w-full grid grid-cols-[1fr_auto_1fr] items-center mb-10">
+            <div className="w-full flex flex-col gap-6 lg:grid lg:grid-cols-[1fr_auto_1fr] items-center mb-10">
               {/* Left spacer to balance grid */}
-              <div></div>
+              <div className="hidden lg:block"></div>
 
               {/* Title - Centered */}
               <h1
-                className="text-4xl lg:text-5xl text-white tracking-[0.15em] text-center"
+                className="text-3xl lg:text-5xl text-white tracking-[0.15em] text-center"
                 style={{ fontFamily: "'Metal Mania'" }}
               >
                 {event.title}
               </h1>
 
               {/* Buttons - Right Side */}
-              <div className="flex items-center justify-end gap-5">
+              <div className="flex items-center justify-center lg:justify-end gap-5">
                 {/* Back Button */}
                 <Link
                   href="/events"
@@ -116,6 +116,16 @@ export default function EventDetails({ event }: Props) {
             {/* Tabs */}
             <EventTabs activeTab={activeTab} setActiveTab={setActiveTab} />
 
+            {/* Mobile-only Poster Image */}
+            <div className="mt-8 w-full max-w-sm lg:hidden relative aspect-[3/4] rounded-xl overflow-hidden shadow-lg border border-white/10">
+              <Image
+                src="/events/poster.png"
+                alt="Event Poster"
+                fill
+                className="object-cover"
+              />
+            </div>
+
             {/* Description Content */}
             <div className="mt-8 max-w-2xl text-center">
               <p className="text-white/85 text-base leading-relaxed tracking-wide">
@@ -157,7 +167,7 @@ export default function EventDetails({ event }: Props) {
 
         {/* Character Image - Fixed Right Side */}
         <div
-          className="fixed right-0 bottom-0 w-[380px] h-[90vh] pointer-events-none"
+          className="hidden lg:block fixed right-0 bottom-0 w-[380px] h-[90vh] pointer-events-none"
           style={{ zIndex: 5 }}
         >
           <Image
