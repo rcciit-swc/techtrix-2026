@@ -29,44 +29,39 @@ export default function PrincipalDesk() {
           <div className="order-2 lg:order-1 flex-1 lg:w-[890px] lg:-ml-[25px] ">
             <div className="p-6 md:p-8 rounded-lg text-justify text-sm md:text-base leading-relaxed shadow-lg">
               <p className="mb-4 text-[#F9FAFB] text-center font-normal  text-[20px] leading-normal font-['ManameALT']">
-                Life is big – achieving perfection in academic or technical
-                domain is important for professional success in life. But that
-                is not all; one must look for opportunities to explore life
-                beyond that. The young undergrads are having lot of energy and
-                spirit within them which needs expression in different forms.
-                After entering the college, while enjoying the adulthood for the
-                first time in life, a student gets some reprieve from the
-                pressure of competitive academics and gets time and freedom to
-                nurture his/her talent in sports, arts, performing arts,
-                innovations and all. <br /> <br />
-                The college fests provide the real platform to showcase their
-                talents and unleash their energy - their youthful exuberance.
-                Game of Thrones (GoT) – the annual sports fest of RCCIIT is one
-                such platform created and traditionally supported by RCCIIT.
-                Members of the Student Welfare Committee along with hundreds of
-                senior and junior student volunteers have come up and are
-                working together under the careful guidance of senior faculty
-                members to make the 2026version of GoT a grand success. From
-                last year GoT has taken up a big challenge by scaling it up to
-                the extent of Inter-College Sports Meet attracting participants
-                from Kolkata, other Districts and even other States. This time
-                also it will be a multi-tournament event organized at multiple
-                venues within and outside college. Cricket, Football, Badminton
-                and other sports competitions at college level are now fewer in
-                numbers compared to earlier days. Trendy games like gully
-                cricket, futsal are more popular which doesn't hold the
-                traditional spirit of the on-field games. Moreover, it is
-                observed that students are now more inclined towards digital
-                games, which is detrimental to their mental and physical health.
-                This is one reason why RCCIIT has put lot of emphasis on games
-                and sports. By accommodating traditional versions of the games
-                in GoT and making those open for all, we believe it will uphold
-                the true spirit of games and sports and foster sportsmanship,
-                positivity and friendship among the students. <br /> <br /> I
-                wish all success of this mega event and hope it will be even
-                better organized this year, particularly considering the
-                institute's silver jubilee celebration year 2026. I also expect
-                better participation and competition this time.
+                Life is vast – achieving excellence in academics and technical
+                knowledge is essential for professional growth, but that alone
+                does not define the true spirit of education. A student must
+                also find opportunities to explore creativity, innovation,
+                leadership and collaboration beyond the classroom. The young
+                undergraduates are filled with immense energy, curiosity and
+                potential, which need expression through constructive and
+                inspiring platforms. After entering college life, students
+                experience a new sense of independence and freedom, which allows
+                them to nurture their talents in technology, research,
+                entrepreneurship, creative thinking and problem-solving. <br />{' '}
+                <br />
+                The college fests provide the ideal platform to showcase these
+                skills and channel youthful enthusiasm into innovation and
+                development. Techtrix 2026 – the annual techno-management fest
+                of RCCIIT – is one such flagship platform, traditionally
+                supported and encouraged by the institute. Members of the
+                Student Welfare Committee, along with hundreds of dedicated
+                senior and junior student volunteers, are working together under
+                the careful guidance of faculty members to make Techtrix 2026 a
+                grand success. Over the years, Techtrix has taken up the
+                challenge of scaling itself into a major inter-college technical
+                fest, attracting participation from institutions across Kolkata,
+                other districts, and beyond the state. This year too, it will be
+                a vibrant multi-event celebration featuring competitions,
+                workshops, hackathons, robotics challenges, management events
+                and exhibitions across diverse domains of emerging technology.{' '}
+                <br /> <br />I extend my best wishes for the grand success of
+                Techtrix 2026, and I hope it will be even better organized this
+                year, particularly as we celebrate the institute’s silver
+                jubilee year 2026. I also look forward to enthusiastic
+                participation, stronger collaboration, and higher standards of
+                excellence in this edition.
               </p>
             </div>
           </div>
