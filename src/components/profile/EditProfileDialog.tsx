@@ -1,11 +1,10 @@
 'use client';
 
-import { FC, useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
@@ -28,14 +27,13 @@ interface EditProfileDialogProps {
   onSave: (formData: FormData) => Promise<void>;
 }
 
-export const EditProfileDialog: FC<EditProfileDialogProps> = ({
+export default function EditProfileDialog({
   open,
   onOpenChange,
   userData,
   name,
-  profileImage,
   onSave,
-}) => {
+}: EditProfileDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
@@ -91,13 +89,16 @@ export const EditProfileDialog: FC<EditProfileDialogProps> = ({
                 }}
               />
               <div className="relative z-10 flex flex-col items-center">
-                <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6">
-                  <Check size={40} className="text-white" />
+                <div className="w-20 h-20 bg-yellow-400 rounded-full flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(250,204,21,0.5)]">
+                  <Check size={40} className="text-black" />
                 </div>
-                <h2 className="text-2xl font-bold text-white mb-2 rajdhanifont">
+                <h2
+                  className="text-2xl font-bold text-yellow-400 mb-2 uppercase tracking-wider"
+                  style={{ fontFamily: "'Metal Mania'" }}
+                >
                   Profile Updated!
                 </h2>
-                <p className="text-gray-300 text-center mb-4 rajdhanifont">
+                <p className="text-white/70 text-center mb-4" style={{ fontFamily: 'Maname' }}>
                   Your profile has been successfully updated
                 </p>
               </div>
@@ -128,60 +129,65 @@ export const EditProfileDialog: FC<EditProfileDialogProps> = ({
                 <div className="flex flex-col gap-8 md:gap-[33px] items-start w-full">
                   {/* Title */}
                   <h2
-                    className="rajdhanifont font-semibold text-[35px] md:text-[40px] leading-normal text-white text-center underline decoration-solid underline-offset-4 w-full"
-                    style={{ textUnderlinePosition: 'from-font' }}
+                    className="text-[28px] md:text-[36px] leading-normal text-yellow-400 text-center w-full uppercase tracking-wider"
+                    style={{ fontFamily: "'Metal Mania'" }}
                   >
                     Personal Information
                   </h2>
 
                   {/* Full Name Field */}
-                  <div className="flex flex-col gap-5 md:gap-[6px] items-start w-full">
+                  <div className="flex flex-col gap-2 items-start w-full">
                     <label
                       htmlFor="fullName"
-                      className="rajdhanifont font-medium text-[24px] leading-normal text-white"
+                      className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide"
+                      style={{ fontFamily: 'Maname' }}
                     >
                       Full Name
                     </label>
-                    <div className="relative w-full h-[45px]">
-                      <div className="absolute inset-0 bg-[#090b0d] border border-[#ff003c] rounded-[15px]" />
+                    <div className="relative w-full h-[50px]">
                       <input
                         id="fullName"
                         name="fullName"
                         defaultValue={userData?.name || name}
-                        className="relative w-full h-full bg-transparent px-[22px] rajdhanifont font-semibold text-[25px] text-[#cca855] focus:outline-none focus:ring-2 focus:ring-[#ff003c] rounded-[15px]"
+                        className="w-full h-full bg-white/10 border border-white/20 hover:border-yellow-400/60 focus:border-yellow-400 px-5 py-0 font-medium text-[18px] text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/30 rounded-xl transition-all leading-[50px]"
+                        style={{ fontFamily: 'Maname' }}
                         placeholder="Enter your full name"
                       />
                     </div>
                   </div>
 
                   {/* Gender Field */}
-                  <div className="flex flex-col gap-5 md:gap-[6px] items-start w-full">
+                  <div className="flex flex-col gap-2 items-start w-full">
                     <label
                       htmlFor="gender"
-                      className="rajdhanifont font-medium text-[24px] leading-normal text-white"
+                      className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide"
+                      style={{ fontFamily: 'Maname' }}
                     >
                       Gender
                     </label>
                     <Select name="gender" defaultValue={userData?.gender || ''}>
-                      <SelectTrigger className="relative w-full h-[45px] bg-[#090b0d] border border-[#ff003c] rounded-[15px] px-[22px] rajdhanifont font-semibold text-[25px] text-[#cca855] focus:ring-2 focus:ring-[#ff003c]">
+                      <SelectTrigger className="w-full h-[50px] bg-white/10 border border-white/20 hover:border-yellow-400/60 focus:border-yellow-400 rounded-xl px-5 font-medium text-[18px] text-white focus:ring-2 focus:ring-yellow-400/30 transition-all leading-[50px] flex items-center" style={{ fontFamily: 'Maname' }}>
                         <SelectValue placeholder="Select Gender" />
                       </SelectTrigger>
-                      <SelectContent className="bg-[#090b0d] border border-[#ff003c]">
+                      <SelectContent className="bg-black/95 backdrop-blur-md border border-white/20 rounded-xl">
                         <SelectItem
                           value="female"
-                          className="text-[#cca855] focus:text-white hover:bg-[#ff003c]/20 focus:bg-[#ff003c]/20 rajdhanifont font-semibold text-[20px]"
+                          className="text-white focus:text-yellow-400 hover:bg-white/10 focus:bg-white/10 font-medium text-[16px]"
+                          style={{ fontFamily: 'Maname' }}
                         >
                           Female
                         </SelectItem>
                         <SelectItem
                           value="male"
-                          className="text-[#cca855] focus:text-white hover:bg-[#ff003c]/20 focus:bg-[#ff003c]/20 rajdhanifont font-semibold text-[20px]"
+                          className="text-white focus:text-yellow-400 hover:bg-white/10 focus:bg-white/10 font-medium text-[16px]"
+                          style={{ fontFamily: 'Maname' }}
                         >
                           Male
                         </SelectItem>
                         <SelectItem
                           value="other"
-                          className="text-[#cca855] focus:text-white hover:bg-[#ff003c]/20 focus:bg-[#ff003c]/20 rajdhanifont font-semibold text-[20px]"
+                          className="text-white focus:text-yellow-400 hover:bg-white/10 focus:bg-white/10 font-medium text-[16px]"
+                          style={{ fontFamily: 'Maname' }}
                         >
                           Other
                         </SelectItem>
@@ -190,44 +196,130 @@ export const EditProfileDialog: FC<EditProfileDialogProps> = ({
                   </div>
 
                   {/* Phone Number Field */}
-                  <div className="flex flex-col gap-5 md:gap-[7px] items-start w-full">
+                  <div className="flex flex-col gap-2 items-start w-full">
                     <label
                       htmlFor="phone"
-                      className="rajdhanifont font-medium text-[24px] leading-normal text-white"
+                      className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide"
+                      style={{ fontFamily: 'Maname' }}
                     >
                       Phone Number
                     </label>
-                    <div className="relative w-full h-[45px]">
-                      <div className="absolute inset-0 bg-[#090b0d] border border-[#ff003c] rounded-[15px]" />
+                    <div className="relative w-full h-[50px]">
                       <input
                         id="phone"
                         name="phone"
                         type="tel"
                         defaultValue={userData?.phone || ''}
-                        className="relative w-full h-full bg-transparent px-[22px] rajdhanifont font-semibold text-[25px] text-[#cca855] focus:outline-none focus:ring-2 focus:ring-[#ff003c] rounded-[15px]"
+                        className="w-full h-full bg-white/10 border border-white/20 hover:border-yellow-400/60 focus:border-yellow-400 px-5 py-0 font-medium text-[18px] text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/30 rounded-xl transition-all leading-[50px]"
+                        style={{ fontFamily: 'Maname' }}
                         placeholder="Enter phone number"
                       />
                     </div>
                   </div>
 
                   {/* Email Field */}
-                  <div className="flex flex-col gap-5 md:gap-[18px] items-start w-full">
+                  <div className="flex flex-col gap-2 items-start w-full">
                     <label
                       htmlFor="email"
-                      className="rajdhanifont font-medium text-[24px] leading-normal text-white"
+                      className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide"
+                      style={{ fontFamily: 'Maname' }}
                     >
                       Email ID
                     </label>
-                    <div className="relative w-full h-[45px]">
-                      <div className="absolute inset-0 bg-[#090b0d] border border-[#ff003c] rounded-[15px]" />
+                    <div className="relative w-full h-[50px]">
                       <input
                         id="email"
                         name="email"
                         type="email"
                         defaultValue={userData?.email || ''}
-                        className="relative w-full h-full bg-transparent px-[22px] rajdhanifont font-semibold text-[25px] text-[#cca855] focus:outline-none focus:ring-2 focus:ring-[#ff003c] rounded-[15px]"
+                        className="w-full h-full bg-white/5 border border-white/10 px-5 py-0 font-medium text-[18px] text-white/50 focus:outline-none rounded-xl cursor-not-allowed leading-[50px]"
+                        style={{ fontFamily: 'Maname' }}
                         placeholder="Enter your email"
                         readOnly
+                      />
+                    </div>
+                  </div>
+
+                  {/* College Field */}
+                  <div className="flex flex-col gap-2 items-start w-full">
+                    <label
+                      htmlFor="college"
+                      className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide"
+                      style={{ fontFamily: 'Maname' }}
+                    >
+                      College
+                    </label>
+                    <div className="relative w-full h-[50px]">
+                      <input
+                        id="college"
+                        name="college"
+                        defaultValue={userData?.college || ''}
+                        className="w-full h-full bg-white/10 border border-white/20 hover:border-yellow-400/60 focus:border-yellow-400 px-5 py-0 font-medium text-[18px] text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/30 rounded-xl transition-all leading-[50px]"
+                        style={{ fontFamily: 'Maname' }}
+                        placeholder="Enter your college name"
+                      />
+                    </div>
+                  </div>
+
+                  {/* College Roll Field */}
+                  <div className="flex flex-col gap-2 items-start w-full">
+                    <label
+                      htmlFor="college_roll"
+                      className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide"
+                      style={{ fontFamily: 'Maname' }}
+                    >
+                      College Roll No
+                    </label>
+                    <div className="relative w-full h-[50px]">
+                      <input
+                        id="college_roll"
+                        name="college_roll"
+                        defaultValue={userData?.college_roll || ''}
+                        className="w-full h-full bg-white/10 border border-white/20 hover:border-yellow-400/60 focus:border-yellow-400 px-5 py-0 font-medium text-[18px] text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/30 rounded-xl transition-all leading-[50px]"
+                        style={{ fontFamily: 'Maname' }}
+                        placeholder="Enter your college roll no"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Course Field */}
+                  <div className="flex flex-col gap-2 items-start w-full">
+                    <label
+                      htmlFor="course"
+                      className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide"
+                      style={{ fontFamily: 'Maname' }}
+                    >
+                      Course
+                    </label>
+                    <div className="relative w-full h-[50px]">
+                      <input
+                        id="course"
+                        name="course"
+                        defaultValue={userData?.course || ''}
+                        className="w-full h-full bg-white/10 border border-white/20 hover:border-yellow-400/60 focus:border-yellow-400 px-5 py-0 font-medium text-[18px] text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/30 rounded-xl transition-all leading-[50px]"
+                        style={{ fontFamily: 'Maname' }}
+                        placeholder="e.g. B.Tech, M.Tech, BCA"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Stream Field */}
+                  <div className="flex flex-col gap-2 items-start w-full">
+                    <label
+                      htmlFor="stream"
+                      className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide"
+                      style={{ fontFamily: 'Maname' }}
+                    >
+                      Stream
+                    </label>
+                    <div className="relative w-full h-[50px]">
+                      <input
+                        id="stream"
+                        name="stream"
+                        defaultValue={userData?.stream || ''}
+                        className="w-full h-full bg-white/10 border border-white/20 hover:border-yellow-400/60 focus:border-yellow-400 px-5 py-0 font-medium text-[18px] text-white focus:outline-none focus:ring-2 focus:ring-yellow-400/30 rounded-xl transition-all leading-[50px]"
+                        style={{ fontFamily: 'Maname' }}
+                        placeholder="e.g. CSE, ECE, ME"
                       />
                     </div>
                   </div>
@@ -236,7 +328,8 @@ export const EditProfileDialog: FC<EditProfileDialogProps> = ({
                 {/* Save Button */}
                 <Button
                   type="submit"
-                  className="w-full max-w-[500px] h-[48px] bg-[#f2efe9] hover:bg-[#e5e2dc] text-black rajdhanifont font-semibold text-[21px] rounded-[15px] shadow-[0px_4px_15px_0px_rgba(0,0,0,0.25)] transition-all duration-300 border-0"
+                  className="w-full max-w-[500px] h-[48px] bg-yellow-400 hover:bg-yellow-300 text-black font-bold text-[18px] rounded-full shadow-[0_0_15px_rgba(250,204,21,0.3)] transition-all duration-300 border-0 uppercase tracking-wider"
+                  style={{ fontFamily: "'Metal Mania'" }}
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -245,7 +338,7 @@ export const EditProfileDialog: FC<EditProfileDialogProps> = ({
                       <span>SAVING...</span>
                     </>
                   ) : (
-                    'SAVE'
+                    'SAVE CHANGES'
                   )}
                 </Button>
               </div>
@@ -255,4 +348,4 @@ export const EditProfileDialog: FC<EditProfileDialogProps> = ({
       </DialogContent>
     </Dialog>
   );
-};
+}

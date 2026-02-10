@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useUser, useEvents } from '@/lib/stores';
 import { supabase } from '@/lib/supabase/client';
-import { EditProfileDialog } from './EditProfileDialog';
+import EditProfileDialog from './EditProfileDialog';
 import type { events } from '@/lib/types';
 import EventsCard from '@/components/profile/EventCard';
 import { toast } from 'sonner';
@@ -127,20 +127,23 @@ export default function ProfilePage() {
 
   return (
     <div
-      className="min-h-screen relative rajdhanifont overflow-hidden"
+      className="min-h-screen relative overflow-hidden"
       style={{
-        backgroundImage: "url('/about/playerprofilebg.png')",
+        backgroundImage: "url('/profile/profilebg.jpeg')",
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundAttachment: 'scroll',
+        backgroundAttachment: 'fixed',
       }}
     >
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/70" />
+
       {/* Animated Background Overlay */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 50% 50%, rgba(221, 91, 27, 0.1) 0%, transparent 70%)',
+            'radial-gradient(circle at 50% 50%, rgba(250, 204, 21, 0.1) 0%, transparent 70%)',
         }}
         animate={{
           scale: [1, 1.2, 1],
@@ -152,23 +155,23 @@ export default function ProfilePage() {
         }}
       />
 
-      <main className="pt-40 md:pt-32 pb-2 relative z-10">
+      <main className="pt-8 md:pt-8 pb-0 relative z-10">
         {/* Player Profile Title with Enhanced Animation */}
         <motion.h1
-          initial={{ opacity: 0, y: -50, scale: 0.9 }}
+          initial={{ opacity: 0, y: 0, scale: 0.9 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{
             duration: 0.8,
           }}
-          style={{ opacity, scale }}
-          className="text-center rajdhanifont font-bold text-[32px] md:text-[48px] text-white mb-6 md:mb-8 tracking-[-2px]"
+          style={{ opacity, scale, fontFamily: "'Metal Mania'" }}
+          className="text-center font-bold text-[32px] md:text-[48px] text-white mb-2 md:mb-2 tracking-wider uppercase"
         >
           <motion.span
             animate={{
               textShadow: [
-                '0px 0px 20px rgba(221, 91, 27, 0.8)',
-                '0px 0px 40px rgba(221, 91, 27, 0.6)',
-                '0px 0px 20px rgba(221, 91, 27, 0.8)',
+                '0px 0px 20px rgba(250, 204, 21, 0.8)',
+                '0px 0px 40px rgba(250, 204, 21, 0.6)',
+                '0px 0px 20px rgba(250, 204, 21, 0.8)',
               ],
             }}
             transition={{
@@ -181,7 +184,7 @@ export default function ProfilePage() {
         </motion.h1>
 
         {/* Profile Card Container */}
-        <div className="max-w-7xl mx-auto px-4 md:px-8">
+        <div className="max-w-7xl mx-auto px-4 md:px-4">
           <motion.div
             initial={{ opacity: 0, y: 60, rotateX: -15 }}
             animate={{ opacity: 1, y: 0, rotateX: 0 }}
@@ -190,19 +193,17 @@ export default function ProfilePage() {
             }}
             whileHover="hover"
             variants={cardHoverVariants}
-            className="backdrop-blur-[12.95px] rounded-[20px] p-5 md:p-6 relative overflow-hidden"
+            className="backdrop-blur-md rounded-[40px] p-6 md:p-6 relative overflow-hidden border border-white/10 bg-black/40"
             style={{
-              backgroundImage:
-                'linear-gradient(168deg, rgba(0, 0, 0, 0.25) 5%, rgba(255, 255, 255, 0.25) 95%)',
               transformStyle: 'preserve-3d',
             }}
           >
             {/* Animated Border Glow */}
             <motion.div
-              className="absolute inset-0 rounded-[24px] pointer-events-none"
+              className="absolute inset-0 rounded-[40px] pointer-events-none"
               style={{
                 background:
-                  'linear-gradient(90deg, transparent, rgba(221, 91, 27, 0.5), transparent)',
+                  'linear-gradient(90deg, transparent, rgba(250, 204, 21, 0.4), transparent)',
               }}
               animate={{
                 x: ['-100%', '200%'],
@@ -227,9 +228,9 @@ export default function ProfilePage() {
                 <motion.div
                   animate={{
                     boxShadow: [
-                      '0 0 20px rgba(221, 91, 27, 0.3)',
-                      '0 0 40px rgba(221, 91, 27, 0.6)',
-                      '0 0 20px rgba(221, 91, 27, 0.3)',
+                      '0 0 20px rgba(250, 204, 21, 0.3)',
+                      '0 0 40px rgba(250, 204, 21, 0.5)',
+                      '0 0 20px rgba(250, 204, 21, 0.3)',
                     ],
                   }}
                   transition={{
@@ -238,7 +239,7 @@ export default function ProfilePage() {
                   }}
                   className="rounded-full"
                 >
-                  <Avatar className="w-[160px] h-[160px] border-3 border-white/10">
+                  <Avatar className="w-[160px] h-[160px] border-2 border-yellow-400/30">
                     {!imageLoaded && (
                       <Skeleton className="w-full h-full rounded-full absolute inset-0" />
                     )}
@@ -248,7 +249,7 @@ export default function ProfilePage() {
                       onLoad={() => setImageLoaded(true)}
                       className={imageLoaded ? 'block object-cover' : 'hidden'}
                     />
-                    <AvatarFallback className="bg-muted text-white text-4xl rajdhanifont">
+                    <AvatarFallback className="bg-black/60 text-yellow-400 text-4xl" style={{ fontFamily: "'Metal Mania'" }}>
                       {userData?.name?.[0] || 'U'}
                     </AvatarFallback>
                   </Avatar>
@@ -258,11 +259,12 @@ export default function ProfilePage() {
               {/* User Info */}
               <div className="flex flex-col gap-6 items-start">
                 <motion.div
-                  className="flex flex-col gap-[7px] text-white text-center md:text-left"
+                  className="flex flex-col gap-2 text-white text-center md:text-left"
                   variants={itemVariants}
                 >
                   <motion.h2
-                    className="rajdhanifont font-bold text-[28px] md:text-[36px] uppercase leading-tight"
+                    className="font-bold text-[28px] md:text-[36px] uppercase leading-tight text-yellow-400 tracking-wider"
+                    style={{ fontFamily: "'Metal Mania'" }}
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.3 }}
@@ -270,7 +272,8 @@ export default function ProfilePage() {
                     {userData?.name || name}
                   </motion.h2>
                   <motion.p
-                    className="rajdhanifont font-medium text-[16px] md:text-[18px]"
+                    className="font-medium text-[16px] md:text-[18px] text-white/70"
+                    style={{ fontFamily: 'Maname' }}
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.4 }}
@@ -278,7 +281,8 @@ export default function ProfilePage() {
                     {userData?.email}
                   </motion.p>
                   <motion.p
-                    className="rajdhanifont font-medium text-[16px] md:text-[18px]"
+                    className="font-medium text-[16px] md:text-[18px] text-white/70"
+                    style={{ fontFamily: 'Maname' }}
                     initial={{ opacity: 0, x: -30 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.6, delay: 0.5 }}
@@ -291,14 +295,15 @@ export default function ProfilePage() {
                 <motion.div className="flex gap-4" variants={itemVariants}>
                   <motion.button
                     onClick={() => setIsEditModalOpen(true)}
-                    className="h-[44px] w-[120px] bg-[#dd5b1b] rounded-[12px] shadow-[0px_4px_15px_rgba(0,0,0,0.25)] rajdhanifont font-semibold text-[#f2efe9] text-[18px] uppercase transition-colors relative overflow-hidden"
+                    className="h-[44px] px-8 bg-yellow-400 hover:bg-yellow-300 rounded-full shadow-[0_0_15px_rgba(250,204,21,0.3)] font-bold text-black text-[16px] uppercase tracking-wider transition-colors relative overflow-hidden"
+                    style={{ fontFamily: "'Metal Mania'" }}
                     variants={buttonVariants}
                     initial="rest"
                     whileHover="hover"
                     whileTap="tap"
                   >
                     <motion.span
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
                       initial={{ x: '-100%' }}
                       whileHover={{ x: '100%' }}
                       transition={{ duration: 0.5 }}
@@ -307,14 +312,15 @@ export default function ProfilePage() {
                   </motion.button>
                   <motion.button
                     onClick={handleLogout}
-                    className="h-[44px] w-[120px] bg-[#f2efe9] rounded-[12px] shadow-[0px_4px_15px_rgba(0,0,0,0.25)] rajdhanifont font-semibold text-black text-[18px] uppercase transition-colors relative overflow-hidden"
+                    className="h-[44px] px-8 bg-white/10 border border-white/30 hover:bg-white/20 rounded-full font-bold text-white text-[16px] uppercase tracking-wider transition-colors relative overflow-hidden"
+                    style={{ fontFamily: "'Metal Mania'" }}
                     variants={buttonVariants}
                     initial="rest"
                     whileHover="hover"
                     whileTap="tap"
                   >
                     <motion.span
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-black/10 to-transparent"
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
                       initial={{ x: '-100%' }}
                       whileHover={{ x: '100%' }}
                       transition={{ duration: 0.5 }}
@@ -337,9 +343,9 @@ export default function ProfilePage() {
                 <motion.div
                   animate={{
                     boxShadow: [
-                      '0 0 20px rgba(221, 91, 27, 0.3)',
-                      '0 0 40px rgba(221, 91, 27, 0.6)',
-                      '0 0 20px rgba(221, 91, 27, 0.3)',
+                      '0 0 20px rgba(250, 204, 21, 0.3)',
+                      '0 0 40px rgba(250, 204, 21, 0.5)',
+                      '0 0 20px rgba(250, 204, 21, 0.3)',
                     ],
                   }}
                   transition={{
@@ -348,7 +354,7 @@ export default function ProfilePage() {
                   }}
                   className="rounded-full"
                 >
-                  <Avatar className="w-[160px] h-[160px] border-3 border-white/10">
+                  <Avatar className="w-[160px] h-[160px] border-2 border-yellow-400/30">
                     {!imageLoaded && (
                       <Skeleton className="w-full h-full rounded-full absolute inset-0" />
                     )}
@@ -358,7 +364,7 @@ export default function ProfilePage() {
                       onLoad={() => setImageLoaded(true)}
                       className={imageLoaded ? 'block object-cover' : 'hidden'}
                     />
-                    <AvatarFallback className="bg-muted text-white text-4xl rajdhanifont">
+                    <AvatarFallback className="bg-black/60 text-yellow-400 text-4xl" style={{ fontFamily: "'Metal Mania'" }}>
                       {userData?.name?.[0] || 'U'}
                     </AvatarFallback>
                   </Avatar>
@@ -367,16 +373,16 @@ export default function ProfilePage() {
 
               {/* User Info */}
               <motion.div
-                className="flex flex-col gap-[7px] text-white text-center w-full max-w-[321px]"
+                className="flex flex-col gap-2 text-white text-center w-full max-w-[321px]"
                 variants={itemVariants}
               >
-                <h2 className="rajdhanifont font-bold text-[26px] md:text-[32px] uppercase leading-tight">
+                <h2 className="font-bold text-[26px] md:text-[32px] uppercase leading-tight text-yellow-400 tracking-wider" style={{ fontFamily: "'Metal Mania'" }}>
                   {userData?.name || name}
                 </h2>
-                <p className="rajdhanifont font-medium text-[16px] md:text-[18px]">
+                <p className="font-medium text-[16px] md:text-[18px] text-white/70" style={{ fontFamily: 'Maname' }}>
                   {userData?.email}
                 </p>
-                <p className="rajdhanifont font-medium text-[16px] md:text-[18px]">
+                <p className="font-medium text-[16px] md:text-[18px] text-white/70" style={{ fontFamily: 'Maname' }}>
                   {userData?.phone}
                 </p>
               </motion.div>
@@ -388,14 +394,15 @@ export default function ProfilePage() {
               >
                 <motion.button
                   onClick={() => setIsEditModalOpen(true)}
-                  className="h-[42px] w-full bg-[#dd5b1b] rounded-[12px] shadow-[0px_4px_15px_rgba(0,0,0,0.25)] rajdhanifont font-semibold text-[#f2efe9] text-[18px] uppercase transition-colors relative overflow-hidden"
+                  className="h-[44px] w-full bg-yellow-400 hover:bg-yellow-300 rounded-full shadow-[0_0_15px_rgba(250,204,21,0.3)] font-bold text-black text-[16px] uppercase tracking-wider transition-colors relative overflow-hidden"
+                  style={{ fontFamily: "'Metal Mania'" }}
                   variants={buttonVariants}
                   initial="rest"
                   whileHover="hover"
                   whileTap="tap"
                 >
                   <motion.span
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
                     initial={{ x: '-100%' }}
                     whileHover={{ x: '100%' }}
                     transition={{ duration: 0.5 }}
@@ -404,14 +411,15 @@ export default function ProfilePage() {
                 </motion.button>
                 <motion.button
                   onClick={handleLogout}
-                  className="h-[42px] w-full bg-[#f2efe9] rounded-[12px] shadow-[0px_4px_15px_rgba(0,0,0,0.25)] rajdhanifont font-semibold text-black text-[18px] uppercase transition-colors relative overflow-hidden"
+                  className="h-[44px] w-full bg-white/10 border border-white/30 hover:bg-white/20 rounded-full font-bold text-white text-[16px] uppercase tracking-wider transition-colors relative overflow-hidden"
+                  style={{ fontFamily: "'Metal Mania'" }}
                   variants={buttonVariants}
                   initial="rest"
                   whileHover="hover"
                   whileTap="tap"
                 >
                   <motion.span
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-black/10 to-transparent"
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"
                     initial={{ x: '-100%' }}
                     whileHover={{ x: '100%' }}
                     transition={{ duration: 0.5 }}
@@ -427,21 +435,19 @@ export default function ProfilePage() {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="mt-16 md:mt-4"
+            className="mt-4 md:mt-4"
           >
             {/* Section Title with Animated Underline */}
             <motion.h2
-              className="text-center rajdhanifont font-bold text-[32px] md:text-[48px] text-white mb-8 md:mb-10 relative inline-block w-full"
-              style={{
-                textShadow: '0px 0px 15px #b60302, 0px 3px 0px #ff003c',
-              }}
+              className="text-center font-bold text-[32px] md:text-[48px] text-white mb-4 md:mb-6 relative inline-block w-full uppercase tracking-wider"
+              style={{ fontFamily: "'Metal Mania'" }}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.5 }}
             >
               Registered Events
               <motion.span
-                className="absolute bottom-0 left-1/2 h-1 bg-gradient-to-r from-transparent via-[#dd5b1b] to-transparent"
+                className="absolute bottom-0 left-1/2 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent"
                 initial={{ width: 0, x: '-50%' }}
                 animate={{ width: '60%', x: '-50%' }}
                 transition={{ duration: 1, delay: 0.8 }}
@@ -460,10 +466,6 @@ export default function ProfilePage() {
                       duration: 0.5,
                       delay: 0.6 + index * 0.1,
                     }}
-                    whileHover={{
-                      scale: 1.05,
-                      y: -10,
-                    }}
                     className="w-full max-w-[340px]"
                   >
                     <EventsCard
@@ -477,19 +479,21 @@ export default function ProfilePage() {
                       transaction_screenshot={
                         event.transaction_screenshot ?? null
                       }
+                      transaction_verified={event.transaction_verified}
                     />
                   </motion.div>
                 ))}
               </div>
             ) : (
               <motion.div
-                className="text-center text-white rajdhanifont mt-6"
+                className="text-center text-white mt-6"
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6, delay: 0.6 }}
               >
                 <motion.p
-                  className="text-lg md:text-xl mb-6"
+                  className="text-lg md:text-xl mb-6 text-white/70"
+                  style={{ fontFamily: 'Maname' }}
                   animate={{
                     opacity: [0.7, 1, 0.7],
                   }}
@@ -505,11 +509,12 @@ export default function ProfilePage() {
                   whileTap={{ scale: 0.95 }}
                 >
                   <Button
-                    className="bg-[#dd5b1b] hover:bg-[#c94f15] text-[#f2efe9] rajdhanifont font-semibold text-lg px-8 py-3 rounded-[15px] relative overflow-hidden"
+                    className="bg-yellow-400 hover:bg-yellow-300 text-black font-bold text-lg px-8 py-3 rounded-full shadow-[0_0_15px_rgba(250,204,21,0.3)] relative overflow-hidden uppercase tracking-wider"
+                    style={{ fontFamily: "'Metal Mania'" }}
                     onClick={() => router.push('/events')}
                   >
                     <motion.span
-                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
                       animate={{ x: ['-100%', '200%'] }}
                       transition={{
                         duration: 2,

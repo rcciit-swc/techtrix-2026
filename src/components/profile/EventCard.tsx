@@ -13,12 +13,7 @@ import {
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-
-interface TeamMember {
-  name: string;
-  email: string;
-  phone: string;
-}
+import type { TeamMember } from '@/lib/types';
 
 interface EventCardProps {
   event_id: string;
@@ -29,16 +24,18 @@ interface EventCardProps {
   schedule: string;
   team_details: TeamMember[] | null;
   transaction_screenshot: string | null;
+  transaction_verified?: string | null;
 }
 
-const EventCard = ({
+export default function EventCard({
   name,
   image_url,
   registration_fees,
   schedule,
   team_details,
   transaction_screenshot,
-}: EventCardProps) => {
+  transaction_verified,
+}: EventCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'team' | 'payment'>('team');
   const [mounted, setMounted] = useState(false);
@@ -108,8 +105,8 @@ const EventCard = ({
               {/* Header */}
               <div className="relative p-6 border-b border-[#CCA855]/30">
                 <h2
-                  className="text-2xl md:text-3xl font-bold text-[#CCA855] text-center pr-8"
-                  style={{ fontFamily: 'Irish Grover' }}
+                  className="text-2xl md:text-3xl font-bold text-[#CCA855] text-center pr-8 uppercase tracking-wider"
+                  style={{ fontFamily: "'Metal Mania'" }}
                 >
                   {name}
                 </h2>
@@ -127,10 +124,10 @@ const EventCard = ({
                   onClick={() => setActiveTab('team')}
                   className={`flex-1 py-4 px-6 font-bold uppercase tracking-wide transition-all ${
                     activeTab === 'team'
-                      ? 'bg-[#CCA855]/20 text-[#CCA855] border-b-2 border-[#CCA855]'
+                      ? 'bg-[#CCA855]/10 text-[#CCA855] border-b-2 border-[#CCA855]'
                       : 'text-gray-400 hover:text-[#CCA855]'
                   }`}
-                  style={{ fontFamily: 'Rajdhani' }}
+                  style={{ fontFamily: 'Maname' }}
                 >
                   <span className="flex items-center justify-center gap-2">
                     <Users size={20} />
@@ -141,10 +138,10 @@ const EventCard = ({
                   onClick={() => setActiveTab('payment')}
                   className={`flex-1 py-4 px-6 font-bold uppercase tracking-wide transition-all ${
                     activeTab === 'payment'
-                      ? 'bg-[#CCA855]/20 text-[#CCA855] border-b-2 border-[#CCA855]'
+                      ? 'bg-[#CCA855]/10 text-[#CCA855] border-b-2 border-[#CCA855]'
                       : 'text-gray-400 hover:text-[#CCA855]'
                   }`}
-                  style={{ fontFamily: 'Rajdhani' }}
+                  style={{ fontFamily: 'Maname' }}
                 >
                   <span className="flex items-center justify-center gap-2">
                     <Receipt size={20} />
@@ -167,10 +164,10 @@ const EventCard = ({
                           key={index}
                           className="p-4 rounded-xl bg-gradient-to-r from-[#CCA855]/10 to-transparent border border-[#CCA855]/20"
                         >
-                          <h3 className="text-lg font-bold text-[#CCA855] mb-2 rajdhanifont">
+                          <h3 className="text-lg font-bold text-[#CCA855] mb-2" style={{ fontFamily: 'Maname' }}>
                             {index === 0 ? 'Team Lead' : `Member ${index + 1}`}
                           </h3>
-                          <div className="space-y-1 text-white rajdhanifont">
+                          <div className="space-y-1 text-white" style={{ fontFamily: 'Maname' }}>
                             <p>
                               <span className="text-gray-400">Name:</span>{' '}
                               {member.name}
@@ -187,7 +184,7 @@ const EventCard = ({
                         </div>
                       ))
                     ) : (
-                      <p className="text-center text-gray-400 py-8 rajdhanifont">
+                      <p className="text-center text-gray-400 py-8" style={{ fontFamily: 'Maname' }}>
                         Solo registration - No team details available
                       </p>
                     )}
@@ -198,7 +195,7 @@ const EventCard = ({
                   <motion.div
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    className="flex flex-col items-center justify-center"
+                    className="flex flex-col items-center justify-center font-['Maname'] text-white"
                   >
                     {transaction_screenshot ? (
                       <div className="relative w-full max-w-md">
@@ -216,8 +213,10 @@ const EventCard = ({
                           size={64}
                           className="text-gray-600 mx-auto mb-4"
                         />
-                        <p className="text-gray-400 rajdhanifont text-lg">
-                          Free event - No payment required
+                        <p className="text-gray-400 text-lg" style={{ fontFamily: 'Maname' }}>
+                          {registration_fees > 0
+                            ? 'Payment pending / Screenshot not available'
+                            : 'Free event - No payment required'}
                         </p>
                       </div>
                     )}
@@ -232,6 +231,8 @@ const EventCard = ({
     );
   };
 
+  const isPaymentPending = registration_fees > 0 && !transaction_verified;
+
   return (
     <>
       <motion.div
@@ -239,14 +240,13 @@ const EventCard = ({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        whileHover={{ y: -8 }}
       >
         {/* Background Image with Gradient Overlay */}
         <div className="absolute inset-0 rounded-[20px] overflow-hidden">
           <Image
             src={image_url || '/placeholder.svg'}
             alt={name || 'Event image'}
-            className="object-cover transition-transform duration-500 group-hover:scale-110"
+            className="object-cover"
             fill
             sizes="(max-width: 768px) 100vw, 400px"
             priority={true}
@@ -255,19 +255,36 @@ const EventCard = ({
           <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/80" />
         </div>
 
-        {/* Registered Badge - Top Left */}
+        {/* Persistent Gold Overlay on Hover */}
+        <div className="absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-[20px] bg-gradient-to-b from-[#CCA855]/15 to-[#CCA855]/0" />
+
+        {/* Moving Shine Effect */}
+        <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden rounded-[20px]">
+          <div className="absolute top-0 -left-[150%] w-[100%] h-full bg-gradient-to-r from-transparent via-[#CCA855]/40 to-transparent -skew-x-12 transition-all duration-1000 ease-out group-hover:left-[150%]" />
+        </div>
+
+        {/* Status Badge - Top Left */}
         <motion.div
           className="absolute top-4 left-4 z-20"
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
           transition={{ delay: 0.3, type: 'spring', stiffness: 200 }}
         >
-          <div className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 px-3 py-1.5 rounded-full shadow-lg">
-            <CheckCircle2 size={16} className="text-white" />
-            <span className="text-white font-bold text-xs uppercase tracking-wide">
-              Registered
-            </span>
-          </div>
+          {isPaymentPending ? (
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-yellow-500 to-orange-600 px-3 py-1.5 rounded-full shadow-lg">
+              <Receipt size={16} className="text-white" />
+              <span className="text-white font-bold text-xs uppercase tracking-wide">
+                Payment Pending
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1.5 bg-gradient-to-r from-green-500 to-emerald-600 px-3 py-1.5 rounded-full shadow-lg">
+              <CheckCircle2 size={16} className="text-white" />
+              <span className="text-white font-bold text-xs uppercase tracking-wide">
+                Registered
+              </span>
+            </div>
+          )}
         </motion.div>
 
         {/* Decorative Corner Elements */}
@@ -291,7 +308,7 @@ const EventCard = ({
               <h3
                 className="font-bold text-white text-2xl md:text-3xl uppercase tracking-wide mb-2 line-clamp-3"
                 style={{
-                  fontFamily: 'Irish Grover',
+                  fontFamily: "'Metal Mania'",
                   textShadow:
                     '0 0 20px rgba(204, 168, 85, 0.5), 2px 2px 4px rgba(0,0,0,0.8)',
                 }}
@@ -316,7 +333,7 @@ const EventCard = ({
             transition={{ delay: 0.3 }}
           >
             {/* Date and Fee Info Cards */}
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-2 gap-3" style={{ fontFamily: 'Maname' }}>
               {/* Date Card */}
               <div className="bg-black/40 backdrop-blur-md rounded-xl p-3 border border-[#CCA855]/30">
                 <div className="flex items-center gap-2 mb-1">
@@ -325,7 +342,7 @@ const EventCard = ({
                     Date
                   </span>
                 </div>
-                <p className="text-white text-sm font-bold rajdhanifont">
+                <p className="text-white text-sm font-bold">
                   {formattedDate || 'TBA'}
                 </p>
               </div>
@@ -338,7 +355,7 @@ const EventCard = ({
                     Fee
                   </span>
                 </div>
-                <p className="text-white text-sm font-bold rajdhanifont">
+                <p className="text-white text-sm font-bold">
                   ₹ {registration_fees || 0}
                 </p>
               </div>
@@ -360,7 +377,7 @@ const EventCard = ({
                 <Eye size={20} className="text-[#CCA855]" />
                 <span
                   className="text-[#CCA855]"
-                  style={{ fontFamily: 'Irish Grover' }}
+                  style={{ fontFamily: "'Metal Mania'" }}
                 >
                   View Details
                 </span>
@@ -385,6 +402,4 @@ const EventCard = ({
       {renderModal()}
     </>
   );
-};
-
-export default EventCard;
+}
