@@ -28,6 +28,8 @@ import {
   Crown,
   Check,
   Loader2,
+  X,
+  ArrowRight,
 } from 'lucide-react';
 
 interface TeamMember {
@@ -96,191 +98,171 @@ export function ViewTeamMembers({
     visible: (i: number) => ({
       opacity: 1,
       x: 0,
-      transition: { delay: i * 0.1, duration: 0.4 },
+      transition: { delay: i * 0.05, duration: 0.3 },
     }),
     exit: { opacity: 0, x: -20, transition: { duration: 0.2 } },
   };
 
-  const buttonVariants = {
-    hover: { scale: 1.05, transition: { duration: 0.2 } },
-    tap: { scale: 0.98, transition: { duration: 0.1 } },
-  };
-
   const Content = () => (
-    <div className="mt-4 md:mt-6 font-antolia tracking-widest">
-      {/* Team Lead Card with enhanced styling */}
+    <div className="mt-6 space-y-6">
+      {/* Team Lead Card */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-4 md:mb-6 relative overflow-hidden"
+        transition={{ duration: 0.4 }}
+        className="relative group"
       >
-        <div className="absolute inset-0 bg-[#FF003C]/20 rounded-xl blur-sm"></div>
-        <div className="bg-[#090B0D] border-2 border-[#FF003C]/30 rounded-xl p-3 md:p-5 relative">
-          <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
-            <div className="bg-[#FF003C] rounded-full p-0.5">
-              <div className="bg-[#090B0D] rounded-full p-1.5 md:p-2">
-                <Crown size={18} className="text-[#CCA855] md:w-6 md:h-6" />
+        <div className="absolute inset-0 bg-yellow-400/5 rounded-xl blur-sm group-hover:bg-yellow-400/10 transition-all duration-500"></div>
+        <div className="relative bg-white/5 border border-white/10 rounded-xl p-5 overflow-hidden">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="bg-yellow-400/20 p-2 rounded-full">
+                <Crown size={18} className="text-yellow-400" />
               </div>
+              <h3
+                className="text-lg text-white tracking-widest"
+                style={{ fontFamily: "'Metal Mania'" }}
+              >
+                Team Lead
+              </h3>
             </div>
-            <h3 className="text-base md:text-2xl text-[#CCA855] font-bold">
-              Team Lead
-            </h3>
-          </div>
-
-          <div className="grid gap-2 md:gap-3 pl-3 md:pl-4 ml-1 md:ml-2 border-l-2 border-[#FF003C]/30">
-            <div className="flex items-center gap-2 md:gap-3">
-              <User
-                size={14}
-                className="text-[#CCA855]/70 md:w-[18px] md:h-[18px]"
-              />
-              <div>
-                <p className="text-xs md:text-sm text-[#CCA855]/70">Name</p>
-                <p className="font-medium text-sm md:text-base text-white">
-                  {teamLeadData?.name || ''}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 md:gap-3">
-              <Mail
-                size={14}
-                className="text-[#CCA855]/70 md:w-[18px] md:h-[18px]"
-              />
-              <div>
-                <p className="text-xs md:text-sm text-[#CCA855]/70">Email</p>
-                <p className="font-medium text-sm md:text-base text-white">
-                  {teamLeadData?.email || ''}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 md:gap-3">
-              <Phone
-                size={14}
-                className="text-[#CCA855]/70 md:w-[18px] md:h-[18px]"
-              />
-              <div>
-                <p className="text-xs md:text-sm text-[#CCA855]/70">Phone</p>
-                <p className="font-medium text-sm md:text-base text-white">
-                  {teamLeadData?.phone || ''}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <motion.div
-            className="mt-3 md:mt-4"
-            variants={buttonVariants}
-            whileHover="hover"
-            whileTap="tap"
-          >
             <Button
               onClick={onEditTeamLead}
-              className="bg-[#CCA855] hover:bg-[#CCA855]/90 text-black font-medium flex items-center gap-2 px-3 md:px-4 py-1.5 md:py-2 text-sm rounded-md border-0 transition-all duration-300"
+              variant="ghost"
+              size="sm"
+              className="text-white/40 hover:text-white hover:bg-white/10 h-8 w-8 p-0 rounded-full"
             >
-              <Edit size={14} className="md:w-4 md:h-4" />
-              <span>Edit Lead Details</span>
+              <Edit size={14} />
             </Button>
-          </motion.div>
+          </div>
+
+          <div className="space-y-3 pl-2 border-l border-white/10 ml-4">
+            <div className="flex items-center gap-3">
+              <User size={14} className="text-white/40 shrink-0" />
+              <div>
+                <p className="text-[10px] text-white/40 uppercase tracking-wider">
+                  Name
+                </p>
+                <p className="text-sm text-white font-medium">
+                  {teamLeadData?.name || '-'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Mail size={14} className="text-white/40 shrink-0" />
+              <div>
+                <p className="text-[10px] text-white/40 uppercase tracking-wider">
+                  Email
+                </p>
+                <p className="text-sm text-white font-medium truncate max-w-[200px]">
+                  {teamLeadData?.email || '-'}
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Phone size={14} className="text-white/40 shrink-0" />
+              <div>
+                <p className="text-[10px] text-white/40 uppercase tracking-wider">
+                  Phone
+                </p>
+                <p className="text-sm text-white font-medium">
+                  {teamLeadData?.phone || '-'}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </motion.div>
 
       {/* Team Members List */}
-      <h3 className="text-base md:text-xl text-[#CCA855] mb-3 md:mb-4 flex items-center gap-2">
-        <Users size={16} className="text-[#CCA855] md:w-5 md:h-5" />
-        Team Members ({teamMembers.length})
-        <div className="h-px grow ml-2 md:ml-3 bg-[#FF003C]/50"></div>
-      </h3>
-
-      <AnimatePresence>
-        {teamMembers.map((member, index) => (
-          <motion.div
-            key={index}
-            custom={index}
-            variants={memberVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="mb-4 relative overflow-hidden"
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h3
+            className="text-lg text-white tracking-widest flex items-center gap-2"
+            style={{ fontFamily: "'Metal Mania'" }}
           >
-            <div className="absolute inset-0 bg-[#FF003C]/10 rounded-xl blur-sm"></div>
-            <div className="bg-[#090B0D]/80 border border-[#FF003C]/20 p-3 md:p-5 rounded-xl hover:border-[#FF003C]/40 transition-all duration-300">
-              <div className="grid gap-2 md:gap-3 mb-2 md:mb-3">
-                <div className="flex items-center gap-2 md:gap-3">
-                  <User
-                    size={14}
-                    className="text-[#CCA855]/70 md:w-[18px] md:h-[18px]"
-                  />
-                  <div>
-                    <p className="text-xs md:text-sm text-[#CCA855]/70">Name</p>
-                    <p className="font-medium text-sm md:text-base text-white">
-                      {member.name}
-                    </p>
-                  </div>
-                </div>
+            <Users size={18} className="text-white/60" />
+            Team Members
+            <span className="text-sm text-white/40 font-sans tracking-normal ml-2">
+              ({teamMembers.length})
+            </span>
+          </h3>
+        </div>
 
-                <div className="flex items-center gap-2 md:gap-3">
-                  <Mail
-                    size={14}
-                    className="text-[#CCA855]/70 md:w-[18px] md:h-[18px]"
-                  />
-                  <div>
-                    <p className="text-xs md:text-sm text-[#CCA855]/70">
-                      Email
-                    </p>
-                    <p className="font-medium text-sm md:text-base text-white">
-                      {member.email}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-2 md:gap-3">
-                  <Phone
-                    size={14}
-                    className="text-[#CCA855]/70 md:w-[18px] md:h-[18px]"
-                  />
-                  <div>
-                    <p className="text-xs md:text-sm text-[#CCA855]/70">
-                      Phone
-                    </p>
-                    <p className="font-medium text-sm md:text-base text-white">
-                      {member.phone}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-2 md:gap-3 mt-3 md:mt-4">
-                <Button
-                  onClick={() => onEditMember(index)}
-                  className="bg-[#CCA855] hover:bg-[#CCA855]/90 text-black font-medium flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 text-sm rounded-md border-0 transition-all duration-300 transform hover:scale-105 active:scale-98"
+        <div className="space-y-3">
+          <AnimatePresence mode="popLayout">
+            {teamMembers.length > 0 ? (
+              teamMembers.map((member, index) => (
+                <motion.div
+                  key={index}
+                  custom={index}
+                  variants={memberVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                  layout
+                  className="bg-white/5 border border-white/10 rounded-xl p-4 group hover:border-white/20 transition-colors"
                 >
-                  <Edit size={14} className="md:w-4 md:h-4" />
-                  <span>Edit</span>
-                </Button>
-
-                <Button
-                  onClick={() => onRemoveMember(index)}
-                  className="bg-[#FF003C] hover:bg-[#FF003C]/90 text-white font-medium flex items-center gap-1.5 md:gap-2 px-3 md:px-4 py-1.5 md:py-2 text-sm rounded-md border-0 transition-all duration-300 transform hover:scale-105 active:scale-98"
-                >
-                  <Trash2 size={14} className="md:w-4 md:h-4" />
-                  <span>Remove</span>
-                </Button>
-              </div>
-            </div>
-          </motion.div>
-        ))}
-      </AnimatePresence>
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="bg-white/10 p-2 rounded-full">
+                        <User size={16} className="text-white/80" />
+                      </div>
+                      <div>
+                        <p className="text-sm text-white font-medium">
+                          {member.name}
+                        </p>
+                        <p className="text-xs text-white/40">{member.email}</p>
+                      </div>
+                    </div>
+                    <div className="flex gap-1">
+                      <Button
+                        onClick={() => onEditMember(index)}
+                        variant="ghost"
+                        size="sm"
+                        className="text-white/40 hover:text-white hover:bg-white/10 h-7 w-7 p-0 rounded-full"
+                      >
+                        <Edit size={12} />
+                      </Button>
+                      <Button
+                        onClick={() => onRemoveMember(index)}
+                        variant="ghost"
+                        size="sm"
+                        className="text-white/40 hover:text-red-400 hover:bg-red-500/10 h-7 w-7 p-0 rounded-full"
+                      >
+                        <Trash2 size={12} />
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 text-xs text-white/60 pl-11">
+                    <Phone size={10} />
+                    <span>{member.phone}</span>
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-center py-8 border border-dashed border-white/10 rounded-xl"
+              >
+                <p className="text-white/40 text-sm">No members added yet</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
 
       {showConfirmTeam && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-8 mb-4"
+          className="pt-4 border-t border-white/10"
         >
-          <div className="h-px w-full bg-[#FF003C]/50 mb-8"></div>
+          {/* Divider with spacing handled by margin/padding */}
         </motion.div>
       )}
     </div>
@@ -292,18 +274,12 @@ export function ViewTeamMembers({
       x: 0,
       opacity: 1,
       transition: {
-        duration: 0.3,
-        ease: 'easeOut', // or 'easeOut' as const
+        type: 'spring',
+        stiffness: 300,
+        damping: 30,
       },
     },
-    exit: {
-      x: '100%',
-      opacity: 0,
-      transition: {
-        duration: 0.2,
-        ease: 'easeIn',
-      },
-    },
+    exit: { x: '100%', opacity: 0, transition: { duration: 0.2 } },
   };
 
   const mobileDrawerVariants: Variants = {
@@ -312,90 +288,71 @@ export function ViewTeamMembers({
       y: 0,
       opacity: 1,
       transition: {
-        duration: 0.3,
-        ease: 'easeOut',
+        type: 'spring',
+        stiffness: 300,
+        damping: 30,
       },
     },
-    exit: {
-      y: '100%',
-      opacity: 0,
-      transition: {
-        duration: 0.2,
-        ease: 'easeIn',
-      },
-    },
+    exit: { y: '100%', opacity: 0, transition: { duration: 0.2 } },
   };
 
   if (isMobile) {
     return (
       <Drawer open={isOpen} onOpenChange={onOpenChange} modal={true}>
-        <AnimatePresence>
-          {isOpen && (
-            <DrawerContent className="bg-[#090B0D] border-t-2 border-[#FF003C]/30 flex flex-col max-h-[80vh]">
-              <motion.div
-                variants={mobileDrawerVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                className="flex flex-col h-full"
+        <DrawerContent className="bg-[#0A0A0A] border-t border-white/20 max-h-[85vh] flex flex-col">
+          <motion.div
+            variants={mobileDrawerVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="flex flex-col h-full"
+          >
+            <DrawerHeader className="border-b border-white/10 pb-4">
+              <DrawerTitle
+                className="text-white text-xl tracking-widest text-center"
+                style={{ fontFamily: "'Metal Mania'" }}
               >
-                <DrawerHeader className="flex-shrink-0">
-                  <DrawerTitle className="text-[#CCA855] text-lg md:text-2xl font-antolia tracking-wider flex items-center gap-2">
-                    <Users size={18} className="text-[#CCA855] md:w-6 md:h-6" />
-                    Team Roster
-                  </DrawerTitle>
-                  <DrawerDescription className="text-[#CCA855]/80 text-sm md:text-lg font-kagitingan tracking-wider">
-                    {teamMembers.length > 0
-                      ? `${teamMembers.length} team member${teamMembers.length > 1 ? 's' : ''}`
-                      : 'No team members added yet'}
-                  </DrawerDescription>
+                Team Roster
+              </DrawerTitle>
+              <DrawerDescription className="text-white/40 text-center text-xs">
+                Review your team details before registering
+              </DrawerDescription>
+            </DrawerHeader>
 
-                  <div className="h-0.5 md:h-1 w-24 md:w-32 bg-[#FF003C] rounded-full mt-1 md:mt-2"></div>
-                </DrawerHeader>
-                {showConfirmTeam && (
-                  <div className="px-4 pt-2 pb-2 flex-shrink-0">
-                    <Button
-                      onClick={confirmTeam}
-                      disabled={registerLoading}
-                      className="w-full bg-[#CCA855] hover:bg-[#CCA855]/90 text-black font-medium flex items-center justify-center gap-2 px-4 py-2.5 text-sm md:text-base rounded-md border-0 transition-all duration-300 shadow-lg shadow-[#CCA855]/20"
-                    >
-                      {registerLoading ? (
-                        <>
-                          <Loader2
-                            size={18}
-                            className="animate-spin md:w-5 md:h-5"
-                          />
-                          <span>Processing...</span>
-                        </>
-                      ) : (
-                        <>
-                          {isFree ? (
-                            'Register'
-                          ) : (
-                            <>
-                              <CreditCard size={18} className="md:w-5 md:h-5" />
-                              <span>Proceed to Payment</span>
-                              <Check size={18} className="ml-1 md:w-5 md:h-5" />
-                            </>
-                          )}
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                )}
-                <div
-                  className="px-4 pb-4 overflow-y-auto flex-1 my-scrollbar"
-                  onTouchMove={(e) => {
-                    // Stop propagation to prevent background scroll
-                    e.stopPropagation();
-                  }}
+            <div className="px-4 flex-1 overflow-y-auto my-scrollbar">
+              <Content />
+            </div>
+
+            {showConfirmTeam && (
+              <div className="p-4 border-t border-white/10 bg-black/20 backdrop-blur-md">
+                <Button
+                  onClick={confirmTeam}
+                  disabled={registerLoading}
+                  className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-medium py-6 rounded-full group relative overflow-hidden transition-all duration-300"
                 >
-                  <Content />
-                </div>
-              </motion.div>
-            </DrawerContent>
-          )}
-        </AnimatePresence>
+                  {registerLoading ? (
+                    <>
+                      <Loader2 size={18} className="animate-spin mr-2" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard size={18} className="mr-2" />
+                      <span className="tracking-wide text-sm">
+                        {isFree ? 'CONFIRM REGISTRATION' : 'CONFIRM & PAY'}
+                      </span>
+                      <ArrowRight
+                        size={16}
+                        className="ml-2 group-hover:translate-x-1 transition-transform"
+                      />
+                      <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
+          </motion.div>
+        </DrawerContent>
       </Drawer>
     );
   }
@@ -404,11 +361,7 @@ export function ViewTeamMembers({
     <Sheet open={isOpen} onOpenChange={onOpenChange} modal={true}>
       <SheetContent
         side="right"
-        className="bg-[#090B0D] border-l-2 border-[#FF003C]/30 w-100 sm:w-135 overflow-hidden flex flex-col"
-        onWheel={(e) => {
-          // Prevent wheel event from propagating to background
-          e.stopPropagation();
-        }}
+        className="w-full sm:w-[500px] bg-black/80 backdrop-blur-xl border-l border-white/20 p-0 shadow-2xl overflow-hidden flex flex-col"
       >
         <motion.div
           variants={desktopSidebarVariants}
@@ -417,64 +370,51 @@ export function ViewTeamMembers({
           exit="exit"
           className="flex flex-col h-full"
         >
-          <SheetHeader className="flex-shrink-0">
-            <SheetTitle className="text-[#CCA855] text-3xl font-antolia tracking-wider flex items-center gap-3">
-              <Users size={24} className="text-[#CCA855]" />
+          <SheetHeader className="p-6 border-b border-white/10">
+            <SheetTitle
+              className="text-white text-2xl tracking-widest flex items-center gap-3"
+              style={{ fontFamily: "'Metal Mania'" }}
+            >
+              <Users size={24} className="text-white/80" />
               Team Roster
             </SheetTitle>
-            <SheetDescription className="text-[#CCA855]/80 text-xl font-kagitingan tracking-wider">
-              {teamMembers.length > 0
-                ? `${teamMembers.length} team member${teamMembers.length > 1 ? 's' : ''}`
-                : 'No team members added yet'}
+            <SheetDescription className="text-white/40 text-sm">
+              Review and manage your team members
             </SheetDescription>
-
-            <div className="h-1 w-32 bg-[#FF003C] rounded-full mt-2"></div>
           </SheetHeader>
 
+          <div className="flex-1 overflow-y-auto px-6 pb-6 my-scrollbar">
+            <Content />
+          </div>
+
           {showConfirmTeam && (
-            <div className="px-4 pt-4 pb-2 flex-shrink-0">
+            <div className="p-6 border-t border-white/10 bg-black/40 backdrop-blur-md">
               <Button
                 onClick={confirmTeam}
                 disabled={registerLoading}
-                className="w-full bg-[#CCA855] hover:bg-[#CCA855]/90 text-black font-medium flex items-center justify-center gap-2 px-4 py-3 text-base rounded-md border-0 transition-all duration-300 shadow-lg shadow-[#CCA855]/20"
+                className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-medium py-6 rounded-full group relative overflow-hidden transition-all duration-300 shadow-lg"
               >
                 {registerLoading ? (
                   <>
-                    <Loader2 size={22} className="animate-spin" />
+                    <Loader2 size={20} className="animate-spin mr-2" />
                     <span>Processing...</span>
                   </>
                 ) : (
                   <>
-                    {isFree ? (
-                      'Register'
-                    ) : (
-                      <>
-                        <CreditCard size={20} />
-                        <span>Proceed to Payment</span>
-                        <Check size={20} className="ml-1" />
-                      </>
-                    )}
+                    <CreditCard size={20} className="mr-2" />
+                    <span className="tracking-wide">
+                      {isFree ? 'CONFIRM REGISTRATION' : 'CONFIRM & PAY'}
+                    </span>
+                    <ArrowRight
+                      size={18}
+                      className="ml-2 group-hover:translate-x-1 transition-transform"
+                    />
+                    <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
                   </>
                 )}
               </Button>
             </div>
           )}
-
-          <div
-            className="overflow-y-auto flex-1 pr-2 my-scrollbar"
-            onWheel={(e) => {
-              // Stop propagation to prevent background scroll
-              e.stopPropagation();
-            }}
-          >
-            <Content />
-          </div>
-
-          {/* Decorative elements */}
-          <div className="absolute inset-0 overflow-hidden opacity-10 pointer-events-none z-0">
-            <div className="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-[#FF003C] blur-3xl"></div>
-            <div className="absolute -left-20 -bottom-20 w-64 h-64 rounded-full bg-[#FF003C] blur-3xl"></div>
-          </div>
         </motion.div>
       </SheetContent>
     </Sheet>

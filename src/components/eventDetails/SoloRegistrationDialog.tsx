@@ -5,7 +5,6 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
-import Image from 'next/image';
 import { toast } from 'sonner';
 import { useUser } from '@/lib/stores';
 import { useEvents } from '@/lib/stores';
@@ -28,9 +27,7 @@ import {
   ArrowLeft,
   Check,
   X,
-  PartyPopper,
-  Ticket,
-  Music,
+  Loader2,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
@@ -67,6 +64,7 @@ export function SoloEventRegistration({
     null
   );
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isRegistering, setIsRegistering] = useState(false);
   const { initiatePayment, isProcessing } = useRazorpay();
 
   // Stop Lenis smooth scroll when modal is open
@@ -169,6 +167,7 @@ export function SoloEventRegistration({
 
   const onFinalSubmit = async () => {
     if (!soloLeadData) return;
+    setIsRegistering(true);
 
     try {
       const registrationParams = {
@@ -233,6 +232,8 @@ export function SoloEventRegistration({
       console.error('Registration failed:', error);
       toast.error('Registration process failed. Please try again.');
       handleDialogClose();
+    } finally {
+      setIsRegistering(false);
     }
   };
 
@@ -245,9 +246,9 @@ export function SoloEventRegistration({
   };
 
   const fadeVariants = {
-    hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } },
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+    exit: { opacity: 0, y: -10, transition: { duration: 0.2 } },
   };
 
   return (
@@ -258,44 +259,21 @@ export function SoloEventRegistration({
       }
       modal={!isProcessing}
     >
-      <DialogContent
-        className="sm:max-w-[450px] my-scrollbar border-2 border-[#FF003C] rounded-xl p-8 shadow-xl overflow-hidden"
-        style={{
-          backgroundImage:
-            'url(https://i.postimg.cc/C5SMqWV1/cae8d04277c25697532890b8f73997b82d3609a1.jpg)',
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundRepeat: 'no-repeat',
-        }}
-      >
-        <div className="absolute inset-0 bg-black/60"></div>
-
-        <DialogHeader className="relative z-10">
-          <motion.div
-            initial={{ y: -20, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.5 }}
-            className="hidden xl:flex items-center justify-center gap-2 mb-2 md:mb-3 relative z-10"
+      <DialogContent className="sm:max-w-[450px] bg-black/80 backdrop-blur-xl border border-white/20 p-8 shadow-2xl rounded-2xl overflow-hidden">
+        <DialogHeader className="relative z-10 mb-6">
+          <DialogTitle
+            className="text-center text-white text-2xl tracking-widest"
+            style={{ fontFamily: "'Metal Mania'" }}
           >
-            <PartyPopper size={20} className="text-[#FF003C] md:w-6 md:h-6" />
-            <Music size={20} className="text-[#FF003C] md:w-6 md:h-6" />
-            <Ticket size={20} className="text-[#FF003C] md:w-6 md:h-6" />
-          </motion.div>
-          <DialogTitle className="text-center text-white font-antolia tracking-widest font-bold text-sm md:text-2xl lg:text-xl pb-1 relative z-10">
             Registration for {eventName}
           </DialogTitle>
-          <div className="flex justify-center mt-1 md:mt-2">
-            <div className="h-0.5 md:h-1 w-24 md:w-32 bg-[#FF003C] rounded-full"></div>
-          </div>
-          <div className="flex justify-center mt-2 md:mt-3">
-            <div className="flex gap-3 md:gap-4">
-              <div
-                className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full ${step === 1 ? 'bg-[#FF003C]' : 'bg-gray-600'} transition-colors duration-300`}
-              ></div>
-              <div
-                className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full ${step === 2 ? 'bg-[#FF003C]' : 'bg-gray-600'} transition-colors duration-300`}
-              ></div>
-            </div>
+          <div className="flex justify-center mt-4 gap-3">
+            <div
+              className={`w-2 h-2 rounded-full ${step === 1 ? 'bg-white' : 'bg-white/20'} transition-all duration-300`}
+            ></div>
+            <div
+              className={`w-2 h-2 rounded-full ${step === 2 ? 'bg-white' : 'bg-white/20'} transition-all duration-300`}
+            ></div>
           </div>
         </DialogHeader>
 
@@ -303,21 +281,24 @@ export function SoloEventRegistration({
           {showSuccess ? (
             <motion.div
               key="success"
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
-              className="flex flex-col items-center justify-center py-12 relative z-10"
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="flex flex-col items-center justify-center py-8 relative z-10"
             >
-              <div className="w-20 h-20 bg-green-500 rounded-full flex items-center justify-center mb-6">
-                <Check size={40} className="text-white" />
+              <div className="w-16 h-16 bg-green-500/20 border border-green-500/50 rounded-full flex items-center justify-center mb-6">
+                <Check size={32} className="text-green-500" />
               </div>
-              <h2 className="text-2xl font-bold text-white mb-2">
+              <h2
+                className="text-2xl text-white mb-2 tracking-wide"
+                style={{ fontFamily: "'Metal Mania'" }}
+              >
                 Registration Successful!
               </h2>
-              <p className="text-gray-300 text-center mb-4">
+              <p className="text-white/60 text-center mb-4 text-sm">
                 You have successfully registered for {eventName}
               </p>
-              <p className="text-yellow-300 font-medium">
+              <p className="text-yellow-400 font-medium text-sm">
                 We'll see you at the fest!
               </p>
             </motion.div>
@@ -329,140 +310,143 @@ export function SoloEventRegistration({
               animate="visible"
               exit="exit"
               onSubmit={handleSoloLeadSubmit(onSoloLeadSubmit)}
-              className="overflow-y-auto my-scrollbar max-h-[60vh] md:max-h-[55vh] 2xl:max-h-[60vh] relative z-10 mt-2 md:mt-4"
+              className="space-y-4 relative z-10"
             >
-              <div className="grid gap-2 md:gap-4 py-1 md:py-2">
-                <div className="grid gap-1.5">
+              <div className="space-y-4">
+                <div className="space-y-1.5">
                   <label
                     htmlFor="name"
-                    className="flex items-center gap-1 md:gap-2 text-[#CCA855] font-medium text-xs md:text-sm relative z-10"
+                    className="flex items-center gap-2 text-white/60 text-xs uppercase tracking-wider pl-1"
                   >
-                    <User size={14} className="md:w-[18px] md:h-[18px]" />
+                    <User size={14} />
                     <span>Name</span>
                   </label>
-                  <div className="relative">
+                  <div className="relative group">
                     <input
                       id="name"
                       readOnly
                       {...registerSoloLead('name')}
-                      className="w-full bg-[#090B0D] border border-[#FF003C] focus:border-[#FF003C] focus:ring-1 focus:ring-[#FF003C] focus:outline-none text-[#CCA855] rounded-md p-1.5 pl-7 md:p-2 md:pl-9 text-xs md:text-sm transition-all duration-300 relative z-10"
+                      className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/20 focus:outline-none text-white rounded-lg p-2.5 pl-9 text-sm transition-all duration-300 placeholder:text-white/20"
                       placeholder="Enter your name"
                     />
                     <User
-                      size={14}
-                      className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 text-[#FF003C]/70 z-10 md:w-[18px] md:h-[18px]"
+                      size={16}
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/30 group-focus-within:text-yellow-400/70 transition-colors"
                     />
                   </div>
                   {soloLeadErrors.name && (
-                    <p className="text-red-400 text-sm ml-2">
+                    <p className="text-red-400 text-xs ml-1">
                       {soloLeadErrors.name.message}
                     </p>
                   )}
                 </div>
 
-                <div className="grid gap-1.5">
+                <div className="space-y-1.5">
                   <label
                     htmlFor="phone"
-                    className="flex items-center gap-1 md:gap-2 text-[#CCA855] font-medium text-xs md:text-sm relative z-10"
+                    className="flex items-center gap-2 text-white/60 text-xs uppercase tracking-wider pl-1"
                   >
-                    <Phone size={14} className="md:w-[18px] md:h-[18px]" />
+                    <Phone size={14} />
                     <span>Phone</span>
                   </label>
-                  <div className="relative">
+                  <div className="relative group">
                     <input
                       id="phone"
                       type="tel"
                       readOnly
                       {...registerSoloLead('phone')}
-                      className="w-full bg-[#090B0D] border border-[#FF003C] focus:border-[#FF003C] focus:ring-1 focus:ring-[#FF003C] focus:outline-none text-[#CCA855] rounded-md p-1.5 pl-7 md:p-2 md:pl-9 text-xs md:text-sm transition-all duration-300 relative z-10"
+                      className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/20 focus:outline-none text-white rounded-lg p-2.5 pl-9 text-sm transition-all duration-300 placeholder:text-white/20"
                       placeholder="Enter your phone number"
                     />
                     <Phone
-                      size={14}
-                      className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 text-[#FF003C]/70 z-10 md:w-[18px] md:h-[18px]"
+                      size={16}
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/30 group-focus-within:text-yellow-400/70 transition-colors"
                     />
                   </div>
                   {soloLeadErrors.phone && (
-                    <p className="text-red-400 text-sm ml-2">
+                    <p className="text-red-400 text-xs ml-1">
                       {soloLeadErrors.phone.message}
                     </p>
                   )}
                 </div>
 
-                <div className="grid gap-1.5">
+                <div className="space-y-1.5">
                   <label
                     htmlFor="email"
-                    className="flex items-center gap-1 md:gap-2 text-[#CCA855] font-medium text-xs md:text-sm relative z-10"
+                    className="flex items-center gap-2 text-white/60 text-xs uppercase tracking-wider pl-1"
                   >
-                    <Mail size={14} className="md:w-[18px] md:h-[18px]" />
+                    <Mail size={14} />
                     <span>Email</span>
                   </label>
-                  <div className="relative">
+                  <div className="relative group">
                     <input
                       id="email"
                       type="email"
                       {...registerSoloLead('email')}
-                      className="w-full bg-[#090B0D] border border-[#FF003C] focus:border-[#FF003C] focus:ring-1 focus:ring-[#FF003C] focus:outline-none text-[#CCA855] rounded-md p-1.5 pl-7 md:p-2 md:pl-9 text-xs md:text-sm transition-all duration-300 relative z-10"
+                      className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/20 focus:outline-none text-white rounded-lg p-2.5 pl-9 text-sm transition-all duration-300 placeholder:text-white/20"
                       placeholder="Enter your email"
                       readOnly
                     />
                     <Mail
-                      size={14}
-                      className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 text-[#FF003C]/70 z-10 md:w-[18px] md:h-[18px]"
+                      size={16}
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/30 group-focus-within:text-yellow-400/70 transition-colors"
                     />
                   </div>
                   {soloLeadErrors.email && (
-                    <p className="text-red-400 text-sm ml-2">
+                    <p className="text-red-400 text-xs ml-1">
                       {soloLeadErrors.email.message}
                     </p>
                   )}
                 </div>
 
-                <div className="grid gap-1.5">
+                <div className="space-y-1.5">
                   <label
                     htmlFor="college"
-                    className="flex items-center gap-1 md:gap-2 text-[#CCA855] font-medium text-xs md:text-sm relative z-10"
+                    className="flex items-center gap-2 text-white/60 text-xs uppercase tracking-wider pl-1"
                   >
-                    <Building size={14} className="md:w-[18px] md:h-[18px]" />
+                    <Building size={14} />
                     <span>College</span>
                   </label>
-                  <div className="relative">
+                  <div className="relative group">
                     <input
                       id="college"
                       autoFocus
                       {...registerSoloLead('college')}
-                      className="w-full bg-[#090B0D] border border-[#FF003C] focus:border-[#FF003C] focus:ring-1 focus:ring-[#FF003C] focus:outline-none text-[#CCA855] rounded-md p-1.5 pl-7 md:p-2 md:pl-9 text-xs md:text-sm transition-all duration-300 relative z-10"
+                      className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/20 focus:outline-none text-white rounded-lg p-2.5 pl-9 text-sm transition-all duration-300 placeholder:text-white/20"
                       placeholder="Enter your college name"
                     />
                     <Building
-                      size={14}
-                      className="absolute left-2 md:left-3 top-1/2 transform -translate-y-1/2 text-[#FF003C]/70 z-10 md:w-[18px] md:h-[18px]"
+                      size={16}
+                      className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/30 group-focus-within:text-yellow-400/70 transition-colors"
                     />
                   </div>
                   {soloLeadErrors.college && (
-                    <p className="text-red-400 text-sm ml-2">
+                    <p className="text-red-400 text-xs ml-1">
                       {soloLeadErrors.college.message}
                     </p>
                   )}
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 md:gap-4 mt-2 md:mt-4 relative z-10">
+              <div className="flex justify-end gap-3 mt-8 pt-4">
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   onClick={handleDialogClose}
-                  className="bg-[#FF003C] hover:bg-[#FF003C]/90 text-white flex items-center gap-2 px-4 py-2 rounded-md border-0 transition-all duration-300"
+                  className="bg-transparent hover:bg-white/10 text-white/60 hover:text-white flex items-center gap-2 px-5 rounded-full transition-all duration-300"
                 >
-                  <X size={18} />
+                  <X size={16} />
                   <span>Close</span>
                 </Button>
                 <Button
                   type="submit"
-                  className="bg-[#CCA855] hover:bg-[#CCA855]/90 text-black font-medium flex items-center gap-2 px-6 py-2 rounded-md border-0 transition-all duration-300"
+                  className="bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center gap-2 px-6 rounded-full transition-all duration-300 group"
                 >
-                  <span>Next</span>
-                  <ArrowRight size={18} />
+                  <span>Next Step</span>
+                  <ArrowRight
+                    size={16}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
                 </Button>
               </div>
             </motion.form>
@@ -473,94 +457,86 @@ export function SoloEventRegistration({
               initial="hidden"
               animate="visible"
               exit="exit"
-              className="overflow-y-auto my-scrollbar max-h-[70vh] md:max-h-[55vh] relative z-10 mt-2"
+              className="relative z-10"
             >
-              <div className="flex flex-col items-center justify-center gap-4 py-4">
-                <div className="bg-[#090B0D] p-6 rounded-lg border border-[#FF003C] w-full max-w-sm">
-                  <h3 className="text-[#CCA855] font-antolia tracking-wide text-lg text-center mb-4">
-                    Registration Summary
-                  </h3>
+              <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6">
+                <h3
+                  className="text-white/80 text-lg text-center mb-6 tracking-wider"
+                  style={{ fontFamily: "'Metal Mania'" }}
+                >
+                  Confirm Details
+                </h3>
 
-                  <div className="space-y-3 text-sm">
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Event:</span>
-                      <span className="text-white font-medium text-right">
-                        {eventName}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Name:</span>
-                      <span className="text-white font-medium text-right">
-                        {soloLeadData?.name}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Email:</span>
-                      <span className="text-white font-medium text-right">
-                        {soloLeadData?.email}
-                      </span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-gray-400">Registration Fee:</span>
-                      <span
-                        className={`font-bold text-lg text-right ${isFreeEvent ? 'text-green-400' : 'text-[#FF003C]'}`}
-                      >
-                        {isFreeEvent ? 'Free (SWC Paid)' : `₹ ${eventFees}`}
-                      </span>
-                    </div>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center py-2 border-b border-white/5">
+                    <span className="text-white/40 text-sm">Event</span>
+                    <span className="text-white font-medium text-right text-sm">
+                      {eventName}
+                    </span>
                   </div>
-                </div>
-
-                <div className="mt-4 w-full">
-                  <Button
-                    onClick={onFinalSubmit}
-                    disabled={isProcessing}
-                    className="w-full bg-[#CCA855] hover:bg-[#CCA855]/90 text-black font-bold py-3 rounded-md transition-all duration-300 flex items-center justify-center gap-2 relative overflow-hidden group"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                        <span>
-                          {isFreeEvent
-                            ? 'Registering...'
-                            : 'Processing Payment...'}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <CreditCard size={20} />
-                        <span>
-                          {isFreeEvent
-                            ? 'Register (Free)'
-                            : `Pay ₹${eventFees} & Register`}
-                        </span>
-                        <motion.div
-                          className="absolute inset-0 bg-white/20"
-                          initial={{ x: '-100%' }}
-                          whileHover={{ x: '100%' }}
-                          transition={{ duration: 0.5 }}
-                        />
-                      </>
-                    )}
-                  </Button>
-                  <p className="text-center text-xs text-gray-500 mt-3">
-                    {isFreeEvent
-                      ? 'No payment required. Registration confirmed instantly.'
-                      : 'Secure payment via Razorpay. Registration confirmed instantly upon payment.'}
-                  </p>
+                  <div className="flex justify-between items-center py-2 border-b border-white/5">
+                    <span className="text-white/40 text-sm">Name</span>
+                    <span className="text-white font-medium text-right text-sm">
+                      {soloLeadData?.name}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2 border-b border-white/5">
+                    <span className="text-white/40 text-sm">Email</span>
+                    <span className="text-white font-medium text-right text-sm">
+                      {soloLeadData?.email}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="text-white/40 text-sm">Fee</span>
+                    <span
+                      className={`font-bold text-lg text-right ${isFreeEvent ? 'text-green-400' : 'text-yellow-400'}`}
+                    >
+                      {isFreeEvent ? 'Free' : `₹ ${eventFees}`}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              <div className="flex justify-start mt-2">
+              <div className="space-y-3">
+                <Button
+                  onClick={onFinalSubmit}
+                  disabled={isProcessing || isRegistering}
+                  className="w-full bg-white/10 hover:bg-white/20 border border-white/10 text-white font-medium py-6 rounded-full transition-all duration-300 flex items-center justify-center gap-3 relative overflow-hidden group"
+                >
+                  {isProcessing || isRegistering ? (
+                    <>
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      <span>Processing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard size={18} />
+                      <span className="tracking-wide">
+                        {isFreeEvent
+                          ? 'CONFIRM REGISTRATION'
+                          : `PAY ₹${eventFees} & REGISTER`}
+                      </span>
+                      <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
+                    </>
+                  )}
+                </Button>
+                <p className="text-center text-[10px] text-white/30">
+                  {isFreeEvent
+                    ? 'Registration will be confirmed instantly.'
+                    : 'Secure payment via Razorpay.'}
+                </p>
+              </div>
+
+              <div className="flex justify-center mt-4">
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   onClick={() => setStep(1)}
                   disabled={isProcessing}
-                  className="bg-transparent hover:bg-white/10 text-white border border-gray-600 flex items-center gap-2 px-4 py-2 rounded-md transition-all duration-300"
+                  className="bg-transparent hover:bg-white/5 text-white/40 hover:text-white/80 flex items-center gap-2 px-4 py-2 rounded-full transition-all duration-300 text-xs"
                 >
-                  <ArrowLeft size={16} />
-                  <span>Back to Details</span>
+                  <ArrowLeft size={14} />
+                  <span>Back to Edit</span>
                 </Button>
               </div>
             </motion.div>

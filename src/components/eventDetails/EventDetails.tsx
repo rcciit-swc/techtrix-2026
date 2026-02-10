@@ -11,6 +11,8 @@ import { EventTab } from './event';
 import { events } from '@/lib/types/events';
 import { getEventImages } from '@/lib/constants/eventImages';
 import { useEvents } from '@/lib/stores';
+import { ChevronLeft } from 'lucide-react';
+import EventSidebar from './EventSidebar';
 
 interface Props {
   event: events;
@@ -74,48 +76,42 @@ export default function EventDetails({ event }: Props) {
         style={{ zIndex: 10 }}
       >
         {/* Main Content Panel */}
-        <div className="w-full max-w-[1400px] min-h-[75vh] lg:min-h-[85vh] rounded-[40px] border border-white/10 bg-black/40 backdrop-blur-md mx-4 lg:mx-0 lg:ml-[60px] lg:mr-[380px] mt-24 lg:mt-0">
+        <div className="w-full max-w-[1400px] min-h-[75vh] lg:min-h-[85vh] rounded-[40px] border border-white/10 bg-black/40 backdrop-blur-md mx-4 lg:mx-0 lg:ml-[60px] lg:mr-[380px] flex justify-center items-center">
           {/* Inner Content */}
-          <div className="flex flex-col items-center py-8 px-6 lg:py-12 lg:px-12">
+          <div className="w-full flex flex-col items-center py-8 px-4 lg:py-12 lg:px-12">
             {/* Header Row: Title + Buttons */}
-            <div className="w-full flex flex-col gap-6 lg:grid lg:grid-cols-[1fr_auto_1fr] items-center mb-10">
-              {/* Left spacer to balance grid */}
-              <div className="hidden lg:block"></div>
-
-              {/* Title - Centered */}
-              <h1
-                className="text-3xl lg:text-5xl text-white tracking-[0.15em] text-center"
-                style={{ fontFamily: "'Metal Mania'" }}
-              >
-                {event.name}
-              </h1>
-
-              {/* Buttons - Right Side */}
-              <div className="flex items-center justify-center lg:justify-end gap-5">
-                {/* Back Button */}
+            <div className="w-full grid grid-cols-3 items-center mb-6 lg:mb-10 relative">
+              {/* Back Button - Left Side */}
+              <div className="order-1 flex justify-start w-full">
                 <button
                   onClick={() => router.back()}
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-black/80 border border-white/40 text-white text-sm hover:bg-black transition-all cursor-pointer"
+                  className="flex items-center gap-2 px-4 py-2 lg:px-7 lg:py-3 rounded-full bg-black/80 border border-white/40 text-white hover:bg-black transition-all cursor-pointer group"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
+                  <ChevronLeft className="w-5 h-5 lg:w-6 lg:h-6 group-hover:-translate-x-1 transition-transform" />
+                  <span
+                    className="hidden sm:inline text-sm lg:text-[20px]"
+                    style={{ fontFamily: "'Metal Mania'" }}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
-                    />
-                  </svg>
-                  <span style={{ fontFamily: "'Metal Mania'" }}>BACK</span>
+                    BACK
+                  </span>
                 </button>
+              </div>
 
-                {/* Register Now Button */}
-                <RegisterButton event={event} />
+              {/* Title - Centered */}
+              <div className="order-2 flex justify-center w-full px-2">
+                <h1
+                  className="text-xl sm:text-3xl lg:text-5xl text-white tracking-[0.15em] text-center text-ellipsis"
+                  style={{ fontFamily: "'Metal Mania'" }}
+                >
+                  {event.name}
+                </h1>
+              </div>
+
+              {/* Register Button - Right Side */}
+              <div className="order-3 flex justify-end w-full">
+                <div className="scale-75 origin-right sm:scale-90 lg:scale-100">
+                  <RegisterButton event={event} />
+                </div>
               </div>
             </div>
 
@@ -238,40 +234,15 @@ export default function EventDetails({ event }: Props) {
           />
         </div>
 
-        {/* Related Events Sidebar (Desktop only) */}
-        <div
-          className="hidden lg:flex fixed left-0 top-1/2 -translate-y-1/2 flex-col gap-3 pl-4"
-          style={{ zIndex: 15 }}
-        >
-          {relatedEvents.slice(0, 4).map((relatedEvent) => {
-            const relatedImages = getEventImages(
-              relatedEvent.event_id || 'default'
-            );
-            return (
-              <Link
-                key={relatedEvent.event_id}
-                href={`/event/${relatedEvent.event_id}`}
-                className="relative w-[140px] h-[100px] rounded-r-2xl overflow-hidden border-2 border-white/30 hover:border-white hover:scale-105 transition-all group"
-              >
-                <Image
-                  src={relatedImages.bg}
-                  alt={relatedEvent.name}
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-2">
-                  <p
-                    className="text-white text-xs font-bold text-center truncate"
-                    style={{ fontFamily: "'Metal Mania'" }}
-                  >
-                    {relatedEvent.name}
-                  </p>
-                </div>
-              </Link>
-            );
-          })}
-        </div>
+        {/* Event Sidebar (Handles both Mobile & Desktop) */}
+        <EventSidebar
+          activeId={event.id}
+          items={relatedEvents.map((e) => ({
+            id: e.id || '',
+            title: e.name || '',
+            image: getEventImages(e.id || 'default').bg,
+          }))}
+        />
       </div>
     </div>
   );
