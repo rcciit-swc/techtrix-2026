@@ -130,7 +130,7 @@ function EventCardItem({
   isMobile?: boolean;
 }) {
   return (
-    <Link href={`/event/${event.event_id}`}>
+    <Link href={`/event/${event.event_id || event.id}`}>
       <div
         className={`
           shadow-[0_4px_15px_rgba(0,0,0,0.25),0_8px_45px_rgba(217,255,0,0.25)] 

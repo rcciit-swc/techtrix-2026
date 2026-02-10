@@ -5,6 +5,7 @@ import { Orbitron } from 'next/font/google';
 import { Navbar } from '@/components/Navbar';
 import SessionProvider from '@/lib/providers/SessionProvider';
 import { Toaster } from 'sonner';
+import { RazorpayScript } from '@/components/RazorpayScript';
 
 export const metadata: Metadata = constructMetaData({
   title: 'Techtrix 2026',
@@ -29,6 +30,7 @@ export default function RootLayout({
         <Navbar />
         <Toaster position="bottom-right" richColors duration={5000} />
         <SessionProvider />
+        <RazorpayScript />
       </body>
     </html>
   );

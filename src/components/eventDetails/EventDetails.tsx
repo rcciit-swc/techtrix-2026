@@ -2,9 +2,11 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import EventTabs from './EventTabs';
+import RegisterButton from './RegisterButton';
 import { EventTab } from './event';
 import { events } from '@/lib/types/events';
 import { getEventImages } from '@/lib/constants/eventImages';
@@ -15,6 +17,7 @@ interface Props {
 }
 
 export default function EventDetails({ event }: Props) {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState<EventTab>('description');
   const eventsData = useEvents((state) => state.eventsData);
 
@@ -91,9 +94,9 @@ export default function EventDetails({ event }: Props) {
               {/* Buttons - Right Side */}
               <div className="flex items-center justify-center lg:justify-end gap-5">
                 {/* Back Button */}
-                <Link
-                  href="/events"
-                  className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-black/80 border border-white/40 text-white text-sm hover:bg-black transition-all"
+                <button
+                  onClick={() => router.back()}
+                  className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-black/80 border border-white/40 text-white text-sm hover:bg-black transition-all cursor-pointer"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -110,33 +113,10 @@ export default function EventDetails({ event }: Props) {
                     />
                   </svg>
                   <span style={{ fontFamily: "'Metal Mania'" }}>BACK</span>
-                </Link>
+                </button>
 
                 {/* Register Now Button */}
-                {event.reg_status && (
-                  <Link
-                    href={`/register/${event.event_id || event.id}`}
-                    className="flex items-center gap-2 px-7 py-2.5 rounded-full bg-[#C62828] text-white text-sm hover:bg-[#B71C1C] transition-all shadow-lg"
-                  >
-                    <span style={{ fontFamily: "'Metal Mania'" }}>
-                      {event.registered ? 'Registered' : 'Register Now'}
-                    </span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      strokeWidth={2}
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M14 5l7 7m0 0l-7 7m7-7H3"
-                      />
-                    </svg>
-                  </Link>
-                )}
+                <RegisterButton event={event} />
               </div>
             </div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useEvents } from '@/lib/stores';
 import EventDetails from '@/components/eventDetails/EventDetails';
 
@@ -16,34 +16,18 @@ export default function EventPage() {
   // Track if we've attempted to load
   const [hasAttemptedLoad, setHasAttemptedLoad] = useState(false);
 
-  // Debug logs
-  console.log('[EventPage] eventId:', eventId);
-  console.log('[EventPage] eventsData length:', eventsData.length);
-  console.log('[EventPage] eventsLoading:', eventsLoading);
-  console.log('[EventPage] hasAttemptedLoad:', hasAttemptedLoad);
-  if (eventsData.length > 0) {
-    console.log('[EventPage] First event sample:', eventsData[0]);
-    console.log(
-      '[EventPage] All event IDs:',
-      eventsData.map((e) => ({ id: e.id, event_id: e.event_id, name: e.name }))
-    );
-  }
-
   // Trigger data fetch if not already loaded
   useEffect(() => {
-    console.log('[EventPage useEffect] Checking if should fetch...');
     if (eventsData.length === 0 && !eventsLoading && !hasAttemptedLoad) {
-      console.log('[EventPage useEffect] Triggering setEventsData...');
       setEventsData();
       setHasAttemptedLoad(true);
     }
   }, [eventsData.length, eventsLoading, hasAttemptedLoad, setEventsData]);
 
-  // Find the event from store (use event_id as that's the field name from DB)
-  const event = eventsData.find(
-    (e) => e.event_id === eventId || e.id === eventId
-  );
-  console.log('[EventPage] Found event:', event);
+  // Memoize event lookup to avoid recalculating on every render
+  const event = useMemo(() => {
+    return eventsData.find((e) => e.event_id === eventId || e.id === eventId);
+  }, [eventsData, eventId]);
 
   // Show loading while data is being fetched
   if (eventsLoading || (eventsData.length === 0 && !hasAttemptedLoad)) {

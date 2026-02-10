@@ -1,31 +1,6 @@
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase/client';
 
-export async function uploadPaymentScreenshot(file: File, eventName: string) {
-  const bucket = 'fests';
-  const fileName = `${Date.now()}-${file.name}`;
-  const filePath = `game-of-thrones-2026/${eventName}/${fileName}`;
-  const { data, error } = await supabase.storage
-    .from(bucket)
-    .upload(filePath, file);
-
-  if (error) {
-    console.error('Error uploading file:', error);
-    throw error;
-  }
-
-  // Get the public URL of the uploaded file.
-  const publicUrl = await supabase.storage.from(bucket).getPublicUrl(filePath)
-    .data?.publicUrl;
-
-  if (!publicUrl) {
-    throw new Error('Failed to get public URL for the uploaded file.');
-  }
-
-  // Return the public URL.
-  return publicUrl;
-}
-
 export interface RegisterSoloParams {
   userId: string;
   eventId: string;
@@ -107,16 +82,18 @@ export async function registerTeamWithParticipants(
   const validations = [
     { value: params.userId, message: 'User ID is required.' },
     { value: params.eventId, message: 'Event ID is required.' },
-    !isSWCPaid && {
-      value: params.transactionId,
-      message: 'Transaction ID is required.',
-    },
+    !isSWCPaid &&
+      params.paymentMode !== 'RAZORPAY' && {
+        value: params.transactionId,
+        message: 'Transaction ID is required.',
+      },
     { value: params.teamName, message: 'Team name is required.' },
     { value: params.college, message: 'College is required.' },
-    !isSWCPaid && {
-      value: params.transactionScreenshot,
-      message: 'Transaction screenshot is required.',
-    },
+    !isSWCPaid &&
+      params.paymentMode !== 'RAZORPAY' && {
+        value: params.transactionScreenshot,
+        message: 'Transaction screenshot is required.',
+      },
     { value: params.teamLeadName, message: 'Team lead name is required.' },
     { value: params.teamLeadPhone, message: 'Team lead phone is required.' },
     { value: params.teamLeadEmail, message: 'Team lead email is required.' },
@@ -211,3 +188,28 @@ export const approveRegistration = async (registrationId: string) => {
     console.error(error);
   }
 };
+
+/**
+ * Check if a team has a pending or completed payment
+ */
+export async function getPaymentStatus(teamId: string) {
+  const { data, error } = await supabase
+    .from('payments')
+    .select('status, razorpay_order_id, verified_at')
+    .eq('team_id', teamId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .single();
+
+  if (error || !data) {
+    return { status: 'not_started' as const };
+  }
+
+  return data;
+}
+
+export interface PaymentStatusType {
+  status: 'not_started' | 'pending' | 'paid' | 'failed';
+  razorpay_order_id?: string;
+  verified_at?: string;
+}
