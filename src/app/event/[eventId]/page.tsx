@@ -26,7 +26,7 @@ export default function EventPage() {
 
   // Memoize event lookup to avoid recalculating on every render
   const event = useMemo(() => {
-    return eventsData.find((e) => e.event_id === eventId || e.id === eventId);
+    return eventsData.find((e) => e.id === eventId);
   }, [eventsData, eventId]);
 
   // Show loading while data is being fetched

@@ -127,8 +127,8 @@ export async function registerTeamWithParticipants(
     teamLeadEmail,
     teamMembers,
     ref,
-    paymentMode,
     regMode,
+    paymentMode,
     account_holder_name,
   } = params;
 
@@ -146,8 +146,8 @@ export async function registerTeamWithParticipants(
       p_team_lead_phone: teamLeadPhone,
       p_team_lead_email: teamLeadEmail,
       p_team_members: teamMembers || [],
-      p_reg_mode: paymentMode || 'ONLINE',
-      p_payment_mode: regMode || 'UPI',
+      p_reg_mode: regMode || 'ONLINE',
+      p_payment_mode: paymentMode || 'UPI',
       p_referral_code: ref || 'TECHTRIX2025',
       p_attendance: false,
       p_account_holder_name: account_holder_name,

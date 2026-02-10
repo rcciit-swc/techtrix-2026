@@ -18,18 +18,10 @@ export async function POST(request: NextRequest) {
     // Create Supabase client for auth (needs cookies to get current user)
     const supabase = await createServer();
 
-    // Get the current user
-    console.log('[create-order] Getting user from auth...');
-
     const {
       data: { user },
       error: authError,
     } = await supabase.auth.getUser();
-
-    console.log('[create-order] Auth result:', {
-      user: user?.id,
-      authError: authError?.message,
-    });
 
     if (authError || !user) {
       console.log(
@@ -39,7 +31,13 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    console.log('[create-order] User authenticated:', user.id, user.email);
+    console.log(
+      '[create-order] Details:',
+      user.id,
+      user.email,
+      teamId,
+      eventId
+    );
 
     // Verify team exists and belongs to this user
     const { data: team, error: teamError } = await supabaseAdmin
@@ -91,7 +89,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    console.log('ALL verification done we now crrrrreaaate ordedr ');
     // Create Razorpay order
     const razorpayOrder = await createRazorpayOrder({
       amount: event.registration_fees,
@@ -100,6 +97,8 @@ export async function POST(request: NextRequest) {
       teamId,
       eventName: event.name,
     });
+
+    console.log('Razorpay order created successfully');
 
     // Upsert payment record
     const paymentData = {

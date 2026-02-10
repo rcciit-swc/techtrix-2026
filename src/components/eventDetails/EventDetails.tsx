@@ -22,17 +22,16 @@ export default function EventDetails({ event }: Props) {
   const eventsData = useEvents((state) => state.eventsData);
 
   // Get event images from mapping
-  const eventImages = getEventImages(event.event_id || event.id || 'default');
+  const eventImages = getEventImages(event.id || 'default');
 
   // Get other events in the same category (for sidebar suggestions)
   const relatedEvents = useMemo(() => {
     if (!event.event_category_id) return [];
     return eventsData.filter(
       (e) =>
-        e.event_category_id === event.event_category_id &&
-        e.event_id !== event.event_id
+        e.event_category_id === event.event_category_id && e.id !== event.id
     );
-  }, [eventsData, event.event_category_id, event.event_id]);
+  }, [eventsData, event.event_category_id, event.id]);
 
   const getTabContent = () => {
     switch (activeTab) {

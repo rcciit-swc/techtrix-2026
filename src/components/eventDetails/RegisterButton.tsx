@@ -18,16 +18,20 @@ interface RegisterButtonProps {
 export default function RegisterButton({ event }: RegisterButtonProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { userData, userLoading } = useUser();
-  const { markEventAsRegistered } = useEvents();
+  const { userData, userLoading, swcData } = useUser();
+  const { markEventAsRegistered, setEventsData } = useEvents();
   const { initiatePayment, isProcessing, isLoading } = useRazorpay();
   const [isSoloOpen, setIsSoloOpen] = useState(false);
   const [isTeamOpen, setIsTeamOpen] = useState(false);
 
+  // SWC-paid users don't need to pay registration fees
+  const isSWCPaid = !!swcData;
+  const effectiveFees = isSWCPaid ? 0 : event.registration_fees;
+
   // Determine registration state
   const isFullyRegistered =
     event.registered &&
-    (event.transaction_verified != null || event.registration_fees === 0);
+    (event.transaction_verified != null || effectiveFees === 0);
   const isPendingPayment =
     event.registered && !isFullyRegistered && event.registered_team_id;
 
@@ -79,6 +83,7 @@ export default function RegisterButton({ event }: RegisterButtonProps) {
 
       if (result.success) {
         markEventAsRegistered(event.event_id || event.id || '');
+        setEventsData(); // Refetch from backend
         toast.success('Payment successful! Registration confirmed.');
       } else if (result.error !== 'Payment cancelled') {
         toast.error(result.error || 'Payment failed. Please try again.');
@@ -305,7 +310,7 @@ export default function RegisterButton({ event }: RegisterButtonProps) {
         onClose={() => setIsSoloOpen(false)}
         eventName={event.name || ''}
         eventID={event.event_id || event.id || ''}
-        eventFees={event.registration_fees}
+        eventFees={effectiveFees}
       />
 
       <TeamEventRegistration
@@ -315,7 +320,7 @@ export default function RegisterButton({ event }: RegisterButtonProps) {
         minTeamSize={event.min_team_size}
         maxTeamSize={event.max_team_size}
         eventID={event.event_id || event.id || ''}
-        eventFees={event.registration_fees}
+        eventFees={effectiveFees}
       />
     </>
   );

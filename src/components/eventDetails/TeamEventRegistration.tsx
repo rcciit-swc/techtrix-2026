@@ -76,7 +76,7 @@ export function TeamEventRegistration({
   eventFees,
 }: EventRegistrationDialogProps) {
   const { userData } = useUser();
-  const { markEventAsRegistered, eventsData } = useEvents();
+  const { markEventAsRegistered, setEventsData, eventsData } = useEvents();
 
   const teamMemberSchema = z.object({
     name: z.string().min(1, 'Name is required'),
@@ -260,6 +260,7 @@ export function TeamEventRegistration({
         // Payment verified by API/Webhook
         toast.success('Registration successful!');
         markEventAsRegistered(eventID);
+        setEventsData();
         setShowSuccess(true);
         triggerConfetti();
 
@@ -363,6 +364,7 @@ export function TeamEventRegistration({
         }),
       });
       markEventAsRegistered(eventID);
+      setEventsData();
       setShowSuccess(true);
       toast.success('Registered successfully');
       triggerConfetti();
@@ -1094,8 +1096,12 @@ export function TeamEventRegistration({
                               <span className="text-gray-400">
                                 Registration Fee:
                               </span>
-                              <span className="text-[#FF003C] font-bold text-lg text-right">
-                                ₹ {eventFees}
+                              <span
+                                className={`font-bold text-lg text-right ${eventFees === 0 ? 'text-green-400' : 'text-[#FF003C]'}`}
+                              >
+                                {eventFees === 0
+                                  ? 'Free (SWC Paid)'
+                                  : `₹ ${eventFees}`}
                               </span>
                             </div>
                           </div>
@@ -1110,12 +1116,20 @@ export function TeamEventRegistration({
                             {isProcessing || isRegistering ? (
                               <>
                                 <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                                <span>Processing Payment...</span>
+                                <span>
+                                  {eventFees === 0
+                                    ? 'Registering...'
+                                    : 'Processing Payment...'}
+                                </span>
                               </>
                             ) : (
                               <>
                                 <CreditCard size={20} />
-                                <span>Pay ₹{eventFees} & Register</span>
+                                <span>
+                                  {eventFees === 0
+                                    ? 'Register (Free)'
+                                    : `Pay ₹${eventFees} & Register`}
+                                </span>
                                 <motion.div
                                   className="absolute inset-0 bg-white/20"
                                   initial={{ x: '-100%' }}
@@ -1126,8 +1140,9 @@ export function TeamEventRegistration({
                             )}
                           </Button>
                           <p className="text-center text-xs text-gray-500 mt-3">
-                            Secure payment via Razorpay. Registration confirmed
-                            instantly upon payment.
+                            {eventFees === 0
+                              ? 'No payment required. Registration confirmed instantly.'
+                              : 'Secure payment via Razorpay. Registration confirmed instantly upon payment.'}
                           </p>
                         </div>
                       </div>

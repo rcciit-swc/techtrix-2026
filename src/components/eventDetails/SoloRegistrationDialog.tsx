@@ -59,7 +59,7 @@ export function SoloEventRegistration({
   eventFees,
 }: SoloEventRegistrationDialogProps) {
   const { userData } = useUser();
-  const { markEventAsRegistered, eventsData } = useEvents();
+  const { markEventAsRegistered, setEventsData, eventsData } = useEvents();
   const eventData = eventsData?.find((event) => event.event_id === eventID);
 
   const [step, setStep] = useState(1);
@@ -130,22 +130,58 @@ export function SoloEventRegistration({
     });
   };
 
+  const isFreeEvent = eventFees === 0;
+
+  const sendConfirmationEmail = async () => {
+    const emailData = {
+      teamName: null,
+      leaderName: soloLeadData!.name,
+      leaderPhone: soloLeadData!.phone,
+      email: soloLeadData!.email,
+      eventName: eventName,
+      year: '2026',
+      festName: 'Game of Thrones',
+      transactionId: 'free',
+      college: soloLeadData!.college,
+      teamMembers: [],
+      coordinators: eventData?.coordinators || [],
+      verificationDays: 0,
+      contactEmail: 'rcciit.got.official@gmail.com',
+      logoUrl: 'https://i.postimg.cc/Gtpt62ST/got.jpg',
+      socialLinks: {
+        instagram: '#',
+        facebook: '#',
+        website: '#',
+      },
+    };
+
+    await fetch('/api/sendMail', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        to: soloLeadData!.email,
+        subject: `🎉 Registration Confirmed: ${eventName} - Game of Thrones 2026`,
+        fileName: 'send-email.ejs',
+        data: emailData,
+      }),
+    });
+  };
+
   const onFinalSubmit = async () => {
     if (!soloLeadData) return;
 
     try {
-      // 1. Register the team/user first with pending payment
       const registrationParams = {
         userId: String(userData?.id),
         eventId: eventID,
-        transactionId: '', // Will be updated after payment
+        transactionId: '',
         college: soloLeadData.college,
         transactionScreenshot: '',
         name: soloLeadData.name,
         phone: soloLeadData.phone,
         email: soloLeadData.email,
-        account_holder_name: soloLeadData.name, // Use applicant name
-        paymentMode: 'RAZORPAY',
+        account_holder_name: soloLeadData.name,
+        paymentMode: isFreeEvent ? 'SWC_PAID' : 'RAZORPAY',
         regMode: 'ONLINE',
       };
 
@@ -155,7 +191,21 @@ export function SoloEventRegistration({
         throw new Error('Failed to create registration');
       }
 
-      // 2. Initiate Razorpay Payment
+      // Free/SWC-paid: register directly without payment
+      if (isFreeEvent) {
+        toast.success('Registration successful!');
+        markEventAsRegistered(eventID);
+        setEventsData();
+        setShowSuccess(true);
+        triggerConfetti();
+        await sendConfirmationEmail();
+        setTimeout(() => {
+          handleDialogClose();
+        }, 3000);
+        return;
+      }
+
+      // Paid event: initiate Razorpay
       const result = await initiatePayment({
         eventId: eventID,
         teamId: teamId,
@@ -165,46 +215,12 @@ export function SoloEventRegistration({
       });
 
       if (result.success) {
-        // Payment verified by API/Webhook
         toast.success('Registration successful!');
         markEventAsRegistered(eventID);
+        setEventsData();
         setShowSuccess(true);
         triggerConfetti();
-
-        // Send email confirmation
-        const emailData = {
-          teamName: null,
-          leaderName: soloLeadData.name,
-          leaderPhone: soloLeadData.phone,
-          email: soloLeadData.email,
-          eventName: eventName,
-          year: '2026',
-          festName: 'Game of Thrones',
-          transactionId: result.teamId || 'razorpay', // Use teamId or placeholder
-          college: soloLeadData.college,
-          teamMembers: [],
-          coordinators: eventData?.coordinators || [],
-          verificationDays: 0, // Instant verification
-          contactEmail: 'rcciit.got.official@gmail.com',
-          logoUrl: 'https://i.postimg.cc/Gtpt62ST/got.jpg',
-          socialLinks: {
-            instagram: '#',
-            facebook: '#',
-            website: '#',
-          },
-        };
-
-        await fetch('/api/sendMail', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            to: soloLeadData.email,
-            subject: `🎉 Registration Confirmed: ${eventName} - Game of Thrones 2026`,
-            fileName: 'send-email.ejs',
-            data: emailData,
-          }),
-        });
-
+        await sendConfirmationEmail();
         setTimeout(() => {
           handleDialogClose();
         }, 3000);
@@ -486,8 +502,10 @@ export function SoloEventRegistration({
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Registration Fee:</span>
-                      <span className="text-[#FF003C] font-bold text-lg text-right">
-                        ₹ {eventFees}
+                      <span
+                        className={`font-bold text-lg text-right ${isFreeEvent ? 'text-green-400' : 'text-[#FF003C]'}`}
+                      >
+                        {isFreeEvent ? 'Free (SWC Paid)' : `₹ ${eventFees}`}
                       </span>
                     </div>
                   </div>
@@ -502,12 +520,20 @@ export function SoloEventRegistration({
                     {isProcessing ? (
                       <>
                         <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
-                        <span>Processing Payment...</span>
+                        <span>
+                          {isFreeEvent
+                            ? 'Registering...'
+                            : 'Processing Payment...'}
+                        </span>
                       </>
                     ) : (
                       <>
                         <CreditCard size={20} />
-                        <span>Pay ₹{eventFees} & Register</span>
+                        <span>
+                          {isFreeEvent
+                            ? 'Register (Free)'
+                            : `Pay ₹${eventFees} & Register`}
+                        </span>
                         <motion.div
                           className="absolute inset-0 bg-white/20"
                           initial={{ x: '-100%' }}
@@ -518,8 +544,9 @@ export function SoloEventRegistration({
                     )}
                   </Button>
                   <p className="text-center text-xs text-gray-500 mt-3">
-                    Secure payment via Razorpay. Registration confirmed
-                    instantly upon payment.
+                    {isFreeEvent
+                      ? 'No payment required. Registration confirmed instantly.'
+                      : 'Secure payment via Razorpay. Registration confirmed instantly upon payment.'}
                   </p>
                 </div>
               </div>

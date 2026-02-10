@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
+    console.log('Signature verified successfully');
     // Create Supabase client for auth
     const supabase = await createServer();
 
