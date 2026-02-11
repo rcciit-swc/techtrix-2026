@@ -1,6 +1,5 @@
 import AboutSection from '@/components/about/About';
 import EventsSection from '@/components/EventsSection';
-import Footer from '@/components/Footer';
 import Hero from '@/components/Hero';
 import PrincipalDesk from '@/components/PrincipleSection';
 import SponsorSection from '@/components/SponsorSection';
@@ -16,7 +15,6 @@ const page = () => {
       <SponsorSection />
       <SponsorshipProposition />
       <PrincipalDesk />
-      <Footer />
     </div>
   );
 };
