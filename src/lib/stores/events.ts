@@ -20,17 +20,31 @@ const eventState: EventsStateType = {
 
 export const useEvents = create<EventsStoreType>((set) => ({
   ...eventState,
-  setEventsData: () => populateEventDetails(set),
+  setEventsData: (background?: boolean) =>
+    populateEventDetails(set, background),
   getEventByID: (id: string) => populateEventDetailsByID(set, id),
   getEventCategories: () => populateCategories(set),
   markEventAsRegistered: (eventId: string) =>
     set((state) => ({
       eventsData: state.eventsData.map((event) =>
-        event.event_id === eventId
+        event.id === eventId || event.event_id === eventId
           ? {
               ...event,
               registered: true,
               transaction_verified: new Date().toISOString(),
+            }
+          : event
+      ),
+    })),
+  markEventAsPending: (eventId: string, teamId: string) =>
+    set((state) => ({
+      eventsData: state.eventsData.map((event) =>
+        event.id === eventId || event.event_id === eventId
+          ? {
+              ...event,
+              registered: true,
+              registered_team_id: teamId,
+              transaction_verified: null,
             }
           : event
       ),

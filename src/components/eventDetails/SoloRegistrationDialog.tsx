@@ -56,7 +56,12 @@ export function SoloEventRegistration({
   eventFees,
 }: SoloEventRegistrationDialogProps) {
   const { userData } = useUser();
-  const { markEventAsRegistered, setEventsData, eventsData } = useEvents();
+  const {
+    markEventAsRegistered,
+    markEventAsPending,
+    setEventsData,
+    eventsData,
+  } = useEvents();
   const eventData = eventsData?.find((event) => event.event_id === eventID);
 
   const [step, setStep] = useState(1);
@@ -190,11 +195,14 @@ export function SoloEventRegistration({
         throw new Error('Failed to create registration');
       }
 
+      // Optimistically update state to 'Payment Pending' immediately
+      markEventAsPending(eventID, teamId);
+
       // Free/SWC-paid: register directly without payment
       if (isFreeEvent) {
         toast.success('Registration successful!');
         markEventAsRegistered(eventID);
-        setEventsData();
+        setEventsData(true);
         setShowSuccess(true);
         triggerConfetti();
         await sendConfirmationEmail();
@@ -216,7 +224,7 @@ export function SoloEventRegistration({
       if (result.success) {
         toast.success('Registration successful!');
         markEventAsRegistered(eventID);
-        setEventsData();
+        setEventsData(true);
         setShowSuccess(true);
         triggerConfetti();
         await sendConfirmationEmail();

@@ -110,7 +110,7 @@ export default function EventDetails({ event }: Props) {
               {/* Register Button - Right Side */}
               <div className="order-3 flex justify-end w-full">
                 <div className="scale-75 origin-right sm:scale-90 lg:scale-100">
-                  <RegisterButton event={event} />
+                  <RegisterButton eventId={event.id || ''} />
                 </div>
               </div>
             </div>
