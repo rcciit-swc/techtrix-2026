@@ -79,8 +79,9 @@ export interface EventsStateType {
 }
 
 export interface EventsActionsType {
-  setEventsData: () => void;
+  setEventsData: (background?: boolean) => void;
   getEventCategories: () => void;
   getEventByID: (id: string) => void;
   markEventAsRegistered: (eventId: string) => void;
+  markEventAsPending: (eventId: string, teamId: string) => void;
 }

@@ -72,7 +72,12 @@ export function TeamEventRegistration({
   eventFees,
 }: EventRegistrationDialogProps) {
   const { userData } = useUser();
-  const { markEventAsRegistered, setEventsData, eventsData } = useEvents();
+  const {
+    markEventAsRegistered,
+    markEventAsPending,
+    setEventsData,
+    eventsData,
+  } = useEvents();
 
   const teamMemberSchema = z.object({
     name: z.string().min(1, 'Name is required'),
@@ -228,6 +233,8 @@ export function TeamEventRegistration({
         throw new Error('Failed to create registration');
       }
 
+      markEventAsPending(eventID, teamId);
+
       const result = await initiatePayment({
         eventId: eventID,
         teamId: teamId,
@@ -242,7 +249,7 @@ export function TeamEventRegistration({
         );
         toast.success('Registration successful!');
         markEventAsRegistered(eventID);
-        setEventsData();
+        setEventsData(true);
         setShowSuccess(true);
         triggerConfetti();
 
@@ -309,8 +316,14 @@ export function TeamEventRegistration({
       account_holder_name: '',
     };
     try {
-      await registerTeamWithParticipants(registrationParams, eventFees === 0);
-      const eventData = eventsData?.find((event) => event.id === eventID);
+      const teamId = await registerTeamWithParticipants(
+        registrationParams,
+        eventFees === 0
+      );
+      if (teamId) {
+        markEventAsPending(eventID, teamId);
+      }
+      const eventData = eventsData?.find((event) => event.event_id === eventID);
       const emailData = {
         eventName: eventData?.name,
         year: '2025',
@@ -342,7 +355,7 @@ export function TeamEventRegistration({
         }),
       });
       markEventAsRegistered(eventID);
-      setEventsData();
+      setEventsData(true);
       setShowSuccess(true);
       toast.success('Registered successfully');
       triggerConfetti();

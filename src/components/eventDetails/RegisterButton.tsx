@@ -12,28 +12,31 @@ import { SoloEventRegistration } from './SoloRegistrationDialog';
 import { TeamEventRegistration } from './TeamEventRegistration';
 
 interface RegisterButtonProps {
-  event: events;
+  eventId: string;
 }
 
-export default function RegisterButton({ event }: RegisterButtonProps) {
+export default function RegisterButton({ eventId }: RegisterButtonProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { userData, userLoading, swcData } = useUser();
-  const { markEventAsRegistered, setEventsData } = useEvents();
+  const { markEventAsRegistered, setEventsData, eventsData } = useEvents();
   const { initiatePayment, isProcessing, isLoading } = useRazorpay();
   const [isSoloOpen, setIsSoloOpen] = useState(false);
   const [isTeamOpen, setIsTeamOpen] = useState(false);
 
+  // Use event from store if available (contains updated registration status)
+  const event = eventsData.find((e) => e.id === eventId);
+
   // SWC-paid users don't need to pay registration fees
   const isSWCPaid = !!swcData;
-  const effectiveFees = isSWCPaid ? 0 : event.registration_fees;
+  const effectiveFees = isSWCPaid ? 0 : event!.registration_fees;
 
   // Determine registration state
   const isFullyRegistered =
-    event.registered &&
-    (event.transaction_verified != null || effectiveFees === 0);
+    event?.registered &&
+    (event?.transaction_verified != null || effectiveFees === 0);
   const isPendingPayment =
-    event.registered && !isFullyRegistered && event.registered_team_id;
+    event?.registered && !isFullyRegistered && event?.registered_team_id;
 
   const handleRegister = async () => {
     if (userLoading) {
@@ -53,16 +56,14 @@ export default function RegisterButton({ event }: RegisterButtonProps) {
       userData.name.trim() === ''
     ) {
       const currentRef = searchParams?.get('ref');
-      const callbackPath = `/event/${event.event_id || event.id}${
-        currentRef ? `?ref=${currentRef}` : ''
-      }`;
+      const callbackPath = `/event/${event?.id}${currentRef ? `?ref=${currentRef}` : ''}`;
       router.push(
         `/profile?onboarding=true&callback=${encodeURIComponent(callbackPath)}`
       );
       return;
     }
 
-    if (event.max_team_size === 1) {
+    if (event?.max_team_size === 1) {
       setIsSoloOpen(true);
     } else {
       setIsTeamOpen(true);
@@ -70,20 +71,20 @@ export default function RegisterButton({ event }: RegisterButtonProps) {
   };
 
   const handleCompletePayment = async () => {
-    if (!userData || !event.registered_team_id) return;
+    if (!userData || !event?.registered_team_id) return;
 
     try {
       const result = await initiatePayment({
-        eventId: event.event_id || event.id || '',
-        teamId: event.registered_team_id,
+        eventId: event?.id || event?.id || '',
+        teamId: event?.registered_team_id,
         userName: userData.name || '',
         userEmail: userData.email || '',
         userPhone: userData.phone || '',
       });
 
       if (result.success) {
-        markEventAsRegistered(event.event_id || event.id || '');
-        setEventsData(); // Refetch from backend
+        markEventAsRegistered(event?.id || event?.id || '');
+        setEventsData(true); // Refetch from backend
         toast.success('Payment successful! Registration confirmed.');
       } else if (result.error !== 'Payment cancelled') {
         toast.error(result.error || 'Payment failed. Please try again.');
@@ -95,7 +96,7 @@ export default function RegisterButton({ event }: RegisterButtonProps) {
   };
 
   // State 1: Registration closed
-  if (!event.reg_status) {
+  if (!event?.reg_status) {
     return (
       <motion.button
         whileHover={{
@@ -308,18 +309,18 @@ export default function RegisterButton({ event }: RegisterButtonProps) {
       <SoloEventRegistration
         isOpen={isSoloOpen}
         onClose={() => setIsSoloOpen(false)}
-        eventName={event.name || ''}
-        eventID={event.event_id || event.id || ''}
+        eventName={event?.name || ''}
+        eventID={event?.id || ''}
         eventFees={effectiveFees}
       />
 
       <TeamEventRegistration
         isOpen={isTeamOpen}
         onClose={() => setIsTeamOpen(false)}
-        eventName={event.name || ''}
-        minTeamSize={event.min_team_size}
-        maxTeamSize={event.max_team_size}
-        eventID={event.event_id || event.id || ''}
+        eventName={event?.name || ''}
+        minTeamSize={event?.min_team_size}
+        maxTeamSize={event?.max_team_size}
+        eventID={event?.id || ''}
         eventFees={effectiveFees}
       />
     </>

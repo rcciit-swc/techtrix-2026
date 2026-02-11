@@ -5,10 +5,17 @@ import {
 } from '@/lib/services';
 import { events } from '../types/events';
 
-export const populateEventDetails = async (set: any) => {
-  set({ eventsLoading: true });
-  const data = await getEventsData();
-  set({ eventsData: data ?? [], eventsLoading: false });
+export const populateEventDetails = async (
+  set: any,
+  background: boolean = false
+) => {
+  if (!background) set({ eventsLoading: true });
+  try {
+    const data = await getEventsData();
+    set({ eventsData: data ?? [], eventsLoading: false });
+  } catch (error) {
+    set({ eventsLoading: false });
+  }
 };
 
 export const populateCategories = async (set: any) => {

@@ -115,7 +115,7 @@ export function useRazorpay() {
                 const verifyData = await verifyResponse.json();
 
                 if (verifyResponse.ok) {
-                  toast.success('Payment successful! Registration confirmed.');
+                  // Success handled by caller
                   resolve({ success: true, teamId: verifyData.teamId });
                 } else {
                   toast.error(

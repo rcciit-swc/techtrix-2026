@@ -110,7 +110,7 @@ export default function EventDetails({ event }: Props) {
                   {event.name}
                 </h1>
               </div>
-              <RegisterButton event={event} />
+              <RegisterButton eventId={event.id || ''} />
             </div>
 
             {/* Tabs */}
