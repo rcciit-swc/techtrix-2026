@@ -1,5 +1,5 @@
 // types/event.ts
-export type EventTab = 'description' | 'rules';
+export type EventTab = 'info' | 'description' | 'rules';
 
 export interface SidebarEvent {
   id: string;

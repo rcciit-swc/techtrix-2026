@@ -20,7 +20,7 @@ interface Props {
 
 export default function EventDetails({ event }: Props) {
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<EventTab>('description');
+  const [activeTab, setActiveTab] = useState<EventTab>('info');
   const eventsData = useEvents((state) => state.eventsData);
 
   // Get event images from mapping
@@ -37,17 +37,124 @@ export default function EventDetails({ event }: Props) {
 
   const getTabContent = () => {
     switch (activeTab) {
+      case 'info':
+        return (
+          <div className="space-y-3 sm:space-y-4">
+            {/* Registration Info Cards */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+              {/* Team Size Card */}
+              <div className="group relative bg-white/10 rounded-lg p-2 sm:p-4 border border-white/20 text-center overflow-hidden transition-all duration-300 hover:border-white/40 hover:bg-white/15 hover:scale-105 hover:shadow-lg hover:shadow-white/10">
+                {/* Animated gradient border on hover */}
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-400/0 via-cyan-400/0 to-blue-400/0 group-hover:from-blue-400/20 group-hover:via-cyan-400/20 group-hover:to-blue-400/20 transition-all duration-500 rounded-lg" />
+                <div className="relative z-10">
+                  <p className="text-[10px] sm:text-xs text-white/60 mb-1 sm:mb-2 font-['Inter',sans-serif] uppercase tracking-wide">
+                    Team Size
+                  </p>
+                  <p className="text-white font-bold text-sm sm:text-lg font-['Inter',sans-serif] group-hover:text-cyan-300 transition-colors">
+                    {event.min_team_size} - {event.max_team_size}
+                  </p>
+                </div>
+              </div>
+
+              {/* Entry Fee Card */}
+              <div className="group relative bg-white/10 rounded-lg p-2 sm:p-4 border border-white/20 text-center overflow-hidden transition-all duration-300 hover:border-white/40 hover:bg-white/15 hover:scale-105 hover:shadow-lg hover:shadow-white/10">
+                <div className="absolute inset-0 bg-gradient-to-br from-green-400/0 via-emerald-400/0 to-green-400/0 group-hover:from-green-400/20 group-hover:via-emerald-400/20 group-hover:to-green-400/20 transition-all duration-500 rounded-lg" />
+                <div className="relative z-10">
+                  <p className="text-[10px] sm:text-xs text-white/60 mb-1 sm:mb-2 font-['Inter',sans-serif] uppercase tracking-wide">
+                    Entry Fee
+                  </p>
+                  <p className="text-white font-bold text-sm sm:text-lg font-['Inter',sans-serif] group-hover:text-emerald-300 transition-colors">
+                    ₹{event.registration_fees}
+                  </p>
+                </div>
+              </div>
+
+              {/* Prize Pool Card */}
+              {event.prize_pool > 0 && (
+                <div className="group relative bg-gradient-to-br from-yellow-400/20 to-yellow-600/20 rounded-lg p-2 sm:p-4 border border-yellow-400/30 text-center overflow-hidden transition-all duration-300 hover:border-yellow-400/60 hover:from-yellow-400/30 hover:to-yellow-600/30 hover:scale-105 hover:shadow-lg hover:shadow-yellow-400/20">
+                  {/* Glow effect */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/0 to-yellow-600/0 group-hover:from-yellow-400/30 group-hover:to-yellow-600/30 transition-all duration-500 rounded-lg blur-sm" />
+                  <div className="relative z-10">
+                    <p className="text-[10px] sm:text-xs text-yellow-400/80 mb-1 sm:mb-2 font-['Inter',sans-serif] uppercase tracking-wide">
+                      Prize Pool
+                    </p>
+                    <p className="text-yellow-400 font-bold text-sm sm:text-lg font-['Inter',sans-serif] group-hover:text-yellow-300 transition-colors drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]">
+                      ₹{event.prize_pool}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Schedule Section */}
+            {event.schedule && (
+              <div className="animate-fadeIn">
+                <h3
+                  className="text-xs sm:text-base text-white mb-2 tracking-wider flex items-center gap-2"
+                  style={{ fontFamily: "'Metal Mania'" }}
+                >
+                  <span className="inline-block w-1 h-4 sm:h-5 bg-gradient-to-b from-red-500 to-yellow-500 rounded-full" />
+                  SCHEDULE & VENUE
+                </h3>
+                <div className="group relative bg-white/10 rounded-lg p-2 sm:p-3 border border-white/20 overflow-hidden transition-all duration-300 hover:border-white/30 hover:bg-white/15">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                  <div
+                    className="relative text-white/90 text-[11px] sm:text-sm leading-relaxed font-['Inter',sans-serif]"
+                    dangerouslySetInnerHTML={{ __html: event.schedule }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Coordinators */}
+            {event.coordinators && event.coordinators.length > 0 && (
+              <div className="animate-fadeIn">
+                <h3
+                  className="text-xs sm:text-base text-white mb-2 tracking-wider flex items-center gap-2"
+                  style={{ fontFamily: "'Metal Mania'" }}
+                >
+                  <span className="inline-block w-1 h-4 sm:h-5 bg-gradient-to-b from-red-500 to-yellow-500 rounded-full" />
+                  COORDINATORS
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  {event.coordinators.map((coord, index) => (
+                    <div
+                      key={index}
+                      className="group relative px-2 py-1.5 sm:px-3 sm:py-2 rounded-lg bg-white/10 border border-white/20 overflow-hidden transition-all duration-300 hover:border-yellow-400/60 hover:bg-white/15 hover:scale-[1.02] hover:shadow-md hover:shadow-yellow-400/10"
+                      style={{ animationDelay: `${index * 100}ms` }}
+                    >
+                      {/* Shine effect on hover */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-yellow-400/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700" />
+                      <div className="relative">
+                        <p className="text-white font-medium text-xs sm:text-sm font-['Inter',sans-serif] group-hover:text-yellow-300 transition-colors">
+                          {coord.name}
+                        </p>
+                        <Link
+                          href={`tel:${coord.phone}`}
+                          className="text-white/70 text-[10px] sm:text-xs hover:text-yellow-400 transition-colors font-['Inter',sans-serif] inline-flex items-center gap-1"
+                        >
+                          <span className="inline-block w-1 h-1 bg-green-400 rounded-full animate-pulse" />
+                          {coord.phone}
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        );
       case 'rules':
         return (
           <div
-            className="text-white/85 text-base leading-relaxed tracking-wide prose prose-invert max-w-none"
+            className="text-white/90 text-sm sm:text-base leading-relaxed prose prose-invert max-w-none font-['Inter',sans-serif]"
             dangerouslySetInnerHTML={{ __html: event.rules || '' }}
           />
         );
       default:
         return (
           <div
-            className="text-white/85 text-base leading-relaxed tracking-wide prose prose-invert max-w-none"
+            className="text-white/90 text-sm sm:text-base leading-relaxed prose prose-invert max-w-none font-['Inter',sans-serif]"
             dangerouslySetInnerHTML={{ __html: event.description || '' }}
           />
         );
@@ -55,7 +162,7 @@ export default function EventDetails({ event }: Props) {
   };
 
   return (
-    <div className="relative min-h-screen overflow-y-auto">
+    <div className="relative min-h-screen overflow-y-auto py-20 md:py-0">
       {/* Background Image - Fixed */}
       <div
         className="fixed inset-0"
@@ -72,28 +179,28 @@ export default function EventDetails({ event }: Props) {
 
       {/* Content Container - Three Column Layout */}
       <div
-        className="relative flex justify-center py-8 px-2 sm:px-4 lg:py-12 lg:px-0"
+        className="relative flex justify-center py-6 px-2 sm:px-4 lg:py-8 lg:px-0"
         style={{ zIndex: 10 }}
       >
         {/* Left Sidebar Spacer - Desktop only */}
-        <div className="hidden lg:block w-[280px] xl:w-[300px] flex-shrink-0" />
+        <div className="hidden lg:block w-[200px] xl:w-[220px] flex-shrink-0" />
         {/* Main Content Panel - Centered */}
-        <div className="w-full lg:max-w-[700px] xl:max-w-[800px] lg:my-12 rounded-3xl lg:rounded-[40px] border border-white/10 bg-black/40 backdrop-blur-md mx-2 sm:mx-4 lg:mx-6 flex justify-center items-center">
+        <div className="w-full lg:max-w-[950px] xl:max-w-[1100px] lg:my-8 rounded-2xl lg:rounded-3xl border border-white/10 bg-black/40 backdrop-blur-md mx-2 sm:mx-4 lg:mx-6 flex justify-center items-center">
           {/* Inner Content */}
-          <div className="w-full flex flex-col items-center py-6 px-3 sm:py-8 sm:px-6 lg:py-10 lg:px-10">
+          <div className="w-full flex flex-col items-center py-4 px-3 sm:py-6 sm:px-5 lg:py-8 lg:px-8">
             {/* Header Row: Title + Buttons */}
-            <div className="w-full flex flex-row justify-between items-start mb-4 sm:mb-6 lg:mb-8 gap-2">
+            <div className="w-full flex flex-row justify-between items-start mb-4 sm:mb-5 gap-2">
               {/* Back Button - Left Side */}
               <div className="flex justify-start w-fit">
                 <button
                   onClick={() =>
                     router.push(`/events/${event.event_category_id}`)
                   }
-                  className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 lg:px-6 lg:py-2.5 rounded-full bg-black/80 border border-white/40 text-white hover:bg-black transition-all cursor-pointer group"
+                  className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-black/80 border border-white/40 text-white hover:bg-black transition-all cursor-pointer group"
                 >
-                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 lg:w-5 lg:h-5 group-hover:-translate-x-1 transition-transform" />
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" />
                   <span
-                    className="hidden sm:inline text-xs sm:text-sm lg:text-base"
+                    className="hidden sm:inline text-xs sm:text-sm"
                     style={{ fontFamily: "'Metal Mania'" }}
                   >
                     BACK
@@ -104,7 +211,7 @@ export default function EventDetails({ event }: Props) {
               {/* Title - Centered */}
               <div className="flex justify-center flex-1 px-1">
                 <h1
-                  className="text-lg sm:text-2xl lg:text-3xl xl:text-4xl text-white tracking-[0.1em] lg:tracking-[0.15em] text-center leading-tight"
+                  className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-white tracking-wider text-center leading-tight"
                   style={{ fontFamily: "'Metal Mania'" }}
                 >
                   {event.name}
@@ -113,122 +220,45 @@ export default function EventDetails({ event }: Props) {
               <RegisterButton eventId={event.id || ''} />
             </div>
 
-            {/* Tabs */}
-            <EventTabs activeTab={activeTab} setActiveTab={setActiveTab} />
-
-            {/* Mobile-only Poster Image */}
-            <div className="mt-6 w-full max-w-xs sm:max-w-sm lg:hidden relative aspect-[3/4] rounded-xl overflow-hidden shadow-lg border border-white/10">
-              <Image
-                src={event.image_url || '/events/poster.png'}
-                alt={event.name}
-                fill
-                className="object-cover"
-              />
-            </div>
-
-            {/* Tab Content with HTML rendering */}
-            <div className="mt-6 sm:mt-8 max-w-full lg:max-w-2xl text-center px-2">
-              {getTabContent()}
-            </div>
-
-            {/* Schedule Section */}
-            {event.schedule && (
-              <div className="mt-6 sm:mt-8 w-full max-w-full lg:max-w-2xl px-2">
-                <h3
-                  className="text-base sm:text-lg lg:text-xl text-white mb-3 sm:mb-4 tracking-wider text-center"
-                  style={{ fontFamily: "'Metal Mania'" }}
-                >
-                  SCHEDULE & VENUE
-                </h3>
-                <div className="bg-white/10 rounded-xl p-3 sm:p-4 border border-white/20">
-                  <div
-                    className="text-white/85 text-sm sm:text-base leading-relaxed prose prose-invert prose-sm sm:prose-base max-w-none text-center"
-                    dangerouslySetInnerHTML={{ __html: event.schedule }}
+            {/* Side-by-Side Layout: Poster Left, Content Right */}
+            <div className="w-full">
+              {/* Top Section: Poster + Tabs/Content */}
+              <div className="grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-4 lg:gap-6">
+                {/* Left: Event Poster */}
+                <div className="w-full max-w-md lg:max-w-none mx-auto lg:mx-0 relative aspect-[3/4] lg:aspect-auto lg:h-[450px] rounded-xl overflow-hidden shadow-lg border border-white/10">
+                  <Image
+                    src={event.image_url || '/events/poster.png'}
+                    alt={event.name}
+                    fill
+                    className="object-cover"
                   />
                 </div>
-              </div>
-            )}
 
-            {/* Registration Info */}
-            <div className="mt-6 sm:mt-8 lg:mt-10 text-center text-white space-y-2 px-2">
-              <p
-                className="text-xs sm:text-sm uppercase tracking-[0.15em] sm:tracking-[0.2em]"
-                style={{ fontFamily: "'Metal Mania'" }}
-              >
-                TEAM SIZE: {event.min_team_size} - {event.max_team_size} members
-              </p>
-              <p
-                className="mt-4 sm:mt-6 text-lg sm:text-xl tracking-wider"
-                style={{ fontFamily: "'Metal Mania'" }}
-              >
-                Registration Fees: ₹{event.registration_fees}/-
-              </p>
-              {event.prize_pool > 0 && (
-                <p
-                  className="text-base sm:text-lg tracking-wider text-yellow-400"
-                  style={{ fontFamily: "'Metal Mania'" }}
-                >
-                  Prize Pool: ₹{event.prize_pool}
-                </p>
-              )}
-            </div>
+                {/* Right: Tabs + Scrollable Content */}
+                <div className="flex flex-col space-y-3 lg:h-[450px]">
+                  {/* Tabs */}
+                  <EventTabs
+                    activeTab={activeTab}
+                    setActiveTab={setActiveTab}
+                  />
 
-            {/* Coordinators */}
-            {event.coordinators && event.coordinators.length > 0 && (
-              <div className="mt-6 sm:mt-8 lg:mt-10 text-center px-2">
-                <h3
-                  className="text-base sm:text-lg lg:text-xl text-white mb-3 sm:mb-4 tracking-wider"
-                  style={{ fontFamily: "'Metal Mania'" }}
-                >
-                  COORDINATORS
-                </h3>
-                <div className="flex flex-wrap justify-center gap-3 sm:gap-4">
-                  {event.coordinators.map((coord, index) => (
-                    <div
-                      key={index}
-                      className="px-4 sm:px-6 py-2 sm:py-3 rounded-xl bg-white/10 border border-white/20 hover:border-yellow-400/60 transition-all"
-                    >
-                      <p className="text-white font-medium text-sm sm:text-base">
-                        {coord.name}
-                      </p>
-                      <Link
-                        href={`tel:${coord.phone}`}
-                        className="text-white/70 text-xs sm:text-sm hover:text-yellow-400 transition-colors"
-                      >
-                        {coord.phone}
-                      </Link>
-                    </div>
-                  ))}
+                  {/* Scrollable Content Area */}
+                  <div className="lg:overflow-y-auto lg:flex-1 pr-2 custom-scrollbar">
+                    {getTabContent()}
+                  </div>
                 </div>
               </div>
-            )}
-
-            {/* Links */}
-            {event.links && event.links.length > 0 && (
-              <div className="mt-6 sm:mt-8 flex flex-wrap justify-center gap-3 sm:gap-4 px-2">
-                {event.links.map((link, index) => (
-                  <a
-                    key={index}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="px-4 sm:px-6 py-2 sm:py-2.5 text-sm sm:text-base rounded-full bg-white/10 border border-white/30 text-white hover:bg-white/20 transition-all"
-                  >
-                    {link.title}
-                  </a>
-                ))}
-              </div>
-            )}
+            </div>
           </div>
         </div>
 
         {/* Right Character Spacer - Desktop only */}
-        <div className="hidden lg:block w-[280px] xl:w-[300px] flex-shrink-0" />
+        <div className="hidden lg:block w-[200px] xl:w-[220px] flex-shrink-0" />
       </div>
 
       {/* Character Image - Fixed Right Side (Desktop only) */}
       <div
-        className="hidden lg:block fixed right-0 bottom-0 w-[280px] xl:w-[300px] h-[85vh] pointer-events-none"
+        className="hidden lg:block fixed right-0 bottom-0 w-[200px] xl:w-[220px] h-[85vh] pointer-events-none"
         style={{ zIndex: 5 }}
       >
         <Image

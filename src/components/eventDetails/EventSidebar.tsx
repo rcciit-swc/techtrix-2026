@@ -60,7 +60,7 @@ export default function EventSidebar({ items, activeId }: Props) {
             key={item.id}
             href={`/event/${item.id}`}
             className={`
-              relative w-[260px] xl:w-[280px] h-[150px] xl:h-[160px] rounded-r-[30px] overflow-hidden
+              relative w-[180px] xl:w-[200px] h-[130px] xl:h-[140px] rounded-r-[30px] overflow-hidden
               transition-all duration-300 group border-[3px]
               ${
                 activeId === item.id
@@ -81,9 +81,9 @@ export default function EventSidebar({ items, activeId }: Props) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
             {/* Title */}
-            <div className="absolute inset-x-0 bottom-0 pb-4 pt-3 flex justify-center bg-gradient-to-t from-black/80 to-transparent">
+            <div className="absolute inset-x-0 bottom-0 pb-3 pt-2 flex justify-center bg-gradient-to-t from-black/80 to-transparent">
               <span
-                className="text-white text-xl xl:text-2xl font-bold uppercase tracking-wider text-center leading-tight drop-shadow-lg px-2"
+                className="text-white text-base xl:text-lg font-bold uppercase tracking-wider text-center leading-tight drop-shadow-lg px-2"
                 style={{ fontFamily: "'Metal Mania'" }}
               >
                 {item.title}

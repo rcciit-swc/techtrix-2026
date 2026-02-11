@@ -74,7 +74,7 @@ export default function AboutSection() {
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 backdrop-blur border border-white/20">
               <span className="text-blue-400 text-lg">🛡</span>
               <div>
-                <div className="font-bold text-xl">50+</div>
+                <div className="font-bold text-xl">30+</div>
                 <div className="text-xs text-gray-300">EVENTS</div>
               </div>
             </div>

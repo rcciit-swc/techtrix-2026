@@ -1,3 +1,4 @@
+import Footer from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
 import { RazorpayScript } from '@/components/RazorpayScript';
 import SessionProvider from '@/lib/providers/SessionProvider';
@@ -28,6 +29,7 @@ export default function RootLayout({
       <body className={`${orbitron.className} antialiased`}>
         {children}
         <Navbar />
+        <Footer />
         <Toaster position="bottom-right" richColors duration={5000} />
         <SessionProvider />
         <RazorpayScript />

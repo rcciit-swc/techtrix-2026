@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { DynamicBackground } from './AnimatedBackground';
 
-const categories = [
+export const categories = [
   {
     id: 'fb17b092-1622-4a3d-90a9-650fd860f6a0',
     name: 'Automata',

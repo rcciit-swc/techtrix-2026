@@ -5,7 +5,7 @@ import { Sparkles } from './hero/Sparkles';
 
 export default function Hero() {
   return (
-    <section className="relative w-full h-screen bg-[#050816] overflow-hidden flex flex-col items-center justify-start pt-16 md:pt-20">
+    <section className="relative w-full h-screen bg-[#050816] overflow-hidden flex flex-col items-center justify-start pt-16 md:pt-5">
       <HeroBackground />
       <Sparkles />
       <HeroCharacters />

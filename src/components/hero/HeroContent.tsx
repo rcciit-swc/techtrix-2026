@@ -71,7 +71,7 @@ export function HeroContent() {
         animate="visible"
         variants={textReveal}
         transition={{ delay: 0.4 }}
-        className="text-base md:text-xl lg:text-2xl mt-4 md:-mt-4 tracking-[0.3em] uppercase font-bold px-4"
+        className="text-base md:text-xl lg:text-2xl mt-4 md:mt-0 tracking-[0.3em] uppercase font-bold px-4"
         style={{
           fontFamily: '"Metal Mania"',
           background:
