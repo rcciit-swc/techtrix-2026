@@ -1,5 +1,7 @@
 // app/events/[categorieId]/page.tsx
 
+import EventCardsCluster from '@/components/EventCardsCluster';
+
 export default function EventsPage() {
   return (
     <div
