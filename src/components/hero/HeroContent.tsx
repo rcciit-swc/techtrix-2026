@@ -5,8 +5,11 @@ import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
 import { textReveal, titleReveal, buttonReveal } from './hero-animations';
+import { useUser } from '@/lib/stores';
+import { login } from '@/lib/services/auth';
 
 export function HeroContent() {
+  const { userData } = useUser();
   return (
     <div className="relative z-30 flex flex-col items-center justify-center text-center pt-4">
       {/* RCC Institute Structure */}
@@ -105,31 +108,56 @@ export function HeroContent() {
         transition={{ delay: 0.9 }}
         className="flex flex-wrap justify-center gap-4 md:gap-6 mt-6 md:mt-12"
       >
-        <Link
-          href="#register"
-          className="group relative flex items-center gap-[12px] px-[32px] py-[18px] rounded-[24px] bg-[#EDF526] shadow-[0_10px_30px_-10px_rgba(237,245,38,0.5)] hover:scale-105 transition-all duration-300 overflow-hidden text-lg md:text-[22px]"
-          style={{
-            color: '#050816',
-            fontFamily: '"Metal Mania"',
-            fontWeight: 400,
-            letterSpacing: '1px',
-          }}
-        >
-          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          <span className="relative z-10 flex items-center gap-3">
-            Register Now
-            <Image
-              src="/hero/registerr.svg"
-              alt="icon"
-              width={22}
-              height={22}
-              className="group-hover:rotate-12 transition-transform"
-            />
-          </span>
-        </Link>
+        {userData ? (
+          <Link
+            href="#events"
+            className="group relative flex items-center gap-[12px] px-[32px] py-[18px] rounded-[24px] bg-[#EDF526] shadow-[0_10px_30px_-10px_rgba(237,245,38,0.5)] hover:scale-105 transition-all duration-300 overflow-hidden text-lg md:text-[22px]"
+            style={{
+              color: '#050816',
+              fontFamily: '"Metal Mania"',
+              fontWeight: 400,
+              letterSpacing: '1px',
+            }}
+          >
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <span className="relative z-10 flex items-center gap-3">
+              Register Now
+              <Image
+                src="/hero/registerr.svg"
+                alt="icon"
+                width={22}
+                height={22}
+                className="group-hover:rotate-12 transition-transform"
+              />
+            </span>
+          </Link>
+        ) : (
+          <button
+            onClick={() => login()}
+            className="group relative flex items-center gap-[12px] px-[32px] py-[18px] rounded-[24px] bg-[#EDF526] shadow-[0_10px_30px_-10px_rgba(237,245,38,0.5)] hover:scale-105 transition-all duration-300 overflow-hidden text-lg md:text-[22px] cursor-pointer"
+            style={{
+              color: '#050816',
+              fontFamily: '"Metal Mania"',
+              fontWeight: 400,
+              letterSpacing: '1px',
+            }}
+          >
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <span className="relative z-10 flex items-center gap-3">
+              Register Now
+              <Image
+                src="/hero/registerr.svg"
+                alt="icon"
+                width={22}
+                height={22}
+                className="group-hover:rotate-12 transition-transform"
+              />
+            </span>
+          </button>
+        )}
 
         <Link
-          href="#details"
+          href="#about"
           className="group flex items-center gap-3 border-2 border-white/30 px-8 py-4 rounded-[24px] hover:border-white hover:scale-105 transition-all duration-300 text-lg md:text-[22px]"
           style={{
             color: '#FFF',

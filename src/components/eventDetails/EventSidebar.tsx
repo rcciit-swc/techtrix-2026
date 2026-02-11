@@ -23,7 +23,7 @@ export default function EventSidebar({ items, activeId }: Props) {
         {items.map((item) => (
           <Link
             key={item.id}
-            href={`/events/${item.id}`}
+            href={`/event/${item.id}`}
             className={`
               relative flex-shrink-0 w-16 h-16 rounded-full border-[2px] overflow-hidden
               transition-all duration-300
@@ -58,7 +58,7 @@ export default function EventSidebar({ items, activeId }: Props) {
         {items.map((item) => (
           <Link
             key={item.id}
-            href={`/events/${item.id}`}
+            href={`/event/${item.id}`}
             className={`
               relative w-[240px] h-[180px] rounded-r-[40px] overflow-hidden
               transition-all duration-300 group border-[3px]

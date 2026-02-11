@@ -31,6 +31,8 @@ export interface events {
     url: string;
   }[];
   registered?: boolean;
+  transaction_verified?: string | null;
+  registered_team_id?: string | null;
   team_details?: TeamMember[] | null;
   transaction_screenshot?: string | null;
 }

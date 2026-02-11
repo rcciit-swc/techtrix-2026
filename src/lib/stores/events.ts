@@ -26,7 +26,13 @@ export const useEvents = create<EventsStoreType>((set) => ({
   markEventAsRegistered: (eventId: string) =>
     set((state) => ({
       eventsData: state.eventsData.map((event) =>
-        event.event_id === eventId ? { ...event, registered: true } : event
+        event.event_id === eventId
+          ? {
+              ...event,
+              registered: true,
+              transaction_verified: new Date().toISOString(),
+            }
+          : event
       ),
     })),
 }));

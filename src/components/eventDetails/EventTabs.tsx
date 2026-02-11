@@ -10,7 +10,6 @@ export default function EventTabs({ activeTab, setActiveTab }: Props) {
   const tabs: { id: EventTab; label: string }[] = [
     { id: 'description', label: 'Description' },
     { id: 'rules', label: 'Rules' },
-    { id: 'more', label: 'More Details' },
   ];
 
   return (
