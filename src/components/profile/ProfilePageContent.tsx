@@ -11,7 +11,6 @@ import EditProfileDialog from './EditProfileDialog';
 import type { events } from '@/lib/types';
 import EventsCard from '@/components/profile/EventCard';
 import { toast } from 'sonner';
-import { handleSaveChanges } from '@/lib/services/user';
 import ProfileSkeleton from './ProfileSkeleton';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -55,11 +54,8 @@ export default function ProfilePage() {
   };
 
   const handleProfileSave = async (formData: FormData) => {
-    await handleSaveChanges(formData, userData, updateUserData, () => {
-      setIsEditModalOpen(false);
-      const cb = searchParams.get('callback');
-      if (cb) router.replace(cb);
-    });
+    const cb = searchParams.get('callback');
+    if (cb) router.replace(cb);
   };
 
   if (userLoading) return <ProfileSkeleton />;

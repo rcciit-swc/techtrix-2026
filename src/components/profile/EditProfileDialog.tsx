@@ -7,6 +7,8 @@ import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Check } from 'lucide-react';
+import { toast } from 'sonner';
+import { updateUserData } from '@/lib/services/user';
 
 interface EditProfileDialogProps {
   open: boolean;
@@ -14,7 +16,7 @@ interface EditProfileDialogProps {
   userData: any;
   profileImage?: string;
   name?: string;
-  onSave: (formData: FormData) => Promise<void>;
+  onSave?: (formData: FormData) => Promise<void>;
 }
 
 export default function EditProfileDialog({ open, onOpenChange, userData, name, onSave }: EditProfileDialogProps) {
@@ -24,22 +26,97 @@ export default function EditProfileDialog({ open, onOpenChange, userData, name, 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsSubmitting(true);
+
+    const formData = new FormData(e.currentTarget);
+    const formDataObj = Object.fromEntries(formData.entries());
+
+    if (!formDataObj.gender) {
+      toast.error('Gender is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formDataObj.fullName) {
+      toast.error('Full name is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formDataObj.phone) {
+      toast.error('Phone number is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!/^\d{10}$/.test(formDataObj.phone as string)) {
+      toast.error('Invalid phone number');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formDataObj.stream) {
+      toast.error('Stream is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formDataObj.college) {
+      toast.error('College is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formDataObj.college_roll) {
+      toast.error('College Roll is required');
+      setIsSubmitting(false);
+      return;
+    }
+    if (!formDataObj.course) {
+      toast.error('Course is required');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!userData?.id) {
+      toast.error('User data not found');
+      setIsSubmitting(false);
+      return;
+    }
+
+    const updatedData = {
+      id: userData.id,
+      full_name: formDataObj.fullName,
+      phone: formDataObj.phone,
+      gender: formDataObj.gender,
+      stream: formDataObj.stream,
+      college: formDataObj.college,
+      college_roll: formDataObj.college_roll,
+      course: formDataObj.course,
+    };
+
     try {
-      await onSave(new FormData(e.currentTarget));
+      await updateUserData(updatedData);
+      // Wait for success update
+      toast.success('Profile updated successfully');
       setShowSuccess(true);
-      setTimeout(() => { setShowSuccess(false); onOpenChange(false); }, 2000);
-    } catch (error) { console.error('Failed to save profile:', error); }
-    finally { setIsSubmitting(false); }
+      if (onSave) {
+        await onSave(formData);
+      }
+
+      setTimeout(() => {
+        setShowSuccess(false);
+        onOpenChange(false);
+      }, 2000);
+    } catch (error) {
+      console.error('Failed to save profile:', error);
+      toast.error('Failed to update profile');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const formFields = [
-    { id: 'fullName', label: 'Full Name', defaultValue: userData?.name || name, placeholder: 'Enter your full name' },
-    { id: 'phone', label: 'Phone Number', type: 'tel', defaultValue: userData?.phone, placeholder: 'Enter phone number' },
+    { id: 'fullName', label: 'Full Name', defaultValue: userData?.name || name, placeholder: 'Enter your full name', required: true },
+    { id: 'phone', label: 'Phone Number', type: 'tel', defaultValue: userData?.phone, placeholder: 'Enter phone number', required: true, pattern: "\\d{10}" },
     { id: 'email', label: 'Email ID', type: 'email', defaultValue: userData?.email, placeholder: 'Enter your email', readOnly: true },
-    { id: 'college', label: 'College', defaultValue: userData?.college, placeholder: 'Enter your college name' },
-    { id: 'college_roll', label: 'College Roll No', defaultValue: userData?.college_roll, placeholder: 'Enter your college roll no' },
-    { id: 'course', label: 'Course', defaultValue: userData?.course, placeholder: 'e.g. B.Tech, M.Tech, BCA' },
-    { id: 'stream', label: 'Stream', defaultValue: userData?.stream, placeholder: 'e.g. CSE, ECE, ME' },
+    { id: 'college', label: 'College', defaultValue: userData?.college, placeholder: 'Enter your college name', required: true },
+    { id: 'college_roll', label: 'College Roll No', defaultValue: userData?.college_roll, placeholder: 'Enter your college roll no', required: true },
+    { id: 'course', label: 'Course', defaultValue: userData?.course, placeholder: 'e.g. B.Tech, M.Tech, BCA', required: true },
+    { id: 'stream', label: 'Stream', defaultValue: userData?.stream, placeholder: 'e.g. CSE, ECE, ME', required: true },
   ];
 
   return (
@@ -84,13 +161,15 @@ export default function EditProfileDialog({ open, onOpenChange, userData, name, 
                   <div className="flex flex-col gap-6 w-full">
                     {formFields.map((field) => (
                       <div key={field.id} className="flex flex-col gap-2 items-start w-full">
-                        <label htmlFor={field.id} className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide" style={{ fontFamily: 'Maname' }}>{field.label}</label>
+                        <label htmlFor={field.id} className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide" style={{ fontFamily: 'Maname' }}>{field.label} {field.required && <span className="text-red-500">*</span>}</label>
                         <input
                           id={field.id}
                           name={field.id}
                           type={field.type || 'text'}
                           defaultValue={field.defaultValue || ''}
                           readOnly={field.readOnly}
+                          required={field.required}
+                          pattern={field.pattern}
                           className={`w-full pt-2 pb-4 bg-white/${field.readOnly ? '5' : '10'} border border-white/${field.readOnly ? '10' : '20'} ${!field.readOnly && 'hover:border-yellow-400/60 focus:border-yellow-400'} px-5 font-medium text-[18px] text-white ${field.readOnly ? 'text-white/50 cursor-not-allowed' : 'focus:outline-none focus:ring-2 focus:ring-yellow-400/30'} rounded-xl transition-all`}
                           style={{ fontFamily: 'Maname' }}
                           placeholder={field.placeholder}
@@ -100,8 +179,8 @@ export default function EditProfileDialog({ open, onOpenChange, userData, name, 
 
                     {/* Gender Field */}
                     <div className="flex flex-col gap-2 items-start w-full">
-                      <label htmlFor="gender" className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide" style={{ fontFamily: 'Maname' }}>Gender</label>
-                      <Select name="gender" defaultValue={userData?.gender || ''}>
+                      <label htmlFor="gender" className="font-medium text-[18px] leading-normal text-white/80 uppercase tracking-wide" style={{ fontFamily: 'Maname' }}>Gender <span className="text-red-500">*</span></label>
+                      <Select name="gender" defaultValue={userData?.gender || ''} required>
                         <SelectTrigger className="w-full pt-2 pb-4 bg-white/10 border border-white/20 hover:border-yellow-400/60 focus:border-yellow-400 rounded-xl px-5 font-medium text-[18px] text-white focus:ring-2 focus:ring-yellow-400/30 transition-all font-[Maname] min-h-[50px]">
                           <SelectValue placeholder="Select Gender" />
                         </SelectTrigger>
