@@ -1,11 +1,11 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { constructMetaData } from '@/lib/utils';
-import { Orbitron } from 'next/font/google';
 import { Navbar } from '@/components/Navbar';
-import SessionProvider from '@/lib/providers/SessionProvider';
-import { Toaster } from 'sonner';
 import { RazorpayScript } from '@/components/RazorpayScript';
+import SessionProvider from '@/lib/providers/SessionProvider';
+import { constructMetaData } from '@/lib/utils';
+import type { Metadata } from 'next';
+import { Orbitron } from 'next/font/google';
+import { Toaster } from 'sonner';
+import './globals.css';
 
 export const metadata: Metadata = constructMetaData({
   title: 'Techtrix 2026',

@@ -1,8 +1,14 @@
-import React from 'react';
+'use client';
+
+import { Facebook, Instagram } from 'lucide-react';
+import { motion } from 'motion/react';
 import Image from 'next/image';
+import Link from 'next/link';
+
 export default function Footer() {
   return (
-    <footer className="relative w-full min-h-screen bg-black text-white px-8">
+    <div className="relative w-full overflow-hidden pb-20">
+      {/* Background Image */}
       <Image
         src="/Footer/Background.jpg"
         alt="Background"
@@ -10,187 +16,190 @@ export default function Footer() {
         className="object-cover opacity-90"
       />
 
-      <div className="absolute inset-0 bg-black/70"></div>
+      {/* Dark Overlay */}
+      <div className="absolute inset-0 bg-black/70" />
 
-      <div className="relative z-10 max-w-7xl mx-auto min-h-screen flex flex-col justify-center">
-        <div className="transform -translate-y-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-y-8 md:gap-x-[250px]">
-            {/* Left */}
-            <div>
-              <h3
-                style={{ fontFamily: 'Metal Mania', fontSize: '25px' }}
-                className="text-yellow-400  font-bold mb-4 uppercase tracking-wide "
-              >
-                The Trials Map
-              </h3>
-              <div
-                style={{ fontFamily: 'Maname' }}
-                className="space-y-2 text-xl"
-              >
-                <div className="text-gray-300 hover:text-white cursor-pointer transition">
-                  Legacy
-                </div>
-                <div className="text-gray-300 hover:text-white cursor-pointer transition">
-                  Events
-                </div>
-                <div className="text-gray-300 hover:text-white cursor-pointer transition">
-                  Hall of Fame
-                </div>
-              </div>
-            </div>
-
-            {/* Middle*/}
-            <div>
-              <h3
-                style={{ fontFamily: 'Metal Mania', fontSize: '25px' }}
-                className="text-yellow-400  font-bold mb-4 uppercase tracking-wide"
-              >
-                Contacts
-              </h3>
-              <div
-                style={{ fontFamily: 'Metal Mania', fontSize: '20px' }}
-                className="space-y-6"
-              >
-                <div>
-                  <h4
-                    style={{ fontFamily: 'Maname' }}
-                    className="text-white  mb-2"
-                  >
-                    ABC KUMAR
-                  </h4>
-                  <div
-                    style={{ fontSize: '15px' }}
-                    className="space-y-1 text-gray-300 "
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="relative w-4 h-4">
-                        <Image
-                          src="/Footer/mobile_icon.svg"
-                          alt="contact"
-                          fill
-                          className=""
-                        />
-                      </div>
-                      <span>+91 XXX XXX XXXX</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="relative w-4 h-4">
-                        <Image
-                          src="/Footer/mail_icon.svg"
-                          alt="mail"
-                          fill
-                          className=""
-                        />
-                      </div>
-                      <span>abc@eor2026.com</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4
-                    style={{ fontFamily: 'Maname', fontSize: '20px' }}
-                    className="text-white  mb-2"
-                  >
-                    XYZ SHARMA
-                  </h4>
-                  <div
-                    style={{ fontSize: '15px' }}
-                    className="space-y-1 text-gray-300 "
-                  >
-                    <div className="flex items-center gap-2">
-                      <div className="relative w-4 h-4">
-                        <Image
-                          src="/Footer/mobile_icon.svg"
-                          alt="contact"
-                          fill
-                          className=""
-                        />
-                      </div>
-                      <span>+91 XXX XXX XXXX</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="relative w-4 h-4">
-                        <Image
-                          src="/Footer/mail_icon.svg"
-                          alt="mail"
-                          fill
-                          className=""
-                        />
-                      </div>
-                      <span>xyz@eor2026.com</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Right */}
-            <div>
-              <h3
-                style={{ fontFamily: 'Metal Mania', fontSize: '25px' }}
-                className="text-yellow-400  font-bold mb-4 uppercase tracking-wide"
-              >
-                The Iron Bank
-              </h3>
-              <div
-                style={{ fontFamily: 'Maname', fontSize: '20px' }}
-                className="space-y-4 "
-              >
-                <div>
-                  <h4 className="text-white  mb-1">Funded By</h4>
-                  <p
-                    style={{ fontFamily: 'Metal Mania', fontSize: '15px' }}
-                    className="text-gray-300 text-xs uppercase"
-                  >
-                    RCCIIIT Student Welfare
-                    <br />
-                    Committee
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-white  mb-1">Technical Credits</h4>
-                  <p
-                    style={{ fontFamily: 'Metal Mania', fontSize: '15px' }}
-                    className="text-gray-300 text-xs"
-                  >
-                    Techtrix Technical Team 2026
-                  </p>
-                </div>
-                <div>
-                  <h4 className="text-white  mb-1">Special Thanks</h4>
-                  <p
-                    style={{ fontFamily: 'Metal Mania', fontSize: '15px' }}
-                    className="text-gray-300 text-xs uppercase"
-                  >
-                    All participating colleges
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/*Last */}
-          <div
-            style={{ fontFamily: 'Maname', fontSize: '20px' }}
-            className="border-t border-gray-400 -mx-8  mt-12 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm"
+      <div className="max-w-7xl mx-auto px-6 md:px-12 py-8 md:py-10 relative z-20">
+        {/* Main Footer Content - 3 Columns */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12 mb-6 items-start">
+          {/* Column 1: Social Media - Connect With Us */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="space-y-4"
           >
-            <div className="text-gray-400">
-              © 2026 TECHTRIX TECH FEST. All rights reserved.
+            <h3
+              className="text-[#EDF526] text-[18px] md:text-[20px] font-bold leading-tight tracking-wider uppercase"
+              style={{ fontFamily: 'Metal Mania' }}
+            >
+              Connect With Us
+            </h3>
+            <div className="flex gap-6">
+              <motion.a
+                href="https://instagram.com/techtrix_official"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.2, rotate: 5 }}
+                whileTap={{ scale: 0.95 }}
+                className="text-[#F2EFE9] hover:text-[#EDF526] transition-colors"
+                aria-label="Instagram"
+              >
+                <Instagram size={28} strokeWidth={2} />
+              </motion.a>
+              <motion.a
+                href="https://www.facebook.com/techtrix.rcciit"
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.2, rotate: -5 }}
+                whileTap={{ scale: 0.95 }}
+                className="text-[#F2EFE9] hover:text-[#EDF526] transition-colors"
+                aria-label="Facebook"
+              >
+                <Facebook size={28} strokeWidth={2} />
+              </motion.a>
             </div>
-            <div className="flex gap-4 text-gray-400">
-              <a href="#" className="hover:text-white transition">
-                Privacy Policy
-              </a>
-              <p style={{ fontFamily: 'Metal Mania' }} className="text-4xl">
-                I
+          </motion.div>
+
+          {/* Column 2: Navigation Links */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="space-y-3 text-center"
+          >
+            <ul className="space-y-2">
+              {[
+                { label: 'Home', href: '/' },
+                { label: 'Events', href: '/events' },
+                { label: 'Team', href: '/team' },
+                { label: 'Gallery', href: '/gallery' },
+                { label: 'Contact', href: '/contact' },
+              ].map((link, index) => (
+                <motion.li
+                  key={link.label}
+                  initial={{ opacity: 0, x: -20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 + index * 0.08 }}
+                >
+                  <Link
+                    href={link.href}
+                    className="text-[#F2EFE9] text-[15px] md:text-[17px] font-medium hover:text-[#EDF526] transition-all duration-300 inline-block hover:scale-105"
+                    style={{ fontFamily: 'Maname' }}
+                  >
+                    {link.label}
+                  </Link>
+                </motion.li>
+              ))}
+            </ul>
+          </motion.div>
+
+          {/* Column 3: Techtrix Logo & Event Info */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="flex flex-col items-center justify-center md:items-end space-y-3"
+          >
+            {/* Techtrix Logo */}
+            <motion.div
+              className="relative"
+              animate={{
+                filter: [
+                  'drop-shadow(0 0 15px rgba(237, 245, 38, 0.6))',
+                  'drop-shadow(0 0 25px rgba(237, 245, 38, 0.9))',
+                  'drop-shadow(0 0 15px rgba(237, 245, 38, 0.6))',
+                ],
+              }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+              }}
+            >
+              <Image
+                src="https://i.postimg.cc/j20BjMhq/logo.png"
+                alt="Techtrix Logo"
+                width={240}
+                height={240}
+                className="w-20 h-auto md:w-32"
+                priority
+              />
+            </motion.div>
+
+            {/* Event Dates */}
+            <div className="text-center md:text-right space-y-1">
+              <p
+                className="text-[#EDF526] text-[14px] md:text-[15px] font-bold uppercase tracking-wider"
+                style={{ fontFamily: 'Metal Mania' }}
+              >
+                Event Dates
               </p>
-              <a href="#" className="hover:text-white transition">
-                Terms of Service
-              </a>
+              <p
+                className="text-[#F2EFE9] text-[13px] md:text-[14px] font-medium"
+                style={{ fontFamily: 'Maname' }}
+              >
+                ANNOUCING SOON
+              </p>
             </div>
-          </div>
+
+            {/* Tagline */}
+            <motion.p
+              className="text-[rgba(242,239,233,0.75)] text-[12px] md:text-[13px] italic text-center md:text-right"
+              style={{ fontFamily: 'Maname' }}
+              animate={{
+                opacity: [0.7, 1, 0.7],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+              }}
+            >
+              Mark your calendars!
+            </motion.p>
+          </motion.div>
         </div>
+
+        {/* Bottom Copyright Section */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="border-t border-[rgba(242,239,233,0.2)] pt-4"
+        >
+          <div
+            className="flex flex-col md:flex-row justify-between items-center gap-2 text-[rgba(242,239,233,0.75)] text-[11px] md:text-[13px]"
+            style={{ fontFamily: 'Maname' }}
+          >
+            <p className="text-center md:text-left">
+              © 2026 TECHTRIX TECH FEST. All rights reserved.
+            </p>
+            <motion.p
+              className="flex items-center gap-2"
+              whileHover={{ scale: 1.05 }}
+            >
+              Made with{' '}
+              <motion.span
+                animate={{
+                  scale: [1, 1.3, 1],
+                  color: ['#ef4444', '#dc2626', '#ef4444'],
+                }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                }}
+              >
+                ❤️
+              </motion.span>{' '}
+              by Techtrix Technical Team
+            </motion.p>
+          </div>
+        </motion.div>
       </div>
-    </footer>
+    </div>
   );
 }

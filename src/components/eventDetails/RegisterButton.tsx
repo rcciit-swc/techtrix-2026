@@ -1,15 +1,15 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { toast } from 'sonner';
-import { useUser, useEvents } from '@/lib/stores';
+import { useRazorpay } from '@/hooks/useRazorpay';
 import { login } from '@/lib/services/auth';
+import { useEvents, useUser } from '@/lib/stores';
 import { events } from '@/lib/types/events';
+import { motion } from 'framer-motion';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { SoloEventRegistration } from './SoloRegistrationDialog';
 import { TeamEventRegistration } from './TeamEventRegistration';
-import { useRazorpay } from '@/hooks/useRazorpay';
 
 interface RegisterButtonProps {
   event: events;
@@ -116,7 +116,7 @@ export default function RegisterButton({ event }: RegisterButtonProps) {
         disabled
         className="relative px-7 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-gray-300 text-[18px] md:text-[20px] cursor-not-allowed font-['Irish_Grover'] rounded-[50px] transition-all duration-300 text-center border-2 border-red-500/50 overflow-hidden opacity-75"
       >
-        <span className="relative z-10 flex items-center gap-2">
+        <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
           <motion.span
             animate={{ rotate: [0, 10, -10, 0] }}
             transition={{ duration: 2, repeat: Infinity }}
@@ -179,7 +179,7 @@ export default function RegisterButton({ event }: RegisterButtonProps) {
         disabled
         className="relative px-7 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white text-[18px] md:text-[20px] cursor-not-allowed font-['Irish_Grover'] rounded-[50px] transition-all duration-300 text-center border-2 border-emerald-400/50 overflow-hidden"
       >
-        <span className="relative z-10 flex items-center gap-2">
+        <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
           <motion.span
             animate={{ scale: [1, 1.2, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
@@ -228,7 +228,7 @@ export default function RegisterButton({ event }: RegisterButtonProps) {
         disabled={isProcessing || isLoading}
         className="relative px-7 py-3 bg-gradient-to-r from-[#CCA855] to-[#a8892e] text-black text-[18px] md:text-[20px] cursor-pointer font-['Irish_Grover'] rounded-[50px] hover:from-[#e0bc60] hover:to-[#CCA855] transition-all duration-300 text-center border-2 border-[#CCA855]/50 hover:border-[#CCA855]/80 overflow-hidden group"
       >
-        <span className="relative z-10 flex items-center gap-2">
+        <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
           {isProcessing || isLoading ? (
             <>
               <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin"></div>
@@ -285,7 +285,7 @@ export default function RegisterButton({ event }: RegisterButtonProps) {
         onClick={handleRegister}
         className="relative px-7 py-3 bg-gradient-to-r from-[#B60302] to-[#8f0202] text-[#FAFAFA] text-[18px] md:text-[20px] cursor-pointer font-['Irish_Grover'] rounded-[50px] hover:from-[#D60302] hover:to-[#B60302] transition-all duration-300 text-center border-2 border-[#FF003C]/30 hover:border-[#FF003C]/60 overflow-hidden group"
       >
-        <span className="relative z-10 flex items-center gap-2">
+        <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
           Register Now
           <motion.span
             animate={{ x: [0, 5, 0] }}

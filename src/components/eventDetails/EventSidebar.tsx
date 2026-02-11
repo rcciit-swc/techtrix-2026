@@ -54,13 +54,13 @@ export default function EventSidebar({ items, activeId }: Props) {
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex fixed left-[-10px] top-1/2 -translate-y-1/2 z-[200] flex-col gap-2">
+      <div className="hidden lg:flex fixed left-0 top-4 z-[200] flex-col gap-2">
         {items.map((item) => (
           <Link
             key={item.id}
             href={`/event/${item.id}`}
             className={`
-              relative w-[240px] h-[180px] rounded-r-[40px] overflow-hidden
+              relative w-[260px] xl:w-[280px] h-[150px] xl:h-[160px] rounded-r-[30px] overflow-hidden
               transition-all duration-300 group border-[3px]
               ${
                 activeId === item.id
@@ -81,9 +81,9 @@ export default function EventSidebar({ items, activeId }: Props) {
             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
             {/* Title */}
-            <div className="absolute inset-x-0 bottom-0 pb-5 pt-4 flex justify-center bg-gradient-to-t from-black/80 to-transparent">
+            <div className="absolute inset-x-0 bottom-0 pb-4 pt-3 flex justify-center bg-gradient-to-t from-black/80 to-transparent">
               <span
-                className="text-white text-2xl font-bold uppercase tracking-wider text-center leading-none drop-shadow-lg"
+                className="text-white text-xl xl:text-2xl font-bold uppercase tracking-wider text-center leading-tight drop-shadow-lg px-2"
                 style={{ fontFamily: "'Metal Mania'" }}
               >
                 {item.title}
