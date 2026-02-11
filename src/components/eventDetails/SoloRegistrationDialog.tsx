@@ -299,7 +299,7 @@ export function SoloEventRegistration({
                 You have successfully registered for {eventName}
               </p>
               <p className="text-yellow-400 font-medium text-sm">
-                We'll see you at the fest!
+                We&apos;ll see you at the fest!
               </p>
             </motion.div>
           ) : step === 1 ? (
