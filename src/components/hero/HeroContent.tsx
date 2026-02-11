@@ -60,7 +60,7 @@ export function HeroContent() {
         initial="hidden"
         animate="visible"
         variants={titleReveal}
-        className="text-[100px] sm:text-[90px] md:text-[110px] lg:text-[180px] xl:text-[200px] font-medium text-white leading-none"
+        className="text-[100px] sm:text-[90px] md:text-[110px] lg:text-[180px] xl:text-[180px] font-medium text-white leading-none"
         style={{ fontFamily: 'Golden Sentry' }}
       >
         TECHTRIX
@@ -71,7 +71,7 @@ export function HeroContent() {
         animate="visible"
         variants={textReveal}
         transition={{ delay: 0.4 }}
-        className="text-base md:text-xl lg:text-2xl mt-4 md:mt-5 tracking-[0.3em] uppercase font-bold px-4"
+        className="text-base md:text-xl lg:text-2xl mt-4 md:-mt-4 tracking-[0.3em] uppercase font-bold px-4"
         style={{
           fontFamily: '"Metal Mania"',
           background:
@@ -89,7 +89,7 @@ export function HeroContent() {
         animate="visible"
         variants={textReveal}
         transition={{ delay: 0.6 }}
-        className="max-w-2xl mt-4 md:mt-4 px-4 text-sm md:text-base lg:text-lg"
+        className="max-w-2xl mt-4 md:mt-2 px-4 text-sm md:text-base lg:text-lg"
         style={{
           fontFamily: 'Maname',
           color: '#F9FAFB',
@@ -107,7 +107,7 @@ export function HeroContent() {
         animate="visible"
         variants={buttonReveal}
         transition={{ delay: 0.9 }}
-        className="flex flex-wrap justify-center gap-4 md:gap-4 mt-6 md:mt-8"
+        className="flex flex-wrap justify-center gap-4 md:gap-4 mt-6 md:mt-4"
       >
         {userData ? (
           <Link

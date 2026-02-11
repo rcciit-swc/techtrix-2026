@@ -108,7 +108,7 @@ export default function ComingSoon() {
           transition={{ duration: 0.8, delay: 0.3 }}
         >
           <h1
-            className="text-5xl md:text-7xl lg:text-8xl font-bold text-[#EDF526] mb-4 uppercase tracking-wider"
+            className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#EDF526] mb-4 uppercase tracking-wider"
             style={{ fontFamily: 'Metal Mania' }}
           >
             Coming Soon
@@ -128,7 +128,7 @@ export default function ComingSoon() {
             }}
           >
             <p
-              className="text-2xl md:text-4xl text-white mb-8"
+              className="text-xl md:text-2xl text-white mb-8"
               style={{ fontFamily: 'KungFuMaster' }}
             >
               This Page is Under Construction

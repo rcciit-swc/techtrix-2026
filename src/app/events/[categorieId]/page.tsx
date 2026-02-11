@@ -1,11 +1,11 @@
 // app/events/page.tsx
-import Background from '@/components/Background';
-import EventCardsCluster from '@/components/EventCardsCluster';
+import ComingSoon from '@/components/ComingSoon';
 
 export default function EventsPage() {
   return (
     <main className="relative w-screen h-screen overflow-hidden">
-      <Background />
+      <ComingSoon />
+      {/* <Background />
 
       <EventCardsCluster />
 
@@ -14,7 +14,7 @@ export default function EventsPage() {
                    text-white text-[85px] text-center font-kungfu"
       >
         Choose Your Destiny
-      </h1>
+      </h1> */}
     </main>
   );
 }
