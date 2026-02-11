@@ -22,7 +22,7 @@ export function constructMetaData({
       'max-snippet': -1,
     },
   },
-  image = '/favicon.jpg',
+  image = 'https://i.postimg.cc/mrpJmwCH/techtrix.jpg',
   keywords = [
     'Game of Thrones',
     'GOT 2026',

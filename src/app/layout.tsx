@@ -10,7 +10,8 @@ import './globals.css';
 
 export const metadata: Metadata = constructMetaData({
   title: 'Techtrix 2026',
-  description: 'The Official Sports Fest of RCCIIT.',
+  description:
+    'The Annual Inter-College National Level Technical Fest of RCCIIT.',
 });
 
 const orbitron = Orbitron({
