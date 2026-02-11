@@ -5,40 +5,62 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 const images = [
-  '/Gallary/DSC09209.JPG.jpeg',
-  '/Gallary/DSC09210.JPG.jpeg',
-  '/Gallary/Ranit_ (24).JPG.jpeg',
-  '/Gallary/RISH_7994 (81).JPG.jpeg',
-  '/Gallary/RISH_8209.JPG.jpeg',
-  '/Gallary/RISH_8373.JPG.jpeg',
-  '/Gallary/RISH_8482.JPG.jpeg',
-  '/Gallary/SAI_8155.JPG.jpeg',
-  '/Gallary/SAI_8301.JPG.jpeg',
-  '/Gallary/SAI_8480.JPG.jpeg',
-  '/Gallary/SAM_0099.JPG.jpeg',
-  '/Gallary/SAM_0355.JPG.jpeg',
-  '/Gallary/SHIN_0176.JPG.jpeg',
-  '/Gallary/SHIN_0223.JPG.jpeg',
-  '/Gallary/Sou_6758.JPG.jpeg',
-  '/Gallary/Sou_6929.JPG.jpeg',
-  '/Gallary/Sou_7177.JPG.jpeg',
-  '/Gallary/_SUB7041.JPG.jpeg',
-  '/Gallary/_SUB7232.JPG.jpeg',
+  '/Gallery/DSC09209.JPG.webp',
+  '/Gallery/DSC09210.JPG.webp',
+  '/Gallery/Ranit_ (24).JPG.webp',
+  '/Gallery/RISH_7994 (81).JPG.webp',
+  '/Gallery/RISH_8209.JPG.webp',
+  '/Gallery/RISH_8373.JPG.webp',
+  '/Gallery/RISH_8482.JPG.webp',
+  '/Gallery/SAI_8155.JPG.webp',
+  '/Gallery/SAI_8301.JPG.webp',
+  '/Gallery/SAI_8480.JPG.webp',
+  '/Gallery/SAM_0099.JPG.webp',
+  '/Gallery/SAM_0355.JPG.webp',
+  '/Gallery/SHIN_0176.JPG.webp',
+  '/Gallery/SHIN_0223.JPG.webp',
+  '/Gallery/Sou_6758.JPG.webp',
+  '/Gallery/Sou_6929.JPG.webp',
+  '/Gallery/Sou_7177.JPG.webp',
+  '/Gallery/_SUB7041.JPG.webp',
+  '/Gallery/_SUB7232.JPG.webp',
 ];
 
 export default function MasonryGallery() {
   const [hovered, setHovered] = useState<number | null>(null);
+  const [failedImages, setFailedImages] = useState<string[]>([]);
+
+  const handleImageError = (src: string) => {
+    console.error('Failed to load image:', src);
+    setFailedImages((prev) => [...prev, src]);
+  };
 
   return (
     <div className="min-h-screen bg-[#000d21]">
       <div>
         <h1
           style={{ fontFamily: 'Metal Mania' }}
-          className="text-4xl  text-center py-10 text-white"
+          className="text-4xl text-center py-10 text-white"
         >
-          Gallary
+          Gallery
         </h1>
       </div>
+
+      {/* Show failed images alert */}
+      {failedImages.length > 0 && (
+        <div className="px-4 pb-4 md:px-6">
+          <div className="bg-red-500/20 border border-red-500 rounded-lg p-4 text-white">
+            <h3 className="font-bold mb-2">
+              Failed to load {failedImages.length} image(s):
+            </h3>
+            <ul className="list-disc list-inside text-sm">
+              {failedImages.map((img, i) => (
+                <li key={i}>{img}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      )}
 
       {/* Gallery Section */}
       <div className="px-4 pb-20 md:px-6">
@@ -75,6 +97,7 @@ export default function MasonryGallery() {
                   quality={85}
                   placeholder="blur"
                   blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwAB//2Q=="
+                  onError={() => handleImageError(src)}
                 />
               </motion.div>
             </motion.div>
