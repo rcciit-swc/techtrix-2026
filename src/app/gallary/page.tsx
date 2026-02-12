@@ -79,10 +79,10 @@ export default function MasonryGallery() {
               <motion.div
                 className={`relative w-full transition-all duration-300 ease-in-out ${
                   hovered === null
-                    ? 'blur-0 scale-100'
+                    ? 'blur-none scale-100'
                     : hovered === index
-                      ? 'blur-0 scale-105'
-                      : 'blur-xs'
+                      ? 'blur-none scale-105'
+                      : 'blur-sm'
                 }`}
                 whileHover={{ scale: 1.05 }}
               >
