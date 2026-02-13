@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase/client';
-import { OrgTeamMember, DefinedOrgTeam } from '@/lib/types/teams';
+import { DefinedOrgTeam, OrgTeamMember } from '@/lib/types/teams';
 
 /**
  * Fetches all organization teams with their members from the database
@@ -11,6 +11,7 @@ export const getOrgTeams = async (): Promise<OrgTeamMember[] | null> => {
       .from('org_teams')
       .select('*')
       .eq('approved', true)
+      .eq('fest_id', '1e628648-6bde-4fb0-84eb-0083ca19ca95')
       .order('sequence', { ascending: true });
 
     if (error) {
