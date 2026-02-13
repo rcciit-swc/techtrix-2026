@@ -4,7 +4,7 @@ import { RazorpayScript } from '@/components/RazorpayScript';
 import SessionProvider from '@/lib/providers/SessionProvider';
 import { constructMetaData } from '@/lib/utils';
 import type { Metadata } from 'next';
-import { Orbitron } from 'next/font/google';
+import { Cinzel, Orbitron, Rajdhani } from 'next/font/google';
 import { Toaster } from 'sonner';
 import './globals.css';
 
@@ -21,6 +21,18 @@ const orbitron = Orbitron({
   variable: '--font-orbitron',
 });
 
+const cinzel = Cinzel({
+  subsets: ['latin'],
+  weight: ['400', '700', '900'],
+  variable: '--font-cinzel',
+});
+
+const rajdhani = Rajdhani({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-rajdhani',
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -28,7 +40,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${orbitron.className} antialiased`}>
+      <body
+        className={`${orbitron.className} ${cinzel.variable} ${rajdhani.variable} antialiased`}
+      >
         {children}
         <Navbar />
         <Footer />
