@@ -54,7 +54,7 @@ export default function EventSidebar({ items, activeId }: Props) {
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex fixed left-0 top-4 z-[200] flex-col gap-2">
+      <div className="hidden lg:flex absolute left-0 top-24 z-[200] flex-col gap-2 max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
         {items.map((item) => (
           <Link
             key={item.id}
