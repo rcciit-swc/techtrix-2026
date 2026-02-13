@@ -3,7 +3,18 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   reactCompiler: true,
   images: {
-    domains: ['i.postimg.cc', 'i.ibb.co'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'i.postimg.cc',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'i.ibb.co',
+        pathname: '/**',
+      },
+    ],
   },
 };
 

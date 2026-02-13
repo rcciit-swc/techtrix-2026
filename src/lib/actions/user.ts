@@ -1,8 +1,26 @@
-import { getUserData } from '@/utils/functions';
+import { getUserData, updateUserData } from '@/lib/services';
 
 export const populateUserDetails = async (set: any) => {
   set({ userLoading: true });
-  // logic
-  await getUserData();
-  set({ userLoading: false });
+  const data = await getUserData();
+  if (data) {
+    set({ userData: data.data, swcData: data.swcData, userLoading: false });
+  } else {
+    set({ userLoading: false });
+  }
+};
+
+export const update_and_populate = async (set: any, data: any) => {
+  set({ userLoading: true });
+  await updateUserData(data);
+  const updatedData = await getUserData();
+  if (updatedData) {
+    set({
+      userData: updatedData.data,
+      swcData: updatedData.swcData,
+      userLoading: false,
+    });
+  } else {
+    set({ userLoading: false });
+  }
 };

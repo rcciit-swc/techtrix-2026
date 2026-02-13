@@ -1,5 +1,5 @@
-import { getTeamsGroupedByCategory } from '@/utils/functions/teams/getTeams';
-import { getTeamIcon, getTeamPath } from '@/utils/functions/teams/teamIcons';
+import { getTeamIcon, getTeamPath } from '@/lib/constants/teamIcons';
+import { getTeamsGroupedByCategory } from '@/lib/services';
 import { Team, TeamMember } from '../types/teams';
 
 /**

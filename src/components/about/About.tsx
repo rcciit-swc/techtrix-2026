@@ -3,6 +3,7 @@ import Image from 'next/image';
 export default function AboutSection() {
   return (
     <section
+      id="about"
       className="relative w-full min-h-screen py-12 md:py-24 overflow-hidden bg-cover bg-center"
       style={{
         backgroundImage: "url('/about/about-bg.png')",
@@ -73,7 +74,7 @@ export default function AboutSection() {
             <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-black/40 backdrop-blur border border-white/20">
               <span className="text-blue-400 text-lg">🛡</span>
               <div>
-                <div className="font-bold text-xl">50+</div>
+                <div className="font-bold text-xl">30+</div>
                 <div className="text-xs text-gray-300">EVENTS</div>
               </div>
             </div>

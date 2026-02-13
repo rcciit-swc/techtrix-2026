@@ -1,12 +1,18 @@
-import type { Metadata } from 'next';
-import './globals.css';
-import { constructMetaData } from '@/utils/functions';
-import { Orbitron } from 'next/font/google';
+import Footer from '@/components/Footer';
 import { Navbar } from '@/components/Navbar';
+import { RazorpayScript } from '@/components/RazorpayScript';
+import SessionProvider from '@/lib/providers/SessionProvider';
+import { constructMetaData } from '@/lib/utils';
+import type { Metadata } from 'next';
+import { Orbitron } from 'next/font/google';
+import { Toaster } from 'sonner';
+import './globals.css';
 
 export const metadata: Metadata = constructMetaData({
+  image: '/favicon.jpg',
   title: 'Techtrix 2026',
-  description: 'The Official Sports Fest of RCCIIT.',
+  description:
+    'The Annual Inter-College National Level Technical Fest of RCCIIT.',
 });
 
 const orbitron = Orbitron({
@@ -25,6 +31,10 @@ export default function RootLayout({
       <body className={`${orbitron.className} antialiased`}>
         {children}
         <Navbar />
+        <Footer />
+        <Toaster position="bottom-right" richColors duration={5000} />
+        <SessionProvider />
+        <RazorpayScript />
       </body>
     </html>
   );
