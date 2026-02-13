@@ -29,7 +29,7 @@ export function Navbar() {
       icon: (
         <IconUsers className="h-full w-full text-neutral-500 dark:text-neutral-300" />
       ),
-      href: '#',
+      href: '/teams',
     },
     {
       title: 'Contact',
