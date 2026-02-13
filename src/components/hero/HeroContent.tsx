@@ -1,28 +1,32 @@
 'use client';
 
-import Image from 'next/image';
-import Link from 'next/link';
+import { login } from '@/lib/services/auth';
+import { useUser } from '@/lib/stores';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
-import { textReveal, titleReveal, buttonReveal } from './hero-animations';
+import Image from 'next/image';
+import Link from 'next/link';
+import { buttonReveal, textReveal, titleReveal } from './hero-animations';
+import { HeroCountdown } from './HeroCountdown';
 
 export function HeroContent() {
+  const { userData } = useUser();
   return (
-    <div className="relative z-30 flex flex-col items-center justify-center text-center pt-4">
+    <div className="relative z-30 flex flex-col items-center justify-center text-center">
       {/* RCC Institute Structure */}
       <motion.div
         variants={textReveal}
         initial="hidden"
         animate="visible"
         transition={{ delay: 0.2 }}
-        className="flex flex-col items-center gap-4 mb-2"
+        className="flex flex-col items-center gap-3 md:gap-4 mb-2 md:mb-3"
       >
         {/* hero6.png image - contains RCC INSTITUTE OF and INFORMATION TECHNOLOGY */}
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
-          className="relative w-40 h-24 md:w-59.75 md:h-33.5"
+          className="relative w-40 h-32 md:w-48 md:h-28 lg:w-52 lg:h-30"
         >
           <Image
             src="/hero/hero6.png"
@@ -38,7 +42,7 @@ export function HeroContent() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.5 }}
-          className="text-white font-bold text-[32px] md:text-[50px]"
+          className="text-white font-bold mb-2 text-[28px] md:text-[40px] lg:text-[45px]"
           style={{
             fontFamily: 'Metal Mania',
             textAlign: 'center',
@@ -56,7 +60,7 @@ export function HeroContent() {
         initial="hidden"
         animate="visible"
         variants={titleReveal}
-        className="text-[90px] sm:text-[100px] md:text-[120px] lg:text-[240px] font-medium text-white leading-none"
+        className="text-[100px] sm:text-[90px] md:text-[110px] lg:text-[180px] xl:text-[180px] font-medium text-white leading-none"
         style={{ fontFamily: 'Golden Sentry' }}
       >
         TECHTRIX
@@ -67,7 +71,7 @@ export function HeroContent() {
         animate="visible"
         variants={textReveal}
         transition={{ delay: 0.4 }}
-        className="text-base md:text-2xl mt-4 md:mt-8 tracking-[0.3em] uppercase font-bold px-4"
+        className="text-base md:text-xl lg:text-2xl mt-4 md:mt-0 tracking-[0.3em] uppercase font-bold px-4"
         style={{
           fontFamily: '"Metal Mania"',
           background:
@@ -85,7 +89,7 @@ export function HeroContent() {
         animate="visible"
         variants={textReveal}
         transition={{ delay: 0.6 }}
-        className="max-w-2xl mt-4 md:mt-6 px-4 text-sm md:text-[20px]"
+        className="max-w-2xl mt-4 md:mt-2 px-4 text-sm md:text-base lg:text-lg"
         style={{
           fontFamily: 'Maname',
           color: '#F9FAFB',
@@ -103,34 +107,59 @@ export function HeroContent() {
         animate="visible"
         variants={buttonReveal}
         transition={{ delay: 0.9 }}
-        className="flex flex-wrap justify-center gap-4 md:gap-6 mt-6 md:mt-12"
+        className="flex flex-wrap justify-center gap-4 md:gap-4 mt-6 md:mt-4"
       >
-        <Link
-          href="#register"
-          className="group relative flex items-center gap-[12px] px-[32px] py-[18px] rounded-[24px] bg-[#EDF526] shadow-[0_10px_30px_-10px_rgba(237,245,38,0.5)] hover:scale-105 transition-all duration-300 overflow-hidden text-lg md:text-[22px]"
-          style={{
-            color: '#050816',
-            fontFamily: '"Metal Mania"',
-            fontWeight: 400,
-            letterSpacing: '1px',
-          }}
-        >
-          <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-          <span className="relative z-10 flex items-center gap-3">
-            Register Now
-            <Image
-              src="/hero/registerr.svg"
-              alt="icon"
-              width={22}
-              height={22}
-              className="group-hover:rotate-12 transition-transform"
-            />
-          </span>
-        </Link>
+        {userData ? (
+          <Link
+            href="#events"
+            className="group relative flex items-center gap-2 md:gap-3 px-6 py-3 md:px-8 md:py-4 rounded-[24px] bg-[#EDF526] shadow-[0_10px_30px_-10px_rgba(237,245,38,0.5)] hover:scale-105 transition-all duration-300 overflow-hidden text-base md:text-lg lg:text-xl"
+            style={{
+              color: '#050816',
+              fontFamily: '"Metal Mania"',
+              fontWeight: 400,
+              letterSpacing: '1px',
+            }}
+          >
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <span className="relative z-10 flex items-center gap-3">
+              Register Now
+              <Image
+                src="/hero/registerr.svg"
+                alt="icon"
+                width={22}
+                height={22}
+                className="group-hover:rotate-12 transition-transform"
+              />
+            </span>
+          </Link>
+        ) : (
+          <button
+            onClick={() => login()}
+            className="group relative flex items-center gap-2 md:gap-3 px-6 py-3 md:px-8 md:py-4 rounded-[24px] bg-[#EDF526] shadow-[0_10px_30px_-10px_rgba(237,245,38,0.5)] hover:scale-105 transition-all duration-300 overflow-hidden text-base md:text-lg lg:text-xl cursor-pointer"
+            style={{
+              color: '#050816',
+              fontFamily: '"Metal Mania"',
+              fontWeight: 400,
+              letterSpacing: '1px',
+            }}
+          >
+            <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+            <span className="relative z-10 flex items-center gap-3">
+              Register Now
+              <Image
+                src="/hero/registerr.svg"
+                alt="icon"
+                width={22}
+                height={22}
+                className="group-hover:rotate-12 transition-transform"
+              />
+            </span>
+          </button>
+        )}
 
         <Link
-          href="#details"
-          className="group flex items-center gap-3 border-2 border-white/30 px-8 py-4 rounded-[24px] hover:border-white hover:scale-105 transition-all duration-300 text-lg md:text-[22px]"
+          href="#about"
+          className="group flex items-center gap-2 md:gap-3 border-2 border-white/30 px-6 py-3 md:px-8 md:py-4 rounded-[24px] hover:border-white hover:scale-105 transition-all duration-300 text-base md:text-lg lg:text-xl"
           style={{
             color: '#FFF',
             fontFamily: '"Metal Mania"',
@@ -145,6 +174,9 @@ export function HeroContent() {
           />
         </Link>
       </motion.div>
+      <div className=" md:hidden block flex-col items-center justify-center">
+        <HeroCountdown />
+      </div>
     </div>
   );
 }

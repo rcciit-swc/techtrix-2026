@@ -1,13 +1,13 @@
 import { Metadata } from 'next';
 
 export function constructMetaData({
-  title = 'Game of Thrones 2026 | Official Sports Fest of RCCIIT',
-  description = 'Game of Thrones 2026 is the premier annual sports festival of RCC Institute of Information Technology. Join us for thrilling competitions, exciting events, and unforgettable moments.',
+  title = 'Techtrix 2026 | Official Technical Fest of RCCIIT',
+  description = 'Techtrix 2026 is the premier annual technical festival of RCC Institute of Information Technology. Join us for thrilling competitions, exciting events, and unforgettable moments.',
   authors = {
-    name: 'Game of Thrones RCCIIT Team 2026',
-    url: 'https://got.rcciit.org.in/',
+    name: 'Techtrix RCCIIT Team 2026',
+    url: 'https://techtrix.rcciit.org.in/',
   },
-  creator = 'Game of Thrones RCCIIT Team 2026',
+  creator = 'Techtrix RCCIIT Team 2026',
   generator = 'Next.js',
   publisher = 'RCC Institute of Information Technology',
   icons = '/favicon.ico',
@@ -24,20 +24,20 @@ export function constructMetaData({
   },
   image = '/favicon.jpg',
   keywords = [
-    'Game of Thrones',
+    'Techtrix',
     'GOT 2026',
     'RCCIIT',
     'RCC Institute',
-    'Sports Fest',
-    'College Sports',
-    'Sports Festival',
-    'Kolkata Sports Event',
+    'Technical Fest',
+    'College Technical',
+    'Technical Festival',
+    'Kolkata Technical Event',
     'College Events',
-    'Sports Competition',
-    'Annual Sports Meet',
+    'Technical Competition',
+    'Annual Technical Meet',
     'RCCIIT Events',
   ],
-  category = 'Sports & Events',
+  category = 'Technical & Events',
   openGraphType = 'website' as const,
   twitterCard = 'summary_large_image' as const,
   verification = {
@@ -65,14 +65,14 @@ export function constructMetaData({
     yahoo?: string;
   };
 } = {}): Metadata {
-  const metadataBase = new URL('https://got.rcciit.org.in/');
+  const metadataBase = new URL('https://techtrix.rcciit.org.in/');
   const imageUrl = new URL(image, metadataBase).toString();
 
   return {
     metadataBase,
     title: {
       default: title,
-      template: '%s | Game of Thrones 2026',
+      template: '%s | Techtrix 2026',
     },
     description,
     keywords,
@@ -90,7 +90,7 @@ export function constructMetaData({
       type: openGraphType,
       locale: 'en_IN',
       url: metadataBase,
-      siteName: 'Game of Thrones 2026',
+      siteName: 'Techtrix 2026',
       title,
       description,
       images: [
@@ -98,7 +98,7 @@ export function constructMetaData({
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: 'Game of Thrones 2026 - Official Sports Fest of RCCIIT',
+          alt: 'Techtrix 2026 - Official Technical Fest of RCCIIT',
           type: 'image/png',
         },
       ],
@@ -120,7 +120,7 @@ export function constructMetaData({
     },
 
     // App-specific metadata
-    applicationName: 'Game of Thrones 2026',
+    applicationName: 'Techtrix 2026',
 
     // Format detection
     formatDetection: {

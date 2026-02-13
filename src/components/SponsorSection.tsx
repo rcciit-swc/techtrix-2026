@@ -1,9 +1,12 @@
-import React from 'react';
 import Image from 'next/image';
+import { DynamicBackground } from './AnimatedBackground';
 
 const SponsorSection = () => {
   return (
     <div className="relative w-full py-12 md:py-16 overflow-hidden">
+      {/* Animated Background */}
+      <DynamicBackground variant="sponsors" />
+
       <div className="absolute inset-0 -z-10">
         <Image
           src="/SponsorSection/SponsorBG.png"
@@ -18,7 +21,7 @@ const SponsorSection = () => {
           <h1
             className="text-white text-center"
             style={{
-              fontFamily: 'VerveAlternate', // unable to fetch verve alternate font
+              fontFamily: 'VerveAlternate',
               fontSize: '35px',
               fontStyle: 'normal',
               fontWeight: 400,
@@ -29,33 +32,17 @@ const SponsorSection = () => {
           </h1>
         </div>
 
-        <div className="flex flex-wrap pt-4 items-center justify-center gap-8 md:gap-12 lg:gap-[150px]">
-          <div className="relative w-48 h-32 md:w-56 md:h-36 lg:w-64 lg:h-40">
-            <Image
-              src="/SponsorSection/Icon1.svg"
-              alt="Sponsor 1"
-              fill
-              className="object-contain"
-            />
-          </div>
-
-          <div className="relative w-48 h-32 md:w-56 md:h-36 lg:w-64 lg:h-40">
-            <Image
-              src="/SponsorSection/Icon2.svg"
-              alt="Sponsor 2"
-              fill
-              className="object-contain"
-            />
-          </div>
-
-          <div className="relative w-48 h-32 md:w-56 md:h-36 lg:w-64 lg:h-40">
-            <Image
-              src="/SponsorSection/Icon3.svg"
-              alt="Sponsor 3"
-              fill
-              className="object-contain"
-            />
-          </div>
+        {/* Launching Soon Message */}
+        <div className="flex items-center justify-center pt-4 min-h-[200px]">
+          <h2
+            className="text-[#EDF526] text-4xl md:text-6xl lg:text-7xl font-bold uppercase tracking-wider"
+            style={{
+              fontFamily: 'Metal Mania',
+              textShadow: '0 0 20px rgba(237, 245, 38, 0.5)',
+            }}
+          >
+            Launching Soon
+          </h2>
         </div>
       </div>
     </div>

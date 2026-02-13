@@ -18,8 +18,8 @@ export const getEventCategories = async () => {
 
 export const getEventsData = async (): Promise<events[] | null> => {
   try {
-    const { auth_data } = await supabase.auth.getSession();
-    const userId = auth_data?.session?.user?.id ?? null;
+    const { data: authData } = await supabase.auth.getSession();
+    const userId = authData?.session?.user?.id ?? null;
 
     const { data, error } = await supabase.rpc(
       'get_events_with_participants_by_fest',

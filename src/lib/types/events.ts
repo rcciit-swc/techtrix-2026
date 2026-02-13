@@ -31,6 +31,8 @@ export interface events {
     url: string;
   }[];
   registered?: boolean;
+  transaction_verified?: string | null;
+  registered_team_id?: string | null;
   team_details?: TeamMember[] | null;
   transaction_screenshot?: string | null;
 }
@@ -77,8 +79,9 @@ export interface EventsStateType {
 }
 
 export interface EventsActionsType {
-  setEventsData: () => void;
+  setEventsData: (background?: boolean) => void;
   getEventCategories: () => void;
   getEventByID: (id: string) => void;
   markEventAsRegistered: (eventId: string) => void;
+  markEventAsPending: (eventId: string, teamId: string) => void;
 }

@@ -13,7 +13,7 @@ export const bgReveal = {
     scale: 1,
     filter: 'blur(0px)',
     transition: {
-      duration: 2.8,
+      duration: 2,
       ease: cinematicEase,
     },
   },
@@ -82,7 +82,7 @@ export const titleReveal = {
     scale: 0.55,
     rotateZ: -14,
     y: 80,
-    filter: 'blur(18px)',
+    filter: 'blur(8px)',
   },
   visible: {
     opacity: 1,
@@ -91,7 +91,7 @@ export const titleReveal = {
     y: 0,
     filter: 'blur(0px)',
     transition: {
-      duration: 2.4,
+      duration: 1.8,
       ease: cinematicEase,
     },
   },
@@ -102,7 +102,7 @@ export const textReveal = {
     opacity: 0,
     y: 40,
     scale: 0.96,
-    filter: 'blur(6px)',
+    filter: 'blur(3px)',
   },
   visible: {
     opacity: 1,
@@ -110,7 +110,7 @@ export const textReveal = {
     scale: 1,
     filter: 'blur(0px)',
     transition: {
-      duration: 1.6,
+      duration: 1.2,
       ease: cinematicEase,
     },
   },
@@ -127,7 +127,7 @@ export const buttonReveal = {
     scale: 1,
     y: 0,
     transition: {
-      duration: 1.4,
+      duration: 1,
       ease: cinematicEase,
     },
   },

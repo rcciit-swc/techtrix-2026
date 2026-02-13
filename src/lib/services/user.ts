@@ -71,33 +71,33 @@ export const handleSaveChanges = async (
 
   if (!formDataObj.gender) {
     toast.error('Gender is required');
-    return;
+    throw new Error('Gender is required');
   } else if (!formDataObj.fullName) {
     toast.error('Full name is required');
-    return;
+    throw new Error('Full name is required');
   } else if (!formDataObj.phone) {
     toast.error('Phone number is required');
-    return;
+    throw new Error('Phone number is required');
   } else if (!/^\d{10}$/.test(formDataObj.phone as string)) {
     toast.error('Invalid phone number');
-    return;
+    throw new Error('Invalid phone number');
   } else if (!formDataObj.stream) {
     toast.error('Stream is required');
-    return;
+    throw new Error('Stream is required');
   } else if (!formDataObj.college) {
     toast.error('College is required');
-    return;
+    throw new Error('College is required');
   } else if (!formDataObj.college_roll) {
     toast.error('College Roll is required');
-    return;
+    throw new Error('College Roll is required');
   } else if (!formDataObj.course) {
     toast.error('Course is required');
-    return;
+    throw new Error('Course is required');
   }
 
   if (!userData?.id) {
     toast.error('User data not found');
-    return;
+    throw new Error('User data not found');
   }
 
   const updatedData = {

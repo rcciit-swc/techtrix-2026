@@ -1,8 +1,9 @@
 'use client';
 
-import Image from 'next/image';
 import { motion } from 'motion/react';
+import Image from 'next/image';
 import { bgReveal } from './hero-animations';
+import { HeroCountdown } from './HeroCountdown';
 
 export function HeroBackground() {
   return (
@@ -19,6 +20,9 @@ export function HeroBackground() {
         className="object-cover"
         priority
       />
+      <div className="hidden md:block">
+        <HeroCountdown />
+      </div>
     </motion.div>
   );
 }

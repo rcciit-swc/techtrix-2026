@@ -1,34 +1,35 @@
-import Image from 'next/image';
 import { ChevronDown, ChevronUp } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { DynamicBackground } from './AnimatedBackground';
 
-const categories = [
+export const categories = [
   {
-    id: 'a1bb62c8-fd3d-485a-959e-be8cc528cc43',
+    id: 'fb17b092-1622-4a3d-90a9-650fd860f6a0',
     name: 'Automata',
     logo: '/events/logo1.png',
     image: '/events/hero1.png',
   },
   {
-    id: '0f947f04-f7bc-45f7-a66c-789b2bbe2b53',
+    id: '12e9931b-42f8-41a0-9f87-3fd641fe946e',
     name: 'Robotics',
     logo: '/events/logo2.png',
     image: '/events/hero2.png',
   },
   {
-    id: '0f52d7d3-a9e7-454a-bff0-979de725e51a',
+    id: '441aa4ca-49ad-4b57-bb7f-6a1c5cc63a32',
     name: 'Out of the box',
     logo: '/events/logo3.png',
     image: '/events/hero3.png',
   },
   {
-    id: '4ff0cd32-079f-43fd-84b0-b9147f74eaca',
+    id: 'a8609025-6132-4d69-8c61-3313ef082db4',
     name: 'Flagship',
     logo: '/events/logo4.png',
     image: '/events/hero4.png',
   },
   {
-    id: '43c36d73-7e86-4c5b-a580-cecda4b14281',
+    id: '40d34d1e-1a8c-4ce6-a3e3-6b704b85a568',
     name: 'Gaming',
     logo: '/events/logo5.png',
     image: '/events/hero5.png',
@@ -39,6 +40,8 @@ export default function EventsSection() {
   return (
     <section id="events">
       <div className="min-h-screen md:min-h-0 md:bg-[#000000] py-8 md:py-12 relative overflow-hidden flex flex-col">
+        {/* Animated Background */}
+        <DynamicBackground variant="events" />
         {/* Mobile Background Image 
         <div className="absolute inset-0 w-full h-full md:hidden z-0">
           <Image
@@ -92,7 +95,7 @@ export default function EventsSection() {
         </div>
 
         {/* Main Container */}
-        <div className="relative w-full flex-1 flex flex-col md:flex-row z-10 bg-black md:bg-transparent">
+        <div className="relative w-full flex-1 flex flex-col md:flex-row z-10 md:bg-transparent">
           {/* Left Section - Yellow Box */}
           <div className="relative w-full md:w-[65%] h-auto md:h-[46.875rem] lg:h-[53.125rem] flex flex-col">
             {/* Top left chevrons - Black */}
@@ -127,16 +130,15 @@ export default function EventsSection() {
               </div>
             </div>
 
-            {/* Inner content area */}
-            <div className="relative h-full flex flex-col gap-4 px-4 pt-16 pb-0 md:flex-row md:gap-4 md:px-6 md:py-10 items-center w-full">
+            <div className="relative h-full flex flex-col gap-6 px-4 pt-16 pb-8 md:flex-row md:gap-4 md:px-6 md:py-10 items-center w-full">
               {categories.map((category, index) => (
                 <Link
                   key={category.name}
                   href={`/events/${category.id}`}
                   className="
                     relative group cursor-pointer
-                    w-full aspect-[3/8] mb-0 last:mb-0
-                    md:flex-1 md:h-[95%] md:aspect-auto md:mb-0
+                    w-[85%] max-w-[280px] aspect-[2/5] mb-4 last:mb-0
+                    md:flex-1 md:h-[95%] md:aspect-auto md:mb-0 md:w-auto md:max-w-none
                   "
                 >
                   <div
@@ -150,10 +152,9 @@ export default function EventsSection() {
                     }}
                   />
 
-                  {/* Image Layer */}
-                  <div className="absolute -top-16 bottom-0 z-10 flex flex-col -left-8 -right-8 md:left-0 md:right-0 md:[clip-path:polygon(0%_0%,_100%_0%,_100%_92%,_0%_100%)]">
+                  <div className="absolute -top-8 bottom-0 z-10 flex flex-col left-0 right-0 md:[clip-path:polygon(0%_0%,_100%_0%,_100%_92%,_0%_100%)]">
                     {/* Image Container */}
-                    <div className="relative flex-[4] w-full overflow-hidden">
+                    <div className="relative flex-[4] w-full overflow-hidden rounded-t-lg md:rounded-none">
                       <div className="absolute inset-0 w-full h-full">
                         <Image
                           src={category.image}
@@ -172,16 +173,15 @@ export default function EventsSection() {
                       <div className="w-full relative mb-0 group-hover:scale-105 transition-transform z-10">
                         <div className="absolute inset-0 bg-[#EDF526] blur opacity-50"></div>
                         {/* Black Rectangle */}
-                        <div className="relative z-10 bg-black w-full py-2 border-y border-[#EEFF00]/30">
-                          <h3 className="text-white text-2xl md:text-sm font-bold uppercase tracking-wider text-center">
+                        <div className="relative z-10 bg-black w-full py-1.5 md:py-2 border-y border-[#EEFF00]/30">
+                          <h3 className="text-white text-lg md:text-sm font-bold uppercase tracking-wider text-center">
                             {category.name}
                           </h3>
                         </div>
                       </div>
 
-                      {/* Extended Region for Logo */}
-                      <div className="flex-1 flex items-center justify-center w-full pb-2 md:pb-10">
-                        <div className="w-12 h-12 md:w-20 md:h-20 lg:w-23 lg:h-23 rounded-full group-hover:scale-110 bg-transparent flex items-center justify-center overflow-hidden">
+                      <div className="flex-1 flex items-center justify-center w-full pb-3 md:pb-10">
+                        <div className="w-16 h-16 md:w-20 md:h-20 lg:w-23 lg:h-23 rounded-full group-hover:scale-110 bg-transparent flex items-center justify-center overflow-hidden">
                           <Image
                             src={category.logo}
                             alt={category.name}
