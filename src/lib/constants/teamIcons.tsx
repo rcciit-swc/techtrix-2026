@@ -1,12 +1,15 @@
 import {
-  Award,
-  Code2Icon,
-  HeartHandshake,
-  Mic,
-  Paintbrush,
+  Cpu,
+  Gem,
+  Hammer,
+  Megaphone,
+  PenTool,
+  Share2,
+  Shield,
   Star,
+  Target,
+  Zap,
 } from 'lucide-react';
-import { FaMoneyCheck, FaTruck } from 'react-icons/fa';
 
 /**
  * Maps team IDs to their corresponding icons
@@ -14,20 +17,20 @@ import { FaMoneyCheck, FaTruck } from 'react-icons/fa';
  */
 export const getTeamIcon = (teamId: string): React.ReactNode => {
   const iconMap: Record<string, React.ReactNode> = {
-    faculty: <HeartHandshake className="text-yellow-200" />,
-    swc: <Award className="text-yellow-200" />,
-    convenors: <Star className="text-yellow-200" />,
-    coordinators: <Star className="text-yellow-200" />,
-    tech: <Code2Icon className="text-yellow-200" />,
-    graphics: <Paintbrush className="text-yellow-200" />,
-    social_media: <Mic className="text-yellow-200" />,
-    pr: <Mic className="text-yellow-200" />,
-    logistics: <FaTruck className="text-yellow-200" />,
-    sponsorship: <FaMoneyCheck className="text-yellow-200" />,
+    faculty: <Shield className="text-red-500" />, // SHIELD - Leadership
+    swc: <Target className="text-blue-400" />, // Hawkeye/Target - Precision
+    convenors: <Star className="text-yellow-400" />, // Captain America Star - Leaders
+    coordinators: <Zap className="text-yellow-400" />, // Thor/Lightning - Energy
+    tech: <Cpu className="text-cyan-400" />, // Iron Man Tech
+    graphics: <PenTool className="text-purple-400" />, // Creative/Art
+    social_media: <Share2 className="text-green-400" />, // Connection/Hulk Green?
+    pr: <Megaphone className="text-orange-400" />, // Communication
+    logistics: <Hammer className="text-gray-400" />, // Thor's Hammer - Heavy Lifting
+    sponsorship: <Gem className="text-yellow-200" />, // Infinity Stones - Value
   };
 
   // Return the icon or a default star icon
-  return iconMap[teamId.toLowerCase()] || <Star className="text-yellow-200" />;
+  return iconMap[teamId.toLowerCase()] || <Star className="text-white" />;
 };
 
 /**
