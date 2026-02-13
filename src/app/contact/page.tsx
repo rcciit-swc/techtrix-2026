@@ -346,6 +346,11 @@ const VenueSection = () => {
 export default function ContactPage() {
   const [activeTab, setActiveTab] = useState<'contacts' | 'venue'>('contacts');
   const [imagesPreloaded, setImagesPreloaded] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     const preloadAllImages = async () => {
@@ -389,35 +394,36 @@ export default function ContactPage() {
 
       {/* Floating Elements / Easter Eggs */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {[...Array(5)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute w-64 h-64 bg-yellow-500/5 rounded-full blur-3xl"
-            initial={{
-              x: Math.random() * 1000,
-              y: Math.random() * 1000,
-              opacity: 0,
-            }}
-            animate={{
-              x: [
-                Math.random() * 1000,
-                Math.random() * 1000,
-                Math.random() * 1000,
-              ],
-              y: [
-                Math.random() * 1000,
-                Math.random() * 1000,
-                Math.random() * 1000,
-              ],
-              opacity: [0.1, 0.3, 0.1],
-            }}
-            transition={{
-              duration: 20 + Math.random() * 10,
-              repeat: Infinity,
-              ease: 'linear',
-            }}
-          />
-        ))}
+        {isClient &&
+          [...Array(5)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="absolute w-64 h-64 bg-yellow-500/5 rounded-full blur-3xl"
+              initial={{
+                x: Math.random() * 1000,
+                y: Math.random() * 1000,
+                opacity: 0,
+              }}
+              animate={{
+                x: [
+                  Math.random() * 1000,
+                  Math.random() * 1000,
+                  Math.random() * 1000,
+                ],
+                y: [
+                  Math.random() * 1000,
+                  Math.random() * 1000,
+                  Math.random() * 1000,
+                ],
+                opacity: [0.1, 0.3, 0.1],
+              }}
+              transition={{
+                duration: 20 + Math.random() * 10,
+                repeat: Infinity,
+                ease: 'linear',
+              }}
+            />
+          ))}
       </div>
 
       {!imagesPreloaded && (
