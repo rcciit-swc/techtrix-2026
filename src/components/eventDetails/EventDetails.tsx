@@ -185,7 +185,7 @@ export default function EventDetails({ event }: Props) {
         {/* Left Sidebar Spacer - Desktop only */}
         <div className="hidden lg:block w-[200px] xl:w-[220px] flex-shrink-0" />
         {/* Main Content Panel - Centered */}
-        <div className="w-full lg:max-w-[950px] xl:max-w-[1100px] lg:my-8 rounded-2xl lg:rounded-3xl border border-white/10 bg-black/40 backdrop-blur-md mx-2 sm:mx-4 lg:mx-6 flex justify-center items-center">
+        <div className="w-full lg:max-w-[950px] xl:max-w-[900px] lg:my-8 rounded-2xl lg:rounded-3xl border border-white/10 bg-black/40 backdrop-blur-md mx-2 sm:mx-4 lg:mx-6 flex justify-center items-center">
           {/* Inner Content */}
           <div className="w-full flex flex-col items-center py-4 px-3 sm:py-6 sm:px-5 lg:py-8 lg:px-8">
             {/* Header Row: Title + Buttons */}
@@ -258,7 +258,7 @@ export default function EventDetails({ event }: Props) {
 
       {/* Character Image - Fixed Right Side (Desktop only) */}
       <div
-        className="hidden lg:block fixed right-0 bottom-0 w-[200px] xl:w-[220px] h-[85vh] pointer-events-none"
+        className="hidden lg:block absolute -right-10 -bottom-10 w-[350px] xl:w-[400px] h-[85vh] pointer-events-none"
         style={{ zIndex: 5 }}
       >
         <Image

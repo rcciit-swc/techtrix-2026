@@ -9,6 +9,7 @@ import { Toaster } from 'sonner';
 import './globals.css';
 
 export const metadata: Metadata = constructMetaData({
+  image: '/favicon.jpg',
   title: 'Techtrix 2026',
   description:
     'The Annual Inter-College National Level Technical Fest of RCCIIT.',
