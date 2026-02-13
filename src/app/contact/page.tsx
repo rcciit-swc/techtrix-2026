@@ -1,26 +1,11 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Mail, Phone, MapPin, Calendar } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Globe, Mail, MapPin, Navigation, Phone } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { contactData } from './contact-data';
 
 const imageCache = new Map<string, string>();
-
-const clearImageCache = () => {
-  imageCache.forEach((blobUrl) => {
-    if (blobUrl.startsWith('blob:')) {
-      URL.revokeObjectURL(blobUrl);
-    }
-  });
-  imageCache.clear();
-  const keys = Object.keys(localStorage);
-  keys.forEach((key) => {
-    if (key.startsWith('img_cache_')) {
-      localStorage.removeItem(key);
-    }
-  });
-};
 
 const cacheImage = async (url: string): Promise<string> => {
   if (imageCache.has(url)) {
@@ -81,99 +66,91 @@ const ContactCard = ({ contact }: { contact: any }) => {
 
   return (
     <motion.div
-      className="relative w-full max-w-sm h-[450px] cursor-pointer group"
+      className="relative w-[250px] h-[300px] cursor-pointer group perspective-1000"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ y: -8, scale: 1.02 }}
-      transition={{ duration: 0.2 }}
+      whileHover={{ y: -5 }}
+      transition={{ duration: 0.3 }}
     >
       <div
-        className="relative w-full h-full rounded-2xl overflow-hidden border-2 border-red-600/40 shadow-xl"
+        className="relative w-full h-full rounded-2xl overflow-hidden border border-yellow-500/20 bg-black/40 backdrop-blur-sm transition-all duration-300"
         style={{
           boxShadow: isHovered
-            ? '0 20px 60px rgba(220, 38, 38, 0.5), 0 0 40px rgba(30, 64, 175, 0.3)'
-            : '0 10px 30px rgba(220, 38, 38, 0.3), 0 0 20px rgba(30, 64, 175, 0.2)',
+            ? '0 0 30px rgba(250, 204, 21, 0.2), inset 0 0 20px rgba(250, 204, 21, 0.1)'
+            : '0 0 15px rgba(0, 0, 0, 0.5)',
         }}
       >
+        {/* Border Glow Effect */}
+        <div
+          className={`absolute inset-0 rounded-2xl border-2 transition-colors duration-300 ${isHovered ? 'border-yellow-500/60' : 'border-transparent'}`}
+        />
+
+        {/* Corner Accents */}
+        <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-yellow-500/30 rounded-tl-xl z-20" />
+        <div className="absolute top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-yellow-500/30 rounded-tr-xl z-20" />
+        <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-yellow-500/30 rounded-bl-xl z-20" />
+        <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-yellow-500/30 rounded-br-xl z-20" />
+
         {imageLoading && (
-          <div className="absolute inset-0 bg-gradient-to-br from-[#1a0000] to-[#000d21] animate-pulse" />
+          <div className="absolute inset-0 bg-gray-900 animate-pulse flex items-center justify-center">
+            <div className="w-8 h-8 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin" />
+          </div>
         )}
 
         <img
           src={cachedImageUrl}
           alt={contact.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover transition-transform duration-700 ease-in-out"
           style={{
-            filter: isHovered
-              ? 'brightness(1.1) saturate(1.2)'
-              : 'brightness(1)',
-            transition: 'filter 0.5s ease',
+            transform: isHovered ? 'scale(1.1)' : 'scale(1)',
+            filter: isHovered ? 'grayscale(0%)' : 'grayscale(20%)',
             opacity: imageLoading ? 0 : 1,
           }}
           onLoad={() => setImageLoading(false)}
         />
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
 
-        <div
-          className={`absolute bottom-0 left-0 right-0 p-5 transition-all duration-500 ${
-            isHovered ? 'opacity-0 invisible' : 'opacity-100 visible'
-          }`}
-        >
+        {/* Content */}
+        <div className="absolute bottom-0 left-0 right-0 p-6 z-10 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
           <h3
             style={{ fontFamily: 'Metal Mania' }}
-            className="text-white font-bold text-3xl text-center mb-2 drop-shadow-lg"
+            className="text-white font-bold text-2xl mb-1 tracking-wider drop-shadow-md group-hover:text-yellow-400 transition-colors"
           >
             {contact.name}
           </h3>
-          <p className="text-red-500 text-xl text-center mb-3 font-semibold">
+          <p className="text-yellow-500/80 text-sm font-bold uppercase tracking-widest mb-3 border-b border-yellow-500/30 pb-2 inline-block">
             {contact.role}
           </p>
-          <a
-            href={`tel:${contact.phone}`}
-            className="flex items-center justify-center gap-2 text-gray-200 text-lg"
+
+          <div
+            className={`space-y-2 overflow-hidden transition-all duration-300 ${isHovered ? 'max-h-24 opacity-100' : 'max-h-0 opacity-0'}`}
           >
-            <Phone className="w-4 h-4" />
-            <span className="font-mono">{contact.phone}</span>
-          </a>
-        </div>
-
-        {isHovered && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-6 bg-gradient-to-br from-black/90 via-red-900/80 to-blue-900/90 backdrop-blur-sm">
-            <div className="text-center">
-              <h3
-                style={{ fontFamily: 'Metal Mania' }}
-                className="text-white font-bold text-2xl mb-3"
-              >
-                {contact.name}
-              </h3>
-              <p className="text-red-400 text-base mb-4 font-semibold">
-                {contact.role}
-              </p>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-center gap-2">
-                  <Phone className="w-4 h-4 text-red-400" />
-                  <p className="text-white text-base tracking-wide font-mono">
-                    {contact.phone}
-                  </p>
-                </div>
-
-                {contact.email && (
-                  <div className="flex items-center justify-center gap-2">
-                    <Mail className="w-4 h-4 text-red-400" />
-                    <p className="text-white text-sm">{contact.email}</p>
-                  </div>
-                )}
+            <a
+              href={`tel:${contact.phone}`}
+              className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors group/link"
+            >
+              <div className="w-6 h-6 rounded-full bg-yellow-500/10 flex items-center justify-center group-hover/link:bg-yellow-500/20">
+                <Phone className="w-3 h-3 text-yellow-500" />
               </div>
-            </div>
-
-            <div className="absolute top-3 left-3 w-8 h-8 border-l-2 border-t-2 border-red-500 opacity-70 rounded-tl-lg"></div>
-            <div className="absolute top-3 right-3 w-8 h-8 border-r-2 border-t-2 border-red-500 opacity-70 rounded-tr-lg"></div>
-            <div className="absolute bottom-3 left-3 w-8 h-8 border-l-2 border-b-2 border-red-500 opacity-70 rounded-bl-lg"></div>
-            <div className="absolute bottom-3 right-3 w-8 h-8 border-r-2 border-b-2 border-red-500 opacity-70 rounded-br-lg"></div>
+              <span className="font-mono text-sm">{contact.phone}</span>
+            </a>
+            {contact.email && (
+              <a
+                href={`mailto:${contact.email}`}
+                className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors group/link"
+              >
+                <div className="w-6 h-6 rounded-full bg-yellow-500/10 flex items-center justify-center group-hover/link:bg-yellow-500/20">
+                  <Mail className="w-3 h-3 text-yellow-500" />
+                </div>
+                <span className="font-mono text-sm truncate">
+                  {contact.email}
+                </span>
+              </a>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </motion.div>
   );
@@ -187,24 +164,26 @@ const ContactSection = ({
   contacts: any[];
 }) => {
   return (
-    <div className="w-full mb-16">
-      <div className="mb-10">
+    <div className="w-full mb-20 relative">
+      <div className="mb-10 flex items-center justify-center gap-4">
+        <div className="h-[2px] w-12 bg-gradient-to-r from-transparent to-yellow-500/50" />
         <h2
           style={{ fontFamily: 'Metal Mania' }}
-          className="text-3xl md:text-4xl font-bold text-center relative"
+          className="text-3xl md:text-5xl font-bold text-center text-transparent bg-clip-text bg-gradient-to-b from-white to-gray-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.3)]"
         >
-          <span className="text-red-500 inline-block">{title}</span>
-          <div className="h-1 w-24 bg-gradient-to-r from-transparent via-blue-500 to-transparent mx-auto mt-3 rounded-full" />
+          {title}
         </h2>
+        <div className="h-[2px] w-12 bg-gradient-to-l from-transparent to-yellow-500/50" />
       </div>
 
-      <div className="flex flex-wrap gap-8 justify-center px-4">
+      <div className="flex flex-wrap gap-8 justify-center px-4 max-w-7xl mx-auto">
         {contacts.map((contact, index) => (
           <motion.div
             key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: index * 0.1, duration: 0.5 }}
           >
             <ContactCard contact={contact} />
           </motion.div>
@@ -218,7 +197,7 @@ const VenueSection = () => {
   const venues = [
     {
       name: 'RCCIIT Campus',
-      subName: 'The Fortress of Strategy',
+      subName: 'The Main Arena',
       address: 'Canal South Road, Beliaghata, Kolkata - 700015',
       landmark: 'Near Paribesh Bhavan / Narkeldanga Police Station',
       transport: 'Nearest Metro: Sealdah / Phoolbagan',
@@ -236,122 +215,126 @@ const VenueSection = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.5 }}
       className="w-full max-w-7xl mx-auto px-4"
     >
       <div className="mb-12 text-center">
         <h2
           style={{ fontFamily: 'Metal Mania' }}
-          className="text-4xl md:text-5xl font-bold relative tracking-wider"
+          className="text-4xl md:text-5xl font-bold tracking-wider mb-2"
         >
-          <span className="text-red-500 inline-block uppercase">
-            Realms of Battle
+          <span className="bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-600 bg-clip-text text-transparent drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]">
+            LOCATIONS
           </span>
-          <div className="text-blue-400 text-lg md:text-xl mt-2 tracking-[0.2em] uppercase font-semibold">
-            Venues & Locations
-          </div>
-          <div className="h-1 w-32 bg-gradient-to-r from-transparent via-red-600 to-transparent mx-auto mt-4 rounded-full" />
         </h2>
+        <p className="text-gray-400 tracking-widest text-sm uppercase">
+          Find your way to the battlefield
+        </p>
       </div>
 
       <div className="space-y-16">
         {venues.map((venue, index) => (
           <motion.div
             key={index}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: index * 0.1, duration: 0.5 }}
-            className={`grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 items-stretch ${
-              index % 2 !== 0 ? 'lg:direction-rtl' : ''
-            }`}
+            className="relative lg:grid lg:grid-cols-12 rounded-3xl overflow-hidden border border-white/10 bg-black/40 backdrop-blur-md"
+            style={{
+              boxShadow: '0 0 40px rgba(0, 0, 0, 0.5)',
+            }}
           >
-            <div
-              className={`lg:col-span-5 rounded-xl overflow-hidden border border-red-600/50 relative group bg-[#001a3d]/80 backdrop-blur-md flex flex-col`}
-              style={{
-                boxShadow:
-                  '0 0 30px rgba(0, 0, 0, 0.8), inset 0 0 20px rgba(220, 38, 38, 0.1)',
-              }}
-            >
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-red-600 via-blue-700 to-red-600" />
+            {/* Tech Decoration Lines */}
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent" />
+            <div className="absolute bottom-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-yellow-500/50 to-transparent" />
 
-              <div className="p-6 md:p-8 flex-1 flex flex-col justify-center">
-                <div className="mb-2 text-red-500 font-bold tracking-widest text-sm uppercase">
+            <div className="lg:col-span-5 p-8 flex flex-col justify-center relative z-10">
+              {/* Background Pattern */}
+              <div className="absolute inset-0 bg-[url('/profile/grid-pattern.png')] opacity-5 pointer-events-none" />
+
+              <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-yellow-500/10 border border-yellow-500/20 w-fit">
+                <div className="w-2 h-2 rounded-full bg-yellow-500 animate-pulse" />
+                <span className="text-yellow-500 text-xs font-bold uppercase tracking-wider">
                   {venue.subName}
+                </span>
+              </div>
+
+              <h3
+                style={{ fontFamily: 'Metal Mania' }}
+                className="text-4xl font-bold text-white mb-8 tracking-wide drop-shadow-md"
+              >
+                {venue.name}
+              </h3>
+
+              <div className="space-y-6">
+                <div className="flex items-start gap-4 group">
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/10 group-hover:border-yellow-500/30 transition-colors">
+                    <MapPin className="w-6 h-6 text-yellow-500" />
+                  </div>
+                  <div>
+                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">
+                      Address
+                    </p>
+                    <p className="text-white leading-relaxed">
+                      {venue.address}
+                    </p>
+                    <p className="text-xs text-yellow-500/70 mt-1 flex items-center gap-1">
+                      <Navigation className="w-3 h-3" />
+                      {venue.landmark}
+                    </p>
+                  </div>
                 </div>
 
-                <h3
-                  style={{ fontFamily: 'Metal Mania' }}
-                  className="text-3xl font-bold text-white mb-6 tracking-wide"
-                >
-                  {venue.name}
-                </h3>
-
-                <div className="space-y-4 text-gray-300">
-                  <div className="flex items-start gap-3">
-                    <MapPin className="w-5 h-5 text-red-500 mt-1 shrink-0" />
-                    <div>
-                      <p className="font-semibold text-white">Address</p>
-                      <p className="text-sm opacity-80">{venue.address}</p>
-                      <p className="text-xs text-red-400 mt-1 italic">
-                        Landmark: {venue.landmark}
-                      </p>
-                    </div>
+                <div className="flex items-start gap-4 group">
+                  <div className="p-3 rounded-lg bg-white/5 border border-white/10 group-hover:border-yellow-500/30 transition-colors">
+                    <Globe className="w-6 h-6 text-yellow-500" />
                   </div>
-
-                  <div className="flex items-start gap-3">
-                    <Calendar className="w-5 h-5 text-red-500 mt-1 shrink-0" />
-                    <div>
-                      <p className="font-semibold text-white">Transport</p>
-                      <p className="text-sm opacity-80">{venue.transport}</p>
-                    </div>
+                  <div>
+                    <p className="text-gray-400 text-xs uppercase tracking-widest mb-1">
+                      Transport
+                    </p>
+                    <p className="text-white leading-relaxed">
+                      {venue.transport}
+                    </p>
                   </div>
+                </div>
 
-                  <div className="flex items-start gap-3 pt-2 border-t border-white/10 mt-4">
-                    <div className="w-5 h-5 text-blue-500 mt-1 shrink-0">
-                      🏆
-                    </div>
-                    <div>
-                      <p className="font-semibold text-white mb-2">
-                        Events Hosted
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {venue.events.map((event, i) => (
-                          <span
-                            key={i}
-                            className="text-xs px-2 py-1 rounded bg-red-900/30 border border-red-600/30 text-gray-200"
-                          >
-                            {event}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
+                <div className="pt-6 border-t border-white/5">
+                  <p className="text-gray-400 text-xs uppercase tracking-widest mb-3">
+                    Events Hosted Here
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {venue.events.map((event, i) => (
+                      <span
+                        key={i}
+                        className="text-xs px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-gray-300 hover:bg-yellow-500/10 hover:border-yellow-500/30 hover:text-yellow-200 transition-all duration-300"
+                      >
+                        {event}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
 
-            <div
-              className={`lg:col-span-7 rounded-xl overflow-hidden border-2 border-red-500/30 shadow-2xl h-80 lg:h-auto min-h-[350px] relative`}
-            >
-              <div className="absolute inset-0 bg-red-900/10 z-10 pointer-events-none mix-blend-overlay" />
+            <div className="lg:col-span-7 h-[400px] lg:h-full min-h-[400px] relative border-t lg:border-t-0 lg:border-l border-white/10">
               <iframe
                 src={venue.mapSrc}
                 width="100%"
                 height="100%"
                 style={{
                   border: 0,
-                  filter: 'grayscale(30%) contrast(1.2) hue-rotate(-15deg)',
+                  filter: 'grayscale(100%) invert(90%) contrast(1.2)',
                 }}
                 allowFullScreen
                 loading="lazy"
                 title={`Map of ${venue.name}`}
                 referrerPolicy="no-referrer-when-downgrade"
-                className="hover:filter-none transition-all duration-500"
+                className="absolute inset-0 hover:filter-none transition-all duration-700"
               ></iframe>
+
+              {/* Overlay Gradient on Map */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-transparent to-transparent pointer-events-none lg:via-black/20" />
             </div>
           </motion.div>
         ))}
@@ -384,125 +367,182 @@ export default function ContactPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-black via-[#450a0a] to-[#1e3a8a]">
+    <div className="min-h-screen relative overflow-x-hidden bg-black text-white">
+      {/* Fixed Background */}
+      <div
+        className="fixed inset-0 bg-cover bg-center bg-fixed z-0"
+        style={{ backgroundImage: "url('/profile/profilebg.jpeg')" }}
+      />
+
+      {/* Dark Overlay with Blur */}
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-[2px] z-0" />
+
+      {/* Animated Gradient Pulse similar to Profile page */}
+      <div
+        className="fixed inset-0 pointer-events-none z-0"
+        style={{
+          background:
+            'radial-gradient(circle at 50% 50%, rgba(250, 204, 21, 0.05) 0%, transparent 70%)',
+          animation: 'pulse 8s infinite',
+        }}
+      />
+
+      {/* Floating Elements / Easter Eggs */}
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        {[...Array(5)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-64 h-64 bg-yellow-500/5 rounded-full blur-3xl"
+            initial={{
+              x: Math.random() * 1000,
+              y: Math.random() * 1000,
+              opacity: 0,
+            }}
+            animate={{
+              x: [
+                Math.random() * 1000,
+                Math.random() * 1000,
+                Math.random() * 1000,
+              ],
+              y: [
+                Math.random() * 1000,
+                Math.random() * 1000,
+                Math.random() * 1000,
+              ],
+              opacity: [0.1, 0.3, 0.1],
+            }}
+            transition={{
+              duration: 20 + Math.random() * 10,
+              repeat: Infinity,
+              ease: 'linear',
+            }}
+          />
+        ))}
+      </div>
+
       {!imagesPreloaded && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
           <div className="text-center">
-            <div className="inline-block h-12 w-12 animate-spin rounded-full border-4 border-solid border-red-600 border-r-transparent"></div>
+            <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p
-              className="mt-4 text-red-500"
+              className="text-yellow-500 tracking-widest uppercase text-sm"
               style={{ fontFamily: 'Metal Mania' }}
             >
-              Loading Images...
+              Establishing Connection...
             </p>
           </div>
         </div>
       )}
 
-      <div className="relative z-10">
-        <div className="container mx-auto px-4 py-12 md:py-16">
-          <div className="mb-16 text-center">
+      <div className="relative z-10 container mx-auto px-4 py-20 lg:py-24">
+        <div className="mb-6 text-center relative">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
             <h1
               style={{ fontFamily: 'Metal Mania' }}
-              className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 text-red-600 drop-shadow-[0_0_15px_rgba(220,38,38,0.5)]"
+              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 text-white tracking-wider drop-shadow-[0_0_25px_rgba(250,204,21,0.3)]"
             >
-              CONTACT US
+              CONTACT{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-yellow-200 to-yellow-400">
+                US
+              </span>
             </h1>
+
+            <div className="flex items-center justify-center gap-4 mb-3">
+              <div className="h-[1px] w-20 bg-gradient-to-r from-transparent to-yellow-500/50" />
+              <div className="w-2 h-2 rotate-45 bg-yellow-500" />
+              <div className="h-[1px] w-20 bg-gradient-to-l from-transparent to-yellow-500/50" />
+            </div>
+
             <p
               style={{ fontFamily: 'Maname' }}
-              className="text-gray-300 text-base md:text-lg max-w-3xl mx-auto leading-relaxed"
+              className="text-gray-300 text-xs md:text-sm max-w-xl mx-auto leading-relaxed"
             >
-              Need information about GOT'26? Contact our team members below for
-              any queries regarding events, sponsorships, or general
-              information.
+              Initiate communication with the{' '}
+              <span className="text-yellow-400 font-semibold">
+                Techtrix High Council
+              </span>
+              . Whether for alliances, inquiries, or strategic information, our
+              channels are open.
             </p>
-          </div>
-
-          <div className="flex justify-center mb-12">
-            <div
-              className="flex gap-3 bg-black/40 rounded-xl p-2 border-2 border-red-600/40 backdrop-blur-md"
-              style={{
-                boxShadow: '0 0 20px rgba(220, 38, 38, 0.3)',
-              }}
-            >
-              <motion.button
-                onClick={() => setActiveTab('contacts')}
-                className={`px-6 py-2.5 rounded-lg font-bold text-base transition-all ${
-                  activeTab === 'contacts'
-                    ? 'bg-red-600 text-white'
-                    : 'text-red-400 hover:text-red-100'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                style={
-                  activeTab === 'contacts'
-                    ? {
-                        boxShadow: '0 0 25px rgba(220, 38, 38, 0.6)',
-                      }
-                    : {}
-                }
-              >
-                Team Contacts
-              </motion.button>
-
-              <motion.button
-                onClick={() => setActiveTab('venue')}
-                className={`px-6 py-2.5 rounded-lg font-bold text-base transition-all ${
-                  activeTab === 'venue'
-                    ? 'bg-red-600 text-white'
-                    : 'text-red-400 hover:text-red-100'
-                }`}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                style={
-                  activeTab === 'venue'
-                    ? {
-                        boxShadow: '0 0 25px rgba(220, 38, 38, 0.6)',
-                      }
-                    : {}
-                }
-              >
-                Venues & Location
-              </motion.button>
-            </div>
-          </div>
-
-          <AnimatePresence mode="wait">
-            {activeTab === 'contacts' && (
-              <motion.div
-                key="contacts"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-                className="space-y-16"
-              >
-                {contactData.map((section, index) => (
-                  <ContactSection
-                    key={index}
-                    title={section.name}
-                    contacts={section.contacts}
-                  />
-                ))}
-              </motion.div>
-            )}
-
-            {activeTab === 'venue' && (
-              <motion.div
-                key="venue"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.3 }}
-              >
-                <VenueSection />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          </motion.div>
         </div>
 
-        <div className="h-16" />
+        <div className="flex justify-center mb-16 relative z-20">
+          <div className="inline-flex p-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md relative">
+            <motion.div
+              className="absolute top-1 bottom-1 rounded-full bg-gradient-to-r from-yellow-600 to-yellow-500 shadow-lg shadow-yellow-500/20"
+              initial={false}
+              animate={{
+                left: activeTab === 'contacts' ? '4px' : '50%',
+                width: 'calc(50% - 4px)',
+                x: activeTab === 'contacts' ? 0 : 0,
+              }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            />
+
+            <button
+              onClick={() => setActiveTab('contacts')}
+              className={`relative z-10 px-8 py-3 rounded-full font-bold text-sm tracking-wider uppercase transition-colors duration-300 ${
+                activeTab === 'contacts'
+                  ? 'text-white'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Team Contacts
+            </button>
+
+            <button
+              onClick={() => setActiveTab('venue')}
+              className={`relative z-10 px-8 py-3 rounded-full font-bold text-sm tracking-wider uppercase transition-colors duration-300 ${
+                activeTab === 'venue'
+                  ? 'text-white'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              Venues & Map
+            </button>
+          </div>
+        </div>
+
+        <AnimatePresence mode="wait">
+          {activeTab === 'contacts' && (
+            <motion.div
+              key="contacts"
+              initial={{ opacity: 0, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, filter: 'blur(10px)' }}
+              transition={{ duration: 0.4 }}
+            >
+              {contactData.map((section, index) => (
+                <ContactSection
+                  key={index}
+                  title={section.name}
+                  contacts={section.contacts}
+                />
+              ))}
+            </motion.div>
+          )}
+
+          {activeTab === 'venue' && (
+            <motion.div
+              key="venue"
+              initial={{ opacity: 0, filter: 'blur(10px)' }}
+              animate={{ opacity: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, filter: 'blur(10px)' }}
+              transition={{ duration: 0.4 }}
+            >
+              <VenueSection />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
+
+      {/* Footer Spacer if needed */}
+      <div className="h-24" />
     </div>
   );
 }
