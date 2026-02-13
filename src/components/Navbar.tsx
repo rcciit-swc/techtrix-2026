@@ -9,6 +9,7 @@ import {
   IconHome,
   IconLogin,
   IconMessageCircle,
+  IconPhoto,
   IconUsers,
 } from '@tabler/icons-react';
 import { Music, VolumeX } from 'lucide-react';
@@ -87,6 +88,11 @@ export function Navbar() {
       title: 'Events',
       icon: <IconCalendarEvent className="h-full w-full text-[#00f7ff]" />,
       href: '/events',
+    },
+    {
+      title: 'Gallery',
+      icon: <IconPhoto className="h-full w-full text-[#00f7ff]" />,
+      href: '/gallery',
     },
     {
       title: 'Teams',
