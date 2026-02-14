@@ -99,7 +99,7 @@ export function constructMetaData({
           width: 1200,
           height: 630,
           alt: 'Techtrix 2026 - Official Technical Fest of RCCIIT',
-          type: 'image/png',
+          type: 'image/jpg',
         },
       ],
     },

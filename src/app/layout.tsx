@@ -10,6 +10,7 @@ import './globals.css';
 
 export const metadata: Metadata = constructMetaData({
   image: '/favicon.jpg',
+  icons: '/favicon.jpg', // Explicitly use the jpg file as favicon
   title: 'Techtrix 2026',
   description:
     'The Annual Inter-College National Level Technical Fest of RCCIIT.',

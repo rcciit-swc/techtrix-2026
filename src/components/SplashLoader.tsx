@@ -35,7 +35,10 @@ export default function SplashLoader({
     }
 
     // Generate random particles only on the client
-    const newParticles = Array.from({ length: 20 }).map((_, i) => ({
+    const isMobile = window.innerWidth < 768;
+    const particleCount = isMobile ? 8 : 20;
+
+    const newParticles = Array.from({ length: particleCount }).map((_, i) => ({
       id: i,
       width: Math.random() * 100 + 50,
       height: Math.random() * 100 + 50,
@@ -72,7 +75,7 @@ export default function SplashLoader({
             {particles.map((particle) => (
               <motion.div
                 key={particle.id}
-                className="absolute rounded-full bg-yellow-400/20 blur-xl"
+                className="absolute rounded-full bg-yellow-400/20 blur-xl will-change-transform"
                 style={{
                   width: particle.width,
                   height: particle.height,
@@ -97,7 +100,7 @@ export default function SplashLoader({
           <div className="relative flex flex-col items-center">
             {/* Pulsing Aura */}
             <motion.div
-              className="absolute inset-0 rounded-full bg-yellow-500/30 blur-3xl"
+              className="absolute inset-0 rounded-full bg-yellow-500/30 blur-3xl will-change-transform"
               animate={{
                 scale: [0.8, 1.2, 0.8],
                 opacity: [0.2, 0.5, 0.2],
@@ -138,12 +141,12 @@ export default function SplashLoader({
 
               {/* Spinning Ring */}
               <motion.div
-                className="absolute -inset-4 rounded-full border-t-2 border-r-2 border-yellow-400/80"
+                className="absolute -inset-4 rounded-full border-t-2 border-r-2 border-yellow-400/80 will-change-transform"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
               />
               <motion.div
-                className="absolute -inset-8 rounded-full border-b-2 border-l-2 border-red-500/40"
+                className="absolute -inset-8 rounded-full border-b-2 border-l-2 border-red-500/40 will-change-transform"
                 animate={{ rotate: -360 }}
                 transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
               />
@@ -151,7 +154,7 @@ export default function SplashLoader({
 
             {/* Text Reveal */}
             <motion.h1
-              className="mt-8 text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 tracking-widest uppercase"
+              className="mt-8 text-4xl md:text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 tracking-widest uppercase will-change-transform"
               style={{
                 fontFamily: "'Metal Mania', cursive",
                 textShadow: '0 0 20px rgba(234, 179, 8, 0.5)',
