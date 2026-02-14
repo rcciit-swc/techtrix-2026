@@ -41,16 +41,14 @@ const page = () => {
       {showSplash && (
         <SplashLoader isLoading={loading} onComplete={handleSplashComplete} />
       )}
-      {!showSplash && (
-        <div className="animate-fade-in">
-          <Hero />
-          <AboutSection />
-          <EventsSection />
-          <SponsorSection />
-          <SponsorshipProposition />
-          <PrincipalDesk />
-        </div>
-      )}
+      <div className="animate-fade-in">
+        <Hero />
+        <AboutSection />
+        <EventsSection />
+        <SponsorSection />
+        <SponsorshipProposition />
+        <PrincipalDesk />
+      </div>
     </>
   );
 };

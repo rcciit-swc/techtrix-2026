@@ -135,16 +135,10 @@ export default function EventsSection() {
                 <Link
                   key={category.name}
                   href={`/events/${category.id}`}
-                  className="
-                    relative group cursor-pointer
-                    w-[85%] max-w-[280px] aspect-[2/5] mb-4 last:mb-0
-                    md:flex-1 md:h-[95%] md:aspect-auto md:mb-0 md:w-auto md:max-w-none
-                  "
+                  className="relative group cursor-pointer w-[85%] max-w-[280px] aspect-[2/5] mb-4 last:mb-0 md:flex-1 md:h-[95%] md:aspect-auto md:mb-0 md:w-auto md:max-w-none"
                 >
                   <div
-                    className="
-                      absolute inset-0 w-full h-full bg-gradient-to-b from-black via-[#EDF526] to-black opacity-100
-                    "
+                    className="absolute inset-0 w-full h-full bg-gradient-to-b from-black via-[#EDF526] to-black opacity-100"
                     style={{
                       clipPath: 'polygon(0% 10%, 100% 0%, 100% 90%, 0% 100%)',
                       boxShadow:
