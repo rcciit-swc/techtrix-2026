@@ -4,8 +4,15 @@ import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
-export default function SplashLoader() {
-  const [isVisible, setIsVisible] = useState(true);
+interface SplashLoaderProps {
+  isLoading: boolean;
+  onComplete?: () => void;
+}
+
+export default function SplashLoader({
+  isLoading,
+  onComplete,
+}: SplashLoaderProps) {
   const [particles, setParticles] = useState<
     Array<{
       id: number;
@@ -20,16 +27,12 @@ export default function SplashLoader() {
   >([]);
 
   useEffect(() => {
-    // Check if we've already shown the splash screen this session
-    const hasShownSplash = sessionStorage.getItem('hasShownSplash');
-
-    if (hasShownSplash) {
-      setIsVisible(false);
-      return;
+    // Lock body scroll when loading
+    if (isLoading) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
     }
-
-    // Lock body scroll
-    document.body.style.overflow = 'hidden';
 
     // Generate random particles only on the client
     const newParticles = Array.from({ length: 20 }).map((_, i) => ({
@@ -44,24 +47,18 @@ export default function SplashLoader() {
     }));
     setParticles(newParticles);
 
-    // Set the flag so it doesn't show again in this session
-    sessionStorage.setItem('hasShownSplash', 'true');
-
-    // Hide the splash screen after the animation duration
-    const timer = setTimeout(() => {
-      setIsVisible(false);
-      document.body.style.overflow = 'auto'; // Restore scroll
-    }, 4000); // 7 seconds total duration
-
     return () => {
-      clearTimeout(timer);
       document.body.style.overflow = 'auto'; // Ensure scroll is restored on cleanup
     };
-  }, []);
+  }, [isLoading]);
 
   return (
-    <AnimatePresence>
-      {isVisible && (
+    <AnimatePresence
+      onExitComplete={() => {
+        if (onComplete) onComplete();
+      }}
+    >
+      {isLoading && (
         <motion.div
           className="fixed inset-0 z-[9999] flex items-center justify-center bg-black opacity-100 block pointer-events-auto"
           initial={{ opacity: 1 }}
@@ -114,7 +111,7 @@ export default function SplashLoader() {
 
             {/* Logo Container */}
             <motion.div
-              className="relative w-40 h-40 md:w-56 md:h-56"
+              className="relative w-64 h-64 md:w-80 md:h-80"
               initial={{ scale: 0.5, opacity: 0, rotate: -180 }}
               animate={{
                 scale: 1,
@@ -127,17 +124,16 @@ export default function SplashLoader() {
               }}
             >
               <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-yellow-500/50 shadow-[0_0_50px_rgba(234,179,8,0.5)]">
-                {/* Replace with actual Logo image if available, using favicon for now as requested */}
-                <Image
-                  src="https://i.postimg.cc/j20BjMhq/logo.png" // Assuming this is the main logo based on typical usage, otherwise favicon.jpg
-                  alt="Techtrix Logo"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-
-                {/* Fallback to favicon if top_left_logo doesn't exist, I should check first */}
-                {/* Or I can use favicon.jpg as seen in layout metadata */}
+                <div className="absolute inset-8">
+                  {/* Replace with actual Logo image if available, using favicon for now as requested */}
+                  <Image
+                    src="https://i.postimg.cc/j20BjMhq/logo.png" // Assuming this is the main logo based on typical usage, otherwise favicon.jpg
+                    alt="Techtrix Logo"
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
               </div>
 
               {/* Spinning Ring */}
