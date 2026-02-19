@@ -43,40 +43,62 @@ export default function PrincipalDesk() {
                 }`}
               >
                 <p className="mb-4 text-[#F9FAFB] text-justify font-normal text-[20px] leading-normal font-['ManameALT']">
-                  Life is vast – achieving excellence in academics and technical
-                  knowledge is essential for professional growth, but that alone
-                  does not define the true spirit of education. A student must
-                  also find opportunities to explore creativity, innovation,
-                  leadership and collaboration beyond the classroom. The young
-                  undergraduates are filled with immense energy, curiosity and
-                  potential, which need expression through constructive and
-                  inspiring platforms. After entering college life, students
-                  experience a new sense of independence and freedom, which
-                  allows them to nurture their talents in technology, research,
-                  entrepreneurship, creative thinking and problem-solving.{' '}
-                  <br /> <br />
-                  The college fests provide the ideal platform to showcase these
-                  skills and channel youthful enthusiasm into innovation and
-                  development. Techtrix 2026 – the annual techno-management fest
-                  of RCCIIT – is one such flagship platform, traditionally
-                  supported and encouraged by the institute. Members of the
-                  Student Welfare Committee, along with hundreds of dedicated
-                  senior and junior student volunteers, are working together
-                  under the careful guidance of faculty members to make Techtrix
-                  2026 a grand success. Over the years, Techtrix has taken up
-                  the challenge of scaling itself into a major inter-college
-                  technical fest, attracting participation from institutions
-                  across Kolkata, other districts, and beyond the state. This
-                  year too, it will be a vibrant multi-event celebration
-                  featuring competitions, workshops, hackathons, robotics
-                  challenges, management events and exhibitions across diverse
-                  domains of emerging technology. <br /> <br />I extend my best
-                  wishes for the grand success of Techtrix 2026, and I hope it
-                  will be even better organized this year, particularly as we
-                  celebrate the institute's silver jubilee year 2026. I also
-                  look forward to enthusiastic participation, stronger
-                  collaboration, and higher standards of excellence in this
-                  edition.
+                  Life offers limitless opportunities, while academic excellence
+                  and strong technical foundations are indispensable for
+                  professional success, they alone cannot define the true
+                  essence of engineering education. For B.Tech students, real
+                  growth lies in transforming theoretical concepts into
+                  innovative technologies, practical systems and impactful
+                  solutions. Engineering education must inspire students to
+                  think beyond conventional boundaries, encouraging them to
+                  experiment, innovate and engineer solutions that address
+                  industrial demands and societal needs. The undergraduate years
+                  are a crucial phase during which students develop analytical
+                  thinking, technical competence and a spirit of inquiry. This
+                  stage provides them with the intellectual freedom and
+                  institutional support necessary to explore cutting-edge
+                  domains, undertake research-driven projects, build prototypes,
+                  participate in technical competitions and cultivate an
+                  innovation-oriented mindset. By engaging in such constructive
+                  pursuits, students evolve from learners of technology into
+                  creators of technology. <br /> <br />
+                  Technical festivals play a vital role in strengthening this
+                  innovation ecosystem by providing a dynamic platform where
+                  knowledge meets execution. Techtrix 2026, the annual
+                  techno-management fest of RCCIIT – represents not merely a
+                  celebratory event, but a vibrant hub of technical creativity
+                  and engineering excellence led by B.Tech students. It offers a
+                  structured environment where students conceptualize, design,
+                  coordinate and execute technically challenging events that
+                  demand precision, teamwork and leadership. Guided by dedicated
+                  faculty mentors, the Student Welfare Committee and an
+                  enthusiastic team of senior and junior volunteers collaborate
+                  to curate competitions and activities that emphasize coding
+                  proficiency, embedded system design, robotics development,
+                  AI-driven applications, sustainable engineering models and
+                  data-centric innovations. Over the years, Techtrix has
+                  steadily expanded its stature as a prominent inter-college
+                  technical congregation, attracting participants from Kolkata
+                  and various districts and states. This year’s edition promises
+                  an even stronger focus on emerging technologies through
+                  hackathons, research workshops, technical symposiums, project
+                  expos and innovation challenges aligned with contemporary
+                  domains such as artificial intelligence, Internet of Things,
+                  renewable energy, automation, cybersecurity, and smart
+                  systems. <br /> <br /> As we celebrate the Institute’s Silver
+                  Jubilee year in 2026, I extend my sincere best wishes for the
+                  resounding success of Techtrix 2026. I am confident that this
+                  edition will exemplify higher benchmarks of technical
+                  innovation, professional organization, and collaborative
+                  excellence. I look forward to active participation from our
+                  B.Tech students and to witnessing ground-breaking ideas,
+                  practical prototypes, and transformative technological
+                  solutions that reflect our unwavering commitment to
+                  engineering advancement and societal progress. Hope this
+                  opportunity will engage more and more individuals as well
+                  groups for showcasing their talent, which will also inspire
+                  our next generations too and may find out various solutions
+                  for existing real-life problems.
                 </p>
               </div>
 
