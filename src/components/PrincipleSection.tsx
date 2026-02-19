@@ -132,7 +132,7 @@ export default function PrincipalDesk() {
           <div className=" lg:-mr-15 order-1 lg:order-2 flex-1 lg:max-w-fit flex flex-col items-center">
             <div className="relative w-full h-[350px] md:h-[350px] lg:h-[450px] lg:w-[350px] overflow-hidden rounded-xl">
               <Image
-                src="/principlesection/Principle-Img.png"
+                src="/principlesection/principal.jpg"
                 alt="Dr. Anirban Mukherjee"
                 fill
                 className="object-cover object-center"
@@ -144,7 +144,7 @@ export default function PrincipalDesk() {
               className="text-center pt-2 w-full"
             >
               <h3 className="text-center text-[25px] leading-[151.689%] font-normal text-[#F9FAFB]">
-                Prof.(Dr.) Anirban Mukherjee
+                Prof.(Dr.) Ashoke Mondal
               </h3>
 
               <p className="text-[#EDF526] text-[14px] font-normal leading-[151.689%] text-center">
