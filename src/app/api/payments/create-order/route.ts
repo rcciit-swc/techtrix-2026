@@ -74,6 +74,54 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+  
+    let finalRegistrationFee = event.registration_fees;
+
+    // Anime Fiesta pricing calculation
+    const ANIME_FIESTA_EVENT_ID = 'fccf6fad-0e49-4a5c-a971-3ab874dc923a';
+    if (eventId === ANIME_FIESTA_EVENT_ID) {
+      
+      const { count: memberCount, error: participantsError } =
+        await supabaseAdmin
+          .from('participants')
+          .select('*', { count: 'exact', head: true })
+          .eq('team_id', teamId);
+
+      if (participantsError) {
+        console.error('Error fetching participants count:', participantsError);
+        return NextResponse.json(
+          { error: 'Failed to fetch team member count' },
+          { status: 500 }
+        );
+      }
+
+      const teamSize = memberCount ?? 1;
+      const baseFee = event.registration_fees; 
+
+      // Pricing formula (max team size: 4):
+      // x = 1: fee = y
+      // x = 2: fee = 2y
+      // x = 3: fee = 3y - y/3
+      // x = 4: fee = 4y - 2y/3
+      switch (teamSize) {
+        case 1:
+          finalRegistrationFee = baseFee;
+          break;
+        case 2:
+          finalRegistrationFee = 2 * baseFee;
+          break;
+        case 3:
+          finalRegistrationFee = Math.round(3 * baseFee - baseFee / 3);
+          break;
+        case 4:
+          finalRegistrationFee = Math.round(4 * baseFee - (2 * baseFee) / 3);
+          break;
+      }
+
+      console.log(
+        `[create-order] Anime Fiesta pricing: teamSize=${teamSize}, baseFee=${baseFee}, finalFee=${finalRegistrationFee}`
+      );
+    }
 
     // Check if there's already a pending/paid payment for this team
     const { data: existingPayment } = await supabaseAdmin
@@ -91,7 +139,7 @@ export async function POST(request: NextRequest) {
     }
     // Create Razorpay order
     const razorpayOrder = await createRazorpayOrder({
-      amount: event.registration_fees,
+      amount: finalRegistrationFee,
       eventId,
       userId: user.id,
       teamId,
@@ -106,7 +154,7 @@ export async function POST(request: NextRequest) {
       event_id: eventId,
       team_id: teamId,
       razorpay_order_id: razorpayOrder.id,
-      amount: event.registration_fees * 100, // Store in paise
+      amount: finalRegistrationFee * 100, // Store in paise
       currency: 'INR',
       status: 'pending',
       updated_at: new Date().toISOString(),
