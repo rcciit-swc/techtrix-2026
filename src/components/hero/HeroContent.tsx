@@ -60,7 +60,7 @@ export function HeroContent() {
         initial="hidden"
         animate="visible"
         variants={titleReveal}
-        className="text-[100px] sm:text-[90px] md:text-[110px] lg:text-[180px] xl:text-[180px] font-medium text-white leading-none"
+        className="text-[100px] sm:text-[90px] md:text-[110px] lg:text-[180px] xl:text-[160px] font-medium text-white leading-none"
         style={{ fontFamily: 'Golden Sentry' }}
       >
         TECHTRIX
@@ -83,6 +83,25 @@ export function HeroContent() {
       >
         Survive the Fall. Engineer the Future.
       </motion.p>
+
+      {/* Fest Dates */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={textReveal}
+        transition={{ delay: 0.5 }}
+        className="mt-5 md:mt-6 px-8 py-2 md:py-3 rounded-[20px] border border-[#EDF526]/30 bg-black/40 backdrop-blur-md shadow-[0_0_20px_rgba(237,245,38,0.2)]"
+      >
+        <p
+          className="text-xl md:text-2xl lg:text-3xl font-bold tracking-[0.15em] text-[#EDF526] text-center"
+          style={{
+            fontFamily: '"Metal Mania"',
+            textShadow: '0 0 12px rgba(237, 245, 38, 0.6)',
+          }}
+        >
+          26th - 29th March 2026
+        </p>
+      </motion.div>
 
       <motion.p
         initial="hidden"
