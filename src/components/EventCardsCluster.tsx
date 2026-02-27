@@ -1,9 +1,10 @@
 'use client';
 
+import { getEventImages } from '@/lib/constants/eventImages';
 import { useEvents } from '@/lib/stores';
 import { events } from '@/lib/types/events';
-
 import { motion } from 'motion/react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
@@ -144,6 +145,8 @@ function EventCardItem({
   event: events;
   isMobile?: boolean;
 }) {
+  const eventImages = getEventImages(event.id || 'default', event.name);
+
   return (
     <Link href={`/event/${event.event_id || event.id}`}>
       <div className="group relative aspect-[3/4] w-full cursor-pointer perspective-1000">
@@ -167,9 +170,12 @@ function EventCardItem({
         >
           {/* Image container */}
           <div className="relative w-full h-full overflow-hidden">
-            <img
-              src={event.image_url || '/events/poster.png'}
+            <Image
+              height={100}
+              width={100}
+              src={event.image_url || eventImages.bg}
               alt={event.name || 'Event Poster'}
+              unoptimized
               className="w-full h-full object-cover 
                 transform group-hover:scale-115
                 transition-transform duration-700 ease-out
@@ -244,29 +250,29 @@ function EventCardItem({
               )}
 
               {/* Registration fee */}
-              {event.registration_fees !== undefined && (
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-[0_0_10px_rgba(250,204,21,0.6)]">
-                    <svg
-                      className="w-3 h-3 text-black"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <span className="text-yellow-400 text-sm font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,1)] tracking-wide">
-                    {event.registration_fees === 0
-                      ? 'FREE'
-                      : `₹${event.registration_fees}`}
-                  </span>
+              <div className="flex items-center gap-2">
+                <div className="w-5 h-5 rounded-full bg-gradient-to-br from-yellow-400 to-red-500 flex items-center justify-center shadow-[0_0_10px_rgba(250,204,21,0.6)]">
+                  <svg
+                    className="w-3 h-3 text-black"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M8.433 7.418c.155-.103.346-.196.567-.267v1.698a2.305 2.305 0 01-.567-.267C8.07 8.34 8 8.114 8 8c0-.114.07-.34.433-.582zM11 12.849v-1.698c.22.071.412.164.567.267.364.243.433.468.433.582 0 .114-.07.34-.433.582a2.305 2.305 0 01-.567.267z" />
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-13a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
                 </div>
-              )}
+                <span className="text-yellow-400 text-sm font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,1)] tracking-wide">
+                  {event.registration_fees === 0
+                    ? 'FREE'
+                    : event.registration_fees
+                      ? `₹${event.registration_fees}`
+                      : 'To be Announced'}
+                </span>
+              </div>
             </div>
 
             {/* Call to action - Marvel style */}
