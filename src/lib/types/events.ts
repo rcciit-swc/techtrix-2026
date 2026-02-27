@@ -22,6 +22,10 @@ export interface events {
   schedule: string;
   description: string;
   rules: string;
+  convenors: {
+    name: string;
+    phone: string;
+  }[];
   coordinators: {
     name: string;
     phone: string;
