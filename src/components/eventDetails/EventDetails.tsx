@@ -24,7 +24,7 @@ export default function EventDetails({ event }: Props) {
   const eventsData = useEvents((state) => state.eventsData);
 
   // Get event images from mapping
-  const eventImages = getEventImages(event.id || 'default');
+  const eventImages = getEventImages(event.id || 'default', event.name);
 
   // Get other events in the same category (for sidebar suggestions)
   const relatedEvents = useMemo(() => {
@@ -276,7 +276,7 @@ export default function EventDetails({ event }: Props) {
         items={relatedEvents.map((e) => ({
           id: e.id || '',
           title: e.name || '',
-          image: getEventImages(e.id || 'default').bg,
+          image: getEventImages(e.id || 'default', e.name).bg,
         }))}
       />
     </div>
