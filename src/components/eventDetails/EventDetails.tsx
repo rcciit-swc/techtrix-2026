@@ -36,6 +36,10 @@ export default function EventDetails({ event }: Props) {
 
   const isFullyLoaded = bgLoaded && charLoaded && posterLoaded;
 
+  // Get registration status from store (updated after registration)
+  const storeEvent = eventsData.find((e) => e.id === event.id);
+  const isRegistered = storeEvent?.registered ?? false;
+
   // Get event images from mapping
   const eventImages = getEventImages(event.id || 'default', event.name);
 
@@ -338,6 +342,22 @@ export default function EventDetails({ event }: Props) {
                   <RegisterButton eventId={event.id || ''} />
                 </div>
               </div>
+              {/* Title - Centered */}
+              <div className="flex flex-col justify-center items-center flex-1 px-1">
+                <h1
+                  className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-white tracking-wider text-center leading-tight"
+                  style={{ fontFamily: "'Metal Mania'" }}
+                >
+                  {event.name}
+                </h1>
+                {isRegistered && (
+                  <span className="mt-1 px-3 py-0.5 text-[10px] sm:text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full tracking-wide">
+                    ✓ Registered
+                  </span>
+                )}
+              </div>
+              <RegisterButton eventId={event.id || ''} />
+            </div>
 
               {/* Side-by-Side Layout: Poster Left, Content Right */}
               <div className="w-full">
@@ -405,7 +425,6 @@ export default function EventDetails({ event }: Props) {
             image: getEventImages(e.id || 'default', e.name).bg,
           }))}
         />
-      </div>
     </>
   );
 }
