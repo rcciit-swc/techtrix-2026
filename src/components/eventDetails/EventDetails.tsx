@@ -25,16 +25,16 @@ export default function EventDetails({ event }: Props) {
   const [activeTab, setActiveTab] = useState<EventTab>('info');
   const eventsData = useEvents((state) => state.eventsData);
 
+  // Get registration status from store (updated after registration)
+  const storeEvent = eventsData.find((e) => e.id === event.id);
+  const isRegistered = storeEvent?.registered ?? false;
+
   // Asset loading state
   const [bgLoaded, setBgLoaded] = useState(false);
   const [charLoaded, setCharLoaded] = useState(false);
   const [posterLoaded, setPosterLoaded] = useState(!event.image_url);
 
   const isFullyLoaded = bgLoaded && charLoaded && posterLoaded;
-
-  // Get registration status from store (updated after registration)
-  const storeEvent = eventsData.find((e) => e.id === event.id);
-  const isRegistered = storeEvent?.registered ?? false;
 
   // Get event images from mapping
   const eventImages = getEventImages(event.id || 'default', event.name);
@@ -307,50 +307,25 @@ export default function EventDetails({ event }: Props) {
                   </div>
                 </div>
 
-              {/* Title - Centered */}
-              <div className="flex flex-col justify-center items-center flex-1 px-1">
-                <h1
-                  className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-white tracking-wider text-center leading-tight"
-                  style={{ fontFamily: "'Metal Mania'" }}
-                >
-                  {event.name}
-                </h1>
-                {isRegistered && (
-                  <span className="mt-1 px-3 py-0.5 text-[10px] sm:text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full tracking-wide">
-                    ✓ Registered
-                  </span>
-                )}
-              </div>
-              <RegisterButton eventId={event.id || ''} />
-            </div>
                 {/* Title - Centered */}
-                <div className="flex justify-center w-full md:flex-1 px-1">
+                <div className="flex flex-col justify-center items-center w-full md:flex-1 px-1">
                   <h1
                     className="text-2xl sm:text-xl lg:text-2xl xl:text-3xl text-white tracking-wider text-center leading-tight"
                     style={{ fontFamily: "'Metal Mania'" }}
                   >
                     {event.name}
                   </h1>
+                  {isRegistered && (
+                    <span className="mt-1 px-3 py-0.5 text-[10px] sm:text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full tracking-wide">
+                      ✓ Registered
+                    </span>
+                  )}
                 </div>
 
                 {/* Show Register Button here on desktop, hide on mobile */}
                 <div className="hidden md:block">
                   <RegisterButton eventId={event.id || ''} />
                 </div>
-              </div>
-              {/* Title - Centered */}
-              <div className="flex flex-col justify-center items-center flex-1 px-1">
-                <h1
-                  className="text-lg sm:text-xl lg:text-2xl xl:text-3xl text-white tracking-wider text-center leading-tight"
-                  style={{ fontFamily: "'Metal Mania'" }}
-                >
-                  {event.name}
-                </h1>
-                {isRegistered && (
-                  <span className="mt-1 px-3 py-0.5 text-[10px] sm:text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full tracking-wide">
-                    ✓ Registered
-                  </span>
-                )}
               </div>
 
               {/* Side-by-Side Layout: Poster Left, Content Right */}
@@ -393,6 +368,7 @@ export default function EventDetails({ event }: Props) {
 
           {/* Right Character Spacer - Desktop only */}
           <div className="hidden lg:block w-[200px] xl:w-[220px] flex-shrink-0" />
+        </div>
 
         {/* Character Image - Fixed Right Side (Desktop only) */}
         <div
@@ -418,6 +394,7 @@ export default function EventDetails({ event }: Props) {
             image: getEventImages(e.id || 'default', e.name).bg,
           }))}
         />
+      </div>
     </>
   );
 }
