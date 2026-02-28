@@ -26,8 +26,6 @@ export default function ProfilePage() {
   const [registeredEvents, setRegisteredEvents] = useState<events[]>([]);
 
   useEffect(() => {
-    const cb = searchParams.get('callback');
-    if (cb && searchParams.get('onboarding') !== 'true') router.replace(cb);
     if (searchParams.get('onboarding') === 'true') {
       setIsEditModalOpen(true);
       toast.info('Finish your profile first');
@@ -55,11 +53,26 @@ export default function ProfilePage() {
   };
 
   const handleProfileSave = async (formData: FormData) => {
-    const cb = searchParams.get('callback');
-    if (cb) router.replace(cb);
+    const next = searchParams.get('next');
+    if (next) {
+      router.replace(next);
+    }
   };
 
-  if (userLoading) return <ProfileSkeleton />;
+  if (userLoading)
+    return (
+      <>
+        <ProfileSkeleton />
+        <EditProfileDialog
+          open={isEditModalOpen}
+          onOpenChange={setIsEditModalOpen}
+          userData={userData}
+          profileImage={profileImage}
+          onSave={handleProfileSave}
+          name={name}
+        />
+      </>
+    );
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -251,7 +264,7 @@ export default function ProfilePage() {
                   <Button
                     className="bg-yellow-400 hover:bg-yellow-300 text-black font-bold text-lg px-8 py-3 rounded-full shadow-[0_0_15px_rgba(250,204,21,0.3)] relative overflow-hidden uppercase tracking-wider group/browse"
                     style={{ fontFamily: "'Metal Mania'" }}
-                    onClick={() => router.push('/events')}
+                    onClick={() => router.push('/#events')}
                   >
                     <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-[shimmer_2s_infinite_linear]" />
                     <span className="relative z-10">Browse Events</span>

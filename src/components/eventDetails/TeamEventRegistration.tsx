@@ -22,6 +22,7 @@ import {
   RegisterTeamParams,
   registerTeamWithParticipants,
 } from '@/lib/services/register';
+import { calculateGatewayFee } from '@/lib/utils/razorpay';
 import { useRazorpay } from '@/hooks/useRazorpay';
 import {
   User,
@@ -898,14 +899,49 @@ export function TeamEventRegistration({
                           <span className="text-white/40">Members</span>
                           <span className="text-white">{totalTeamCount}</span>
                         </div>
-                        <div className="flex justify-between text-sm py-2">
-                          <span className="text-white/40">Total Fee</span>
-                          <span
-                            className={`font-bold ${eventFees === 0 ? 'text-green-400' : 'text-yellow-400'}`}
-                          >
-                            {eventFees === 0 ? 'Free' : `₹ ${eventFees}`}
-                          </span>
-                        </div>
+                        {eventFees > 0 &&
+                          (() => {
+                            const { gatewayFee, totalAmount } =
+                              calculateGatewayFee(eventFees);
+                            return (
+                              <>
+                                <div className="flex justify-between text-sm py-2">
+                                  <span className="text-white/40">
+                                    Registration Fee
+                                  </span>
+                                  <span className="text-white">
+                                    ₹ {eventFees}.00
+                                  </span>
+                                </div>
+                                <div className="flex justify-between text-sm -pt-1 -mt-2 pb-2">
+                                  <span className="text-white/40">
+                                    Gateway Fee
+                                  </span>
+                                  <span className="text-white/50">
+                                    {' '}
+                                    ₹ {gatewayFee}
+                                  </span>
+                                </div>
+                                <div className="border-t border-dashed border-white/10 my-1" />
+                                <div className="flex justify-between text-sm py-2">
+                                  <span className="text-white/60 font-medium">
+                                    Total
+                                  </span>
+                                  <span className="font-bold text-yellow-400">
+                                    ₹ {totalAmount}
+                                  </span>
+                                </div>
+                              </>
+                            );
+                          })()}
+                        {eventFees === 0 && (
+                          <div className="flex justify-between text-sm py-2">
+                            <span className="text-white/40">Total Fee</span>
+                            <span className="font-bold text-green-400">
+                              Free
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -925,7 +961,7 @@ export function TeamEventRegistration({
                           <span className="tracking-wide">
                             {eventFees === 0
                               ? 'CONFIRM REGISTRATION'
-                              : `PAY ₹${eventFees} & REGISTER`}
+                              : `PAY ₹${eventFees > 0 ? calculateGatewayFee(eventFees).totalAmount : 0} & REGISTER`}
                           </span>
                           <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
                         </>

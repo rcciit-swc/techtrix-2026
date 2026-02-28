@@ -2,6 +2,7 @@
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function PrincipalDesk() {
@@ -26,7 +27,7 @@ export default function PrincipalDesk() {
             style={{ fontFamily: 'KungFuMaster' }}
             className="text-white text-[55px] font-normal underline decoration-solid underline-offset-auto decoration-auto"
           >
-            Principal's Desk
+            Principal&apos;s Desk
           </h2>
         </div>
 
@@ -155,14 +156,16 @@ export default function PrincipalDesk() {
         </div>
 
         <div className="flex justify-center w-full lg:mt-16 pb-16">
-          <button className="relative w-[580px] h-[330px] transition-transform hover:scale-105 active:scale-95">
-            <Image
-              src="/principlesection/Button.svg"
-              alt="Register Now"
-              fill
-              className="object-contain"
-            />
-          </button>
+          <Link href="/#events">
+            <button className="relative w-[580px] h-[330px] transition-transform hover:scale-105 active:scale-95">
+              <Image
+                src="/principlesection/Button.svg"
+                alt="Register Now"
+                fill
+                className="object-contain"
+              />
+            </button>
+          </Link>
         </div>
       </div>
     </section>

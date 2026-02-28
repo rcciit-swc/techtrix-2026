@@ -283,47 +283,34 @@ export default function EventDetails({ event }: Props) {
           <div className="w-full lg:max-w-[950px] xl:max-w-[900px] lg:my-8 rounded-2xl lg:rounded-3xl border border-white/10 bg-black/40 backdrop-blur-md mx-2 sm:mx-4 lg:mx-6 flex justify-center items-center">
             {/* Inner Content */}
             <div className="w-full flex flex-col items-center py-4 px-3 sm:py-6 sm:px-5 lg:py-8 lg:px-8">
-              {/* Header Row: Title + Buttons */}
-              <div className="w-full flex flex-col md:flex-row justify-between items-center sm:items-start mb-4 sm:mb-5 gap-3 md:gap-2">
-                {/* Top Row for Mobile (Back + Register), Inline for Desktop */}
-                <div className="w-full md:w-auto flex justify-between items-center md:justify-start">
-                  <button
-                    onClick={() =>
-                      router.push(`/events/${event.event_category_id}`)
-                    }
-                    className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-black/80 border border-white/40 text-white hover:bg-black transition-all cursor-pointer group"
-                  >
-                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" />
-                    <span
-                      className="hidden sm:inline text-xs sm:text-sm"
-                      style={{ fontFamily: "'Metal Mania'" }}
-                    >
-                      BACK
-                    </span>
-                  </button>
-                  {/* Show Register Button here on mobile, hide on md+ */}
-                  <div className="block md:hidden">
-                    <RegisterButton eventId={event.id || ''} />
-                  </div>
-                </div>
-
-                {/* Title - Centered */}
-                <div className="flex flex-col justify-center items-center w-full md:flex-1 px-1">
-                  <h1
-                    className="text-2xl sm:text-xl lg:text-2xl xl:text-3xl text-white tracking-wider text-center leading-tight"
+              {/* Header Row: Back + Title + Register (single row) */}
+              <div className="w-full flex items-center justify-between mb-4 sm:mb-5 gap-2 sm:gap-3">
+                {/* Back Button */}
+                <button
+                  onClick={() =>
+                    router.push(`/events/${event.event_category_id}`)
+                  }
+                  className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-black/80 border border-white/40 text-white hover:bg-black transition-all cursor-pointer group shrink-0"
+                >
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" />
+                  <span
+                    className="hidden sm:inline text-xs sm:text-sm"
                     style={{ fontFamily: "'Metal Mania'" }}
                   >
-                    {event.name}
-                  </h1>
-                  {isRegistered && (
-                    <span className="mt-1 px-3 py-0.5 text-[10px] sm:text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full tracking-wide">
-                      ✓ Registered
-                    </span>
-                  )}
-                </div>
+                    BACK
+                  </span>
+                </button>
 
-                {/* Show Register Button here on desktop, hide on mobile */}
-                <div className="hidden md:block">
+                {/* Title - Centered */}
+                <h1
+                  className="ml-12 text-lg sm:text-2xl lg:text-3xl xl:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-[#EDF526] via-white to-[#EDF526] tracking-widest text-center leading-tight flex-1 min-w-0 drop-shadow-[0_0_12px_rgba(237,245,38,0.4)]"
+                  style={{ fontFamily: "'Metal Mania'" }}
+                >
+                  {event.name}
+                </h1>
+
+                {/* Register Button */}
+                <div className="shrink-0">
                   <RegisterButton eventId={event.id || ''} />
                 </div>
               </div>

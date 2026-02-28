@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createServer } from '@/lib/supabase/server';
 import { createRazorpayOrder } from '@/lib/services/razorpay';
+import { calculateRazorpayChargeInPaise } from '@/lib/utils/razorpay';
 
 export async function POST(request: NextRequest) {
   try {
@@ -136,9 +137,9 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-    // Create Razorpay order
+    // Create Razorpay order with adjusted amount (includes payment gateway charges)
     const razorpayOrder = await createRazorpayOrder({
-      amount: finalRegistrationFee,
+      amount: calculateRazorpayChargeInPaise(finalRegistrationFee), // Convert to paise and adjust for fees
       eventId,
       userId: user.id,
       teamId,
@@ -153,7 +154,7 @@ export async function POST(request: NextRequest) {
       event_id: eventId,
       team_id: teamId,
       razorpay_order_id: razorpayOrder.id,
-      amount: finalRegistrationFee * 100, // Store in paise
+      amount: razorpayOrder.amount,
       currency: 'INR',
       status: 'pending',
       updated_at: new Date().toISOString(),

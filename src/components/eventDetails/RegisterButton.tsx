@@ -6,18 +6,13 @@ import { login } from '@/lib/services/auth';
 import { useEvents, useUser } from '@/lib/stores';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { SoloEventRegistration } from './SoloRegistrationDialog';
 import { TeamEventRegistration } from './TeamEventRegistration';
-
 interface RegisterButtonProps {
   eventId: string;
 }
-
-const DEVFOLIO_EVENT_ID = '23e45f0c-c0a7-4b72-86df-7d9bfb4882aa';
-const DEVFOLIO_SCRIPT_SRC = 'https://apply.devfolio.co/v2/sdk.js';
-const DEVFOLIO_HACKATHON_SLUG = '8aa557ef3fde422f9ce5c96cb7375064';
 
 export default function RegisterButton({ eventId }: RegisterButtonProps) {
   const router = useRouter();
@@ -27,7 +22,6 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
   const { initiatePayment, isProcessing, isLoading } = useRazorpay();
   const [isSoloOpen, setIsSoloOpen] = useState(false);
   const [isTeamOpen, setIsTeamOpen] = useState(false);
-  const isDevfolioEvent = eventId === DEVFOLIO_EVENT_ID;
 
   // Use event from store if available (contains updated registration status)
   const event = eventsData.find((e) => e.id === eventId);
@@ -42,26 +36,6 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
     (event?.transaction_verified != null || effectiveFees === 0);
   const isPendingPayment =
     event?.registered && !isFullyRegistered && event?.registered_team_id;
-
-  useEffect(() => {
-    if (!isDevfolioEvent) return;
-
-    const existingScript = document.querySelector(
-      `script[src="${DEVFOLIO_SCRIPT_SRC}"]`
-    );
-
-    if (existingScript) return;
-
-    const script = document.createElement('script');
-    script.src = DEVFOLIO_SCRIPT_SRC;
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
-
-    return () => {
-      document.body.removeChild(script);
-    };
-  }, [isDevfolioEvent]);
 
   const handleRegister = async () => {
     if (userLoading) {
@@ -140,7 +114,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
         }}
         type="button"
         disabled
-        className="relative px-7 py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-gray-300 text-[18px] md:text-[20px] cursor-not-allowed font-['Irish_Grover'] rounded-[50px] transition-all duration-300 text-center border-2 border-red-500/50 overflow-hidden opacity-75"
+        className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-gray-300 text-[12px] sm:text-[16px] md:text-[18px] cursor-not-allowed font-['Metal_Mania'] rounded-[50px] transition-all duration-300 text-center border-2 border-red-500/50 overflow-hidden opacity-75"
       >
         <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
           <motion.span
@@ -253,7 +227,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
         }}
         type="button"
         disabled
-        className="relative px-7 py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white text-[18px] md:text-[20px] cursor-not-allowed font-['Irish_Grover'] rounded-[50px] transition-all duration-300 text-center border-2 border-emerald-400/50 overflow-hidden"
+        className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white text-[12px] sm:text-[16px] md:text-[18px] cursor-not-allowed font-['Metal_Mania'] rounded-[50px] transition-all duration-300 text-center border-2 border-emerald-400/50 overflow-hidden"
       >
         <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
           <motion.span
@@ -302,7 +276,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
         type="button"
         onClick={handleCompletePayment}
         disabled={isProcessing || isLoading}
-        className="relative px-7 py-3 bg-gradient-to-r from-[#CCA855] to-[#a8892e] text-black text-[18px] md:text-[20px] cursor-pointer font-['Irish_Grover'] rounded-[50px] hover:from-[#e0bc60] hover:to-[#CCA855] transition-all duration-300 text-center border-2 border-[#CCA855]/50 hover:border-[#CCA855]/80 overflow-hidden group"
+        className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-gradient-to-r from-[#CCA855] to-[#a8892e] text-black text-[12px] sm:text-[16px] md:text-[18px] cursor-pointer font-['Metal_Mania'] rounded-[50px] hover:from-[#e0bc60] hover:to-[#CCA855] transition-all duration-300 text-center border-2 border-[#CCA855]/50 hover:border-[#CCA855]/80 overflow-hidden group"
       >
         <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
           {isProcessing || isLoading ? (
@@ -336,17 +310,6 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
   }
 
   // State 4: Not registered — show Register Now + dialogs
-  if (isDevfolioEvent) {
-    return (
-      <div
-        className="apply-button"
-        data-hackathon-slug={DEVFOLIO_HACKATHON_SLUG}
-        data-button-theme="light"
-        style={{ height: '44px', width: '312px' }}
-      />
-    );
-  }
-
   return (
     <>
       <motion.button
@@ -370,7 +333,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
         }}
         type="button"
         onClick={handleRegister}
-        className="relative px-7 py-3 bg-gradient-to-r from-[#B60302] to-[#8f0202] text-[#FAFAFA] text-[18px] md:text-[20px] cursor-pointer font-['Irish_Grover'] rounded-[50px] hover:from-[#D60302] hover:to-[#B60302] transition-all duration-300 text-center border-2 border-[#FF003C]/30 hover:border-[#FF003C]/60 overflow-hidden group"
+        className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-gradient-to-r from-[#B60302] to-[#8f0202] text-[#FAFAFA] text-[12px] sm:text-[16px] md:text-[18px] cursor-pointer font-['Metal_Mania'] rounded-[50px] hover:from-[#D60302] hover:to-[#B60302] transition-all duration-300 text-center border-2 border-[#FF003C]/30 hover:border-[#FF003C]/60 overflow-hidden group"
       >
         <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
           Register Now

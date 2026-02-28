@@ -118,7 +118,7 @@ export function HeroContent() {
           letterSpacing: '0.05em',
         }}
       >
-        RCCIIT's Annual Inter-College National Level Techno-Management Fest
+        RCCIIT&apos;s Annual Inter-College National Level Techno-Management Fest
       </motion.p>
 
       <motion.div

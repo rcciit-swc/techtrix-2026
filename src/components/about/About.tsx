@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function AboutSection() {
   return (
@@ -49,14 +50,14 @@ export default function AboutSection() {
           {/* GLASS MORPHISM BOX */}
           <div className="rounded-2xl bg-black/40 backdrop-blur-md border border-amber-300 p-5 mb-4 md:mb-8 -mt-2 md:-mt-6">
             <p className="text-base text-gray-100 leading-relaxed mb-2 md:mb-4">
-              Techtrix wasn't just built — it was engineered. Born from a
+              Techtrix wasn&apos;t just built — it was engineered. Born from a
               collective of visionaries, coders, and creators, we set out to
               assemble the ultimate gathering of technological might.
             </p>
 
             <p className="text-base text-gray-100 leading-relaxed">
               Our mission? To provide a platform where innovation knows no
-              bounds. Whether you're a start-level genius or a captain of
+              bounds. Whether you&apos;re a start-level genius or a captain of
               industry, this is your proving ground.
             </p>
           </div>
@@ -82,9 +83,11 @@ export default function AboutSection() {
 
           {/* CTA + STATUS */}
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 mb-4 md:mb-10">
-            <button className="font-orbitron font-bold tracking-wider px-6 py-3 md:px-8 md:py-4 rounded-full bg-yellow-400 text-black hover:bg-yellow-300 transition-all duration-300 hover:scale-105">
-              JOIN THE ALLIANCE →
-            </button>
+            <Link href="/#events">
+              <button className="font-orbitron font-bold tracking-wider px-6 py-3 md:px-8 md:py-4 rounded-full bg-yellow-400 text-black hover:bg-yellow-300 transition-all duration-300 hover:scale-105">
+                JOIN THE ALLIANCE →
+              </button>
+            </Link>
 
             <span className="text-xs text-green-400 font-mono tracking-widest">
               ● SYSTEMS ONLINE
