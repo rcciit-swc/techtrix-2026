@@ -274,7 +274,7 @@ export default function EventDetails({ event }: Props) {
 
         {/* Content Container - Three Column Layout */}
         <div
-          className="relative flex justify-center py-6 px-2 sm:px-4 lg:py-8 lg:px-0"
+          className="relative flex justify-center items-center min-h-screen py-6 px-2 sm:px-4 lg:py-8 lg:px-0"
           style={{ zIndex: 10 }}
         >
           {/* Left Sidebar Spacer - Desktop only */}
@@ -372,14 +372,15 @@ export default function EventDetails({ event }: Props) {
 
         {/* Character Image - Fixed Right Side (Desktop only) */}
         <div
-          className="hidden lg:block absolute -right-10 -bottom-10 w-[350px] xl:w-[400px] h-[85vh] pointer-events-none"
+          className="hidden lg:block fixed right-0 bottom-0 w-[350px] xl:w-[400px] pointer-events-none"
           style={{ zIndex: 5 }}
         >
           <Image
             src={eventImages.char}
             alt="Character"
-            fill
-            className="object-contain object-bottom"
+            width={400}
+            height={600}
+            className="w-full h-auto object-contain"
             onLoad={() => setCharLoaded(true)}
             priority
           />
