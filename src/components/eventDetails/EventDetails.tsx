@@ -25,6 +25,10 @@ export default function EventDetails({ event }: Props) {
   const [activeTab, setActiveTab] = useState<EventTab>('info');
   const eventsData = useEvents((state) => state.eventsData);
 
+  // Get registration status from store (updated after registration)
+  const storeEvent = eventsData.find((e) => e.id === event.id);
+  const isRegistered = storeEvent?.registered ?? false;
+
   // Asset loading state
   const [bgLoaded, setBgLoaded] = useState(false);
   const [charLoaded, setCharLoaded] = useState(false);
@@ -270,7 +274,7 @@ export default function EventDetails({ event }: Props) {
 
         {/* Content Container - Three Column Layout */}
         <div
-          className="relative flex justify-center py-6 px-2 sm:px-4 lg:py-8 lg:px-0"
+          className="relative flex justify-center items-center min-h-screen py-6 px-2 sm:px-4 lg:py-8 lg:px-0"
           style={{ zIndex: 10 }}
         >
           {/* Left Sidebar Spacer - Desktop only */}
@@ -304,13 +308,18 @@ export default function EventDetails({ event }: Props) {
                 </div>
 
                 {/* Title - Centered */}
-                <div className="flex justify-center w-full md:flex-1 px-1">
+                <div className="flex flex-col justify-center items-center w-full md:flex-1 px-1">
                   <h1
                     className="text-2xl sm:text-xl lg:text-2xl xl:text-3xl text-white tracking-wider text-center leading-tight"
                     style={{ fontFamily: "'Metal Mania'" }}
                   >
                     {event.name}
                   </h1>
+                  {isRegistered && (
+                    <span className="mt-1 px-3 py-0.5 text-[10px] sm:text-xs font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full tracking-wide">
+                      ✓ Registered
+                    </span>
+                  )}
                 </div>
 
                 {/* Show Register Button here on desktop, hide on mobile */}
@@ -363,14 +372,15 @@ export default function EventDetails({ event }: Props) {
 
         {/* Character Image - Fixed Right Side (Desktop only) */}
         <div
-          className="hidden lg:block absolute -right-10 -bottom-10 w-[350px] xl:w-[400px] h-[85vh] pointer-events-none"
+          className="hidden lg:block fixed right-0 bottom-0 w-[350px] xl:w-[400px] pointer-events-none"
           style={{ zIndex: 5 }}
         >
           <Image
             src={eventImages.char}
             alt="Character"
-            fill
-            className="object-contain object-bottom"
+            width={400}
+            height={600}
+            className="w-full h-auto object-contain"
             onLoad={() => setCharLoaded(true)}
             priority
           />
