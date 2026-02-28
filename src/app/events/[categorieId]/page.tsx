@@ -1,8 +1,8 @@
-// app/events/[categorieId]/page.tsx
-
+import { Suspense } from 'react';
 import EventCardsCluster from '@/components/EventCardsCluster';
+import GenericLoader from '@/components/GenericLoader';
 
-export default function EventsPage() {
+export default async function EventsPage() {
   return (
     <div
       className="min-h-screen relative overflow-hidden bg-cover bg-center bg-fixed"
@@ -21,8 +21,16 @@ export default function EventsPage() {
         }}
       />
 
-      <main className="relative z-10">
-        <EventCardsCluster />
+      <main className="relative z-10 h-full w-full">
+        <Suspense
+          fallback={
+            <div className="h-screen w-full flex items-center justify-center">
+              <GenericLoader />
+            </div>
+          }
+        >
+          <EventCardsCluster />
+        </Suspense>
       </main>
     </div>
   );

@@ -74,13 +74,12 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-  
+
     let finalRegistrationFee = event.registration_fees;
 
     // Anime Fiesta pricing calculation
     const ANIME_FIESTA_EVENT_ID = 'fccf6fad-0e49-4a5c-a971-3ab874dc923a';
     if (eventId === ANIME_FIESTA_EVENT_ID) {
-      
       const { count: memberCount, error: participantsError } =
         await supabaseAdmin
           .from('participants')
@@ -96,7 +95,7 @@ export async function POST(request: NextRequest) {
       }
 
       const teamSize = memberCount ?? 1;
-      const baseFee = event.registration_fees; 
+      const baseFee = event.registration_fees;
 
       // Pricing formula (max team size: 4):
       // x = 1: fee = y
