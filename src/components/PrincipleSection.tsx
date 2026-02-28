@@ -85,21 +85,20 @@ export default function PrincipalDesk() {
                   expos and innovation challenges aligned with contemporary
                   domains such as artificial intelligence, Internet of Things,
                   renewable energy, automation, cybersecurity, and smart
-                  systems.
-                  <br /> <br />
-                  As we celebrate the Institute’s Silver Jubilee year in 2026, I
-                  extend my sincere best wishes for the resounding success of
-                  Techtrix 2026. I am confident that this edition will exemplify
-                  higher benchmarks of technical innovation, professional
-                  organization, and collaborative excellence. I look forward to
-                  active participation from our B.Tech students and to
-                  witnessing ground-breaking ideas, practical prototypes, and
-                  transformative technological solutions that reflect our
-                  unwavering commitment to engineering advancement and societal
-                  progress. Hope this opportunity will engage more and more
-                  individuals as well groups for showcasing their talent, which
-                  will also inspire our next generations too and may find out
-                  various solutions for existing real-life problems.
+                  systems. <br /> <br /> As we celebrate the Institute’s Silver
+                  Jubilee year in 2026, I extend my sincere best wishes for the
+                  resounding success of Techtrix 2026. I am confident that this
+                  edition will exemplify higher benchmarks of technical
+                  innovation, professional organization, and collaborative
+                  excellence. I look forward to active participation from our
+                  B.Tech students and to witnessing ground-breaking ideas,
+                  practical prototypes, and transformative technological
+                  solutions that reflect our unwavering commitment to
+                  engineering advancement and societal progress. Hope this
+                  opportunity will engage more and more individuals as well
+                  groups for showcasing their talent, which will also inspire
+                  our next generations too and may find out various solutions
+                  for existing real-life problems.
                 </p>
               </div>
 
@@ -133,7 +132,7 @@ export default function PrincipalDesk() {
           <div className=" lg:-mr-15 order-1 lg:order-2 flex-1 lg:max-w-fit flex flex-col items-center">
             <div className="relative w-full h-[350px] md:h-[350px] lg:h-[450px] lg:w-[350px] overflow-hidden rounded-xl">
               <Image
-                src="/principlesection/Principle-Img.png"
+                src="/principlesection/principal.jpg"
                 alt="Dr. Anirban Mukherjee"
                 fill
                 className="object-cover object-center"
@@ -145,7 +144,7 @@ export default function PrincipalDesk() {
               className="text-center pt-2 w-full"
             >
               <h3 className="text-center text-[25px] leading-[151.689%] font-normal text-[#F9FAFB]">
-                Prof.(Dr.) Anirban Mukherjee
+                Prof.(Dr.) Ashoke Mondal
               </h3>
 
               <p className="text-[#EDF526] text-[14px] font-normal leading-[151.689%] text-center">

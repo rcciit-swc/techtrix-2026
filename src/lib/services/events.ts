@@ -1,7 +1,7 @@
-import { events } from '@/lib/types/events';
 import { supabase } from '@/lib/supabase/client';
-import { CURRENT_FEST_ID } from '../constants';
+import { events } from '@/lib/types/events';
 import { toast } from 'sonner';
+import { CURRENT_FEST_ID } from '../constants';
 
 export const getEventCategories = async () => {
   try {

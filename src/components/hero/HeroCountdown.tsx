@@ -149,7 +149,7 @@ export function HeroCountdown() {
   });
 
   useEffect(() => {
-    const targetDate = new Date('2026-03-12T00:00:00').getTime();
+    const targetDate = new Date('2026-03-26T00:00:00').getTime();
 
     const updateCountdown = () => {
       const now = new Date().getTime();

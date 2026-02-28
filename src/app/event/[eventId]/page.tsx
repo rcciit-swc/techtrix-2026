@@ -1,9 +1,10 @@
 'use client';
 
-import { useParams } from 'next/navigation';
-import { useEffect, useState, useMemo } from 'react';
-import { useEvents } from '@/lib/stores';
 import EventDetails from '@/components/eventDetails/EventDetails';
+import EventLoader from '@/components/eventDetails/EventLoader';
+import { useEvents } from '@/lib/stores';
+import { useParams } from 'next/navigation';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function EventPage() {
   const params = useParams();
@@ -31,11 +32,7 @@ export default function EventPage() {
 
   // Show loading while data is being fetched
   if (eventsLoading || (eventsData.length === 0 && !hasAttemptedLoad)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-black">
-        <p className="text-white text-xl">Loading event...</p>
-      </div>
-    );
+    return <EventLoader />;
   }
 
   if (!event) {

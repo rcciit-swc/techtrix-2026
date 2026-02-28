@@ -22,28 +22,33 @@ export const EVENT_IMAGES: Record<string, EventImages> = {
 
   // Startup Autopsy
   '1b0af2ef-1101-4f43-8061-3ac42db45167': {
-    bg: 'https://i.postimg.cc/bwBLcqHH/autopsy-bg.jpg',
-    char: 'https://i.postimg.cc/25LGCg2w/autopsy.png',
+    bg: 'https://i.postimg.cc/sDPdSSmP/autopsy-bg.jpg',
+    char: 'https://i.postimg.cc/SNLF88dt/autopsy.png',
   },
 
   // BGMI (all variants)
   'e361ce59-680b-4d38-a185-9b069c37e1da': {
-    bg: 'https://i.postimg.cc/K8HQSmrJ/bgmi-bg.jpg',
-    char: 'https://i.postimg.cc/qv5QVpXS/bgmi.png',
+    bg: 'https://i.postimg.cc/tJLJ86wP/bgmi-bg.jpg',
+    char: 'https://i.postimg.cc/L47JqdXQ/bgmi.png',
   },
   'f11f0af6-5a23-4084-9aa2-ad6d515c0ce4': {
-    bg: 'https://i.postimg.cc/K8HQSmrJ/bgmi-bg.jpg',
-    char: 'https://i.postimg.cc/qv5QVpXS/bgmi.png',
+    bg: 'https://i.postimg.cc/tJLJ86wP/bgmi-bg.jpg',
+    char: 'https://i.postimg.cc/L47JqdXQ/bgmi.png',
   },
   'bcff7603-f956-4334-a072-283c13abd97e': {
-    bg: 'https://i.postimg.cc/K8HQSmrJ/bgmi-bg.jpg',
-    char: 'https://i.postimg.cc/qv5QVpXS/bgmi.png',
+    bg: 'https://i.postimg.cc/tJLJ86wP/bgmi-bg.jpg',
+    char: 'https://i.postimg.cc/L47JqdXQ/bgmi.png',
+  },
+  // FIFA 25
+  '9c0e3ad0-8401-42e8-8411-62dedb2252b5': {
+    bg: 'https://i.postimg.cc/fLxv9m4Y/eafc-bg.jpg',
+    char: 'https://i.postimg.cc/QtpqT1Lk/eafc.png',
   },
 
   // Build The Electro-Bricks
   '845719e3-959b-4f54-a451-18365ebf09f2': {
-    bg: 'https://i.postimg.cc/Jz2KVRcK/buildtheelectro-bg.jpg',
-    char: 'https://i.postimg.cc/8z0wQTBK/buildtheelectro.png',
+    bg: 'https://i.postimg.cc/qq9qWKSs/build-bg.jpg',
+    char: 'https://i.postimg.cc/gc5xw9J5/build.png',
   },
 
   // Clash of Codes
@@ -60,14 +65,8 @@ export const EVENT_IMAGES: Record<string, EventImages> = {
 
   // Capture The Flag
   '6b738e60-2dcc-4ba5-883b-b82d5e98651d': {
-    bg: 'https://i.postimg.cc/3w013znf/ctf-bg.jpg',
-    char: 'https://i.postimg.cc/tgnk98BQ/ctf.png',
-  },
-
-  // Design It Hard
-  'ad92689b-9c96-4f1a-a81a-3e3cea31ab1d': {
-    bg: 'https://i.postimg.cc/MTkDHtLv/design-bg.jpg',
-    char: 'https://i.postimg.cc/NMh4Fbn2/design.png',
+    bg: 'https://i.postimg.cc/VsTJSy6h/ctf-bg.jpg',
+    char: 'https://i.postimg.cc/RC8W3rhz/ctf.png',
   },
 
   // E-Football (Solo + Co-op)
@@ -82,8 +81,14 @@ export const EVENT_IMAGES: Record<string, EventImages> = {
 
   // FC Mobile 25
   'cfb5a041-076b-4856-8bed-46f2a580725c': {
-    bg: 'https://i.postimg.cc/fLxv9m4Y/eafc-bg.jpg',
-    char: 'https://i.postimg.cc/QtpqT1Lk/eafc.png',
+    bg: 'https://i.postimg.cc/y65DJqxC/fc-bg.jpg',
+    char: 'https://i.postimg.cc/h4wXJFvS/fc.png',
+  },
+
+  // Clash Royale
+  '5b99960f-03cf-4c59-a73e-607dc4f00bec': {
+    bg: 'https://i.postimg.cc/sDGC2qGD/clashroyale-bg.jpg',
+    char: 'https://i.postimg.cc/mgxf1j7g/clashroyale.png',
   },
 
   // Fandom Quiz
@@ -146,6 +151,40 @@ export const EVENT_IMAGES: Record<string, EventImages> = {
     char: 'https://i.postimg.cc/Rh4LQh4V/valorant.png',
   },
 
+  // Database Design (HLD)
+  'ad92689b-9c96-4f1a-a81a-3e3cea31ab1d': {
+    bg: 'https://i.postimg.cc/jq9DWV5p/database-bg.jpg',
+    char: 'https://i.postimg.cc/bYMZGXrc/database.png',
+  },
+
+  // FC Mobile 25
+  'FC Mobile 25': {
+    bg: 'https://i.postimg.cc/y65DJqxC/fc-bg.jpg',
+    char: 'https://i.postimg.cc/h4wXJFvS/fc.png',
+  },
+
+  // Freefire (Solo)
+  'f19e70a2-3616-431d-89aa-a9493619edf4': {
+    bg: 'https://i.postimg.cc/J7gsyw0m/freefire-bg.jpg',
+    char: 'https://i.postimg.cc/3r6kyMNN/freefire.png',
+  },
+  // Freefire (Squad)
+  'fcaf3774-df30-466b-be75-1f4a8931c17d': {
+    bg: 'https://i.postimg.cc/J7gsyw0m/freefire-bg.jpg',
+    char: 'https://i.postimg.cc/3r6kyMNN/freefire.png',
+  },
+  // Robo Tug
+  'Robo Tug': {
+    bg: 'https://i.postimg.cc/VsTJSyv6/robotug-bg.jpg',
+    char: 'https://i.postimg.cc/pV7m9Nry/robotug.png',
+  },
+
+  // Treasure Hunt (Tech Based)
+  '137c5b2d-2f37-4c7e-adbd-1f7852a6faba': {
+    bg: 'https://i.postimg.cc/pV7m9Nrh/treasure-bg.jpg',
+    char: 'https://i.postimg.cc/GhyHGMT3/treasure.png',
+  },
+
   // Default fallback
   default: {
     bg: '/eventDetails/codeAndSeek/lokiBg.png',
@@ -153,6 +192,22 @@ export const EVENT_IMAGES: Record<string, EventImages> = {
   },
 };
 
-export const getEventImages = (eventId: string): EventImages => {
-  return EVENT_IMAGES[eventId] || EVENT_IMAGES['default'];
+export const getEventImages = (
+  eventId: string,
+  eventName?: string
+): EventImages => {
+  // First try direct match by ID or exact key
+  if (EVENT_IMAGES[eventId]) return EVENT_IMAGES[eventId];
+  if (eventName && EVENT_IMAGES[eventName]) return EVENT_IMAGES[eventName];
+
+  // Try normalized name match as fallback
+  if (eventName) {
+    const normalizedTarget = eventName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const match = Object.keys(EVENT_IMAGES).find(
+      (key) => key.toLowerCase().replace(/[^a-z0-9]/g, '') === normalizedTarget
+    );
+    if (match) return EVENT_IMAGES[match];
+  }
+
+  return EVENT_IMAGES['default'];
 };
