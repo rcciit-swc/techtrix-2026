@@ -25,10 +25,6 @@ export default function EventDetails({ event }: Props) {
   const [activeTab, setActiveTab] = useState<EventTab>('info');
   const eventsData = useEvents((state) => state.eventsData);
 
-  // Get registration status from store (updated after registration)
-  const storeEvent = eventsData.find((e) => e.id === event.id);
-  const isRegistered = storeEvent?.registered ?? false;
-
   // Asset loading state
   const [bgLoaded, setBgLoaded] = useState(false);
   const [charLoaded, setCharLoaded] = useState(false);
@@ -356,8 +352,6 @@ export default function EventDetails({ event }: Props) {
                   </span>
                 )}
               </div>
-              <RegisterButton eventId={event.id || ''} />
-            </div>
 
               {/* Side-by-Side Layout: Poster Left, Content Right */}
               <div className="w-full">
@@ -399,7 +393,6 @@ export default function EventDetails({ event }: Props) {
 
           {/* Right Character Spacer - Desktop only */}
           <div className="hidden lg:block w-[200px] xl:w-[220px] flex-shrink-0" />
-        </div>
 
         {/* Character Image - Fixed Right Side (Desktop only) */}
         <div
