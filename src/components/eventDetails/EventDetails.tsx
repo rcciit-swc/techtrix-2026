@@ -2,7 +2,7 @@
 'use client';
 
 import { getEventImages } from '@/lib/constants/eventImages';
-import { useEvents } from '@/lib/stores';
+import { useEvents, useUser } from '@/lib/stores';
 import { events } from '@/lib/types/events';
 import { AnimatePresence } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
@@ -28,6 +28,17 @@ export default function EventDetails({ event }: Props) {
   // Get registration status from store (updated after registration)
   const storeEvent = eventsData.find((e) => e.id === event.id);
   const isRegistered = storeEvent?.registered ?? false;
+
+  // SWC-paid logic
+  const { swcData } = useUser();
+  const isSWCPaid = !!swcData;
+  const SWC_FREE_CATEGORY_IDS = [
+    'fb17b092-1622-4a3d-90a9-650fd860f6a0', // Automata
+    '441aa4ca-49ad-4b57-bb7f-6a1c5cc63a32', // Out of the Box
+    'a8609025-6132-4d69-8c61-3313ef082db4', // Flagship
+  ];
+  const isEligibleForSWCFree =
+    isSWCPaid && SWC_FREE_CATEGORY_IDS.includes(event?.event_category_id ?? '');
 
   // Asset loading state
   const [bgLoaded, setBgLoaded] = useState(false);
@@ -90,11 +101,25 @@ export default function EventDetails({ event }: Props) {
                     className="text-[#00ff41] font-normal text-base sm:text-2xl group-hover:text-[#00ff41] transition-colors drop-shadow-[0_0_8px_rgba(0,255,65,0.5)] leading-tight"
                     style={{ fontFamily: "'Metal Mania', cursive" }}
                   >
-                    {event.registration_fees === 0
-                      ? 'FREE'
-                      : event.registration_fees
-                        ? `₹${event.registration_fees}`
-                        : 'To be Announced'}
+                    {isEligibleForSWCFree && event.registration_fees > 0 ? (
+                      <span className="flex flex-col items-center gap-0.5">
+                        <span>
+                          <span className="line-through text-white/40 text-sm sm:text-lg">
+                            ₹{event.registration_fees}
+                          </span>{' '}
+                          <span>₹0</span>
+                        </span>
+                        <span className="text-[8px] sm:text-[10px] bg-[#00ff41]/20 text-[#00ff41] px-1.5 py-0.5 rounded-full border border-[#00ff41]/30 uppercase tracking-wider font-sans font-medium">
+                          SWC Paid
+                        </span>
+                      </span>
+                    ) : event.registration_fees === 0 ? (
+                      'FREE'
+                    ) : event.registration_fees ? (
+                      `₹${event.registration_fees}`
+                    ) : (
+                      'To be Announced'
+                    )}
                   </p>
                 </div>
               </div>

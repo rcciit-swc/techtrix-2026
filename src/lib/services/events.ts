@@ -34,7 +34,16 @@ export const getEventsData = async (): Promise<events[] | null> => {
       return null;
     }
 
-    return data;
+    // Map RPC field names to the expected type fields
+    const mapped = (data as any[])?.map((event: any) => {
+      const { is_registered, ...rest } = event;
+      return {
+        ...rest,
+        registered: is_registered ?? false,
+      };
+    });
+
+    return mapped as events[];
   } catch (err) {
     console.error('Unexpected error fetching events:', err);
     return null;

@@ -25,10 +25,19 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
 
   // Use event from store if available (contains updated registration status)
   const event = eventsData.find((e) => e.id === eventId);
+  console.log(event);
+  console.log(userData);
 
-  // SWC-paid users don't need to pay registration fees
+  // SWC-paid users don't need to pay registration fees for eligible categories
   const isSWCPaid = !!swcData;
-  const effectiveFees = isSWCPaid ? 0 : event!.registration_fees;
+  const SWC_FREE_CATEGORY_IDS = [
+    'fb17b092-1622-4a3d-90a9-650fd860f6a0', // Automata
+    '441aa4ca-49ad-4b57-bb7f-6a1c5cc63a32', // Out of the Box
+    'a8609025-6132-4d69-8c61-3313ef082db4', // Flagship
+  ];
+  const isEligibleForSWCFree =
+    isSWCPaid && SWC_FREE_CATEGORY_IDS.includes(event?.event_category_id ?? '');
+  const effectiveFees = isEligibleForSWCFree ? 0 : event!.registration_fees;
 
   // Determine registration state
   const isFullyRegistered =
@@ -36,6 +45,18 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
     (event?.transaction_verified != null || effectiveFees === 0);
   const isPendingPayment =
     event?.registered && !isFullyRegistered && event?.registered_team_id;
+
+  const SHUTTERSCAPE_EVENT_ID = '49c435f3-ddca-412b-bb9a-b652af49315e';
+  const SHUTTERSCAPE_FORM_URL =
+    'https://docs.google.com/forms/d/e/1FAIpQLSd4VjRSB1kp0NTcSKPwFQRG6J2l9YK-sc5jc1GO50JipbNUjQ/viewform';
+
+  const isShutterscape = eventId === SHUTTERSCAPE_EVENT_ID;
+
+  const openShuttercapeForm = () => {
+    if (isShutterscape) {
+      window.open(SHUTTERSCAPE_FORM_URL, '_blank');
+    }
+  };
 
   const handleRegister = async () => {
     if (userLoading) {
@@ -85,6 +106,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
         markEventAsRegistered(event?.id || event?.id || '');
         setEventsData(true); // Refetch from backend
         toast.success('Payment successful! Registration confirmed.');
+        openShuttercapeForm();
       } else if (result.error !== 'Payment cancelled') {
         toast.error(result.error || 'Payment failed. Please try again.');
       }
@@ -361,6 +383,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
         eventName={event?.name || ''}
         eventID={event?.id || ''}
         eventFees={effectiveFees}
+        onRegistrationComplete={openShuttercapeForm}
       />
 
       <TeamEventRegistration
@@ -371,6 +394,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
         maxTeamSize={event?.max_team_size}
         eventID={event?.id || ''}
         eventFees={effectiveFees}
+        onRegistrationComplete={openShuttercapeForm}
       />
     </>
   );

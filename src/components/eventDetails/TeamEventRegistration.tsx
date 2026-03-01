@@ -51,6 +51,7 @@ interface EventRegistrationDialogProps {
   maxTeamSize: number;
   eventID: string;
   eventFees: number;
+  onRegistrationComplete?: () => void;
 }
 
 // Zod schema for the Team Lead (Step 1)
@@ -71,6 +72,7 @@ export function TeamEventRegistration({
   maxTeamSize,
   eventID,
   eventFees,
+  onRegistrationComplete,
 }: EventRegistrationDialogProps) {
   const { userData } = useUser();
   const {
@@ -282,6 +284,7 @@ export function TeamEventRegistration({
           }),
         });
 
+        onRegistrationComplete?.();
         setTimeout(() => {
           handleDialogClose();
         }, 3000);
@@ -314,7 +317,7 @@ export function TeamEventRegistration({
       teamLeadEmail: teamLeadData!.email,
       teamMembers: teamMembers,
       ref: userData?.referral_code || 'GOT2026',
-      account_holder_name: '',
+      account_holder_name: teamLeadData!.name,
     };
     try {
       const teamId = await registerTeamWithParticipants(
@@ -360,6 +363,7 @@ export function TeamEventRegistration({
       setShowSuccess(true);
       toast.success('Registered successfully');
       triggerConfetti();
+      onRegistrationComplete?.();
       setTimeout(() => {
         handleDialogClose();
       }, 3000);

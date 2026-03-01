@@ -8,6 +8,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useUser, useEvents } from '@/lib/stores';
 import { supabase } from '@/lib/supabase/client';
 import EditProfileDialog from './EditProfileDialog';
+import GoogleFormDialog from './GoogleFormDialog';
 import type { events } from '@/lib/types';
 import EventsCard from '@/components/profile/EventCard';
 import { toast } from 'sonner';
@@ -16,6 +17,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function ProfilePage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isGoogleFormOpen, setIsGoogleFormOpen] = useState(false);
   const { userData, userLoading, updateUserData, clearUserData } = useUser();
   const { eventsData } = useEvents();
   const [profileImage, setProfileImage] = useState<string>();
@@ -23,6 +25,7 @@ export default function ProfilePage() {
   const [name, setName] = useState<string>();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const isOnboarding = searchParams.get('onboarding') === 'true';
   const [registeredEvents, setRegisteredEvents] = useState<events[]>([]);
 
   useEffect(() => {
@@ -53,6 +56,18 @@ export default function ProfilePage() {
   };
 
   const handleProfileSave = async (formData: FormData) => {
+    if (isOnboarding) {
+      setIsGoogleFormOpen(true);
+      return;
+    }
+    const next = searchParams.get('next');
+    if (next) {
+      router.replace(next);
+    }
+  };
+
+  const handleGoogleFormProceed = () => {
+    setIsGoogleFormOpen(false);
     const next = searchParams.get('next');
     if (next) {
       router.replace(next);
@@ -283,6 +298,11 @@ export default function ProfilePage() {
         profileImage={profileImage}
         onSave={handleProfileSave}
         name={name}
+      />
+
+      <GoogleFormDialog
+        open={isGoogleFormOpen}
+        onProceed={handleGoogleFormProceed}
       />
     </div>
   );

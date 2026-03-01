@@ -38,6 +38,7 @@ interface SoloEventRegistrationDialogProps {
   eventName: string;
   eventID: string;
   eventFees: number;
+  onRegistrationComplete?: () => void;
 }
 
 // Schema for solo (team lead) details.
@@ -55,6 +56,7 @@ export function SoloEventRegistration({
   eventName,
   eventID,
   eventFees,
+  onRegistrationComplete,
 }: SoloEventRegistrationDialogProps) {
   const { userData } = useUser();
   const {
@@ -207,6 +209,7 @@ export function SoloEventRegistration({
         setShowSuccess(true);
         triggerConfetti();
         await sendConfirmationEmail();
+        onRegistrationComplete?.();
         setTimeout(() => {
           handleDialogClose();
         }, 3000);
@@ -229,6 +232,7 @@ export function SoloEventRegistration({
         setShowSuccess(true);
         triggerConfetti();
         await sendConfirmationEmail();
+        onRegistrationComplete?.();
         setTimeout(() => {
           handleDialogClose();
         }, 3000);
