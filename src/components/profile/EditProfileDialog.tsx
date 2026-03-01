@@ -190,7 +190,7 @@ export default function EditProfileDialog({
         <div
           className="absolute inset-0 opacity-50 pointer-events-none"
           style={{
-            backgroundImage: 'url(/about/poster.png)',
+            backgroundImage: 'url(/profile/edited-photo.png)',
             backgroundSize: 'auto 100%',
             backgroundPosition: 'center',
             backgroundRepeat: 'no-repeat',
