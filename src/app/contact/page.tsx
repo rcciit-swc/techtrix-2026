@@ -5,64 +5,9 @@ import { Globe, Mail, MapPin, Navigation, Phone } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { contactData } from './contact-data';
 
-const imageCache = new Map<string, string>();
-
-const cacheImage = async (url: string): Promise<string> => {
-  if (imageCache.has(url)) {
-    return imageCache.get(url)!;
-  }
-
-  const cachedData = localStorage.getItem(`img_cache_${url}`);
-  if (cachedData) {
-    if (cachedData.startsWith('data:')) {
-      imageCache.set(url, cachedData);
-      return cachedData;
-    }
-  }
-
-  try {
-    const response = await fetch(url, {
-      mode: 'cors',
-      cache: 'force-cache',
-    });
-    const blob = await response.blob();
-    const reader = new FileReader();
-    const dataUrlPromise = new Promise<string>((resolve) => {
-      reader.onloadend = () => {
-        const dataUrl = reader.result as string;
-        try {
-          if (dataUrl.length < 5 * 1024 * 1024) {
-            localStorage.setItem(`img_cache_${url}`, dataUrl);
-          }
-        } catch (e) {
-          console.warn('LocalStorage full, using memory cache only');
-        }
-        resolve(dataUrl);
-      };
-    });
-    reader.readAsDataURL(blob);
-
-    const dataUrl = await dataUrlPromise;
-    imageCache.set(url, dataUrl);
-
-    return dataUrl;
-  } catch (error) {
-    console.error('Failed to cache image:', url, error);
-    return url;
-  }
-};
-
 const ContactCard = ({ contact }: { contact: any }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const [cachedImageUrl, setCachedImageUrl] = useState<string>(contact.image);
-  const [imageLoading, setImageLoading] = useState(true);
-
-  useEffect(() => {
-    cacheImage(contact.image).then((url) => {
-      setCachedImageUrl(url);
-      setImageLoading(false);
-    });
-  }, [contact.image]);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   return (
     <motion.div
@@ -91,22 +36,22 @@ const ContactCard = ({ contact }: { contact: any }) => {
         <div className="absolute bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-yellow-500/30 rounded-bl-xl z-20" />
         <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-yellow-500/30 rounded-br-xl z-20" />
 
-        {imageLoading && (
+        {!imageLoaded && (
           <div className="absolute inset-0 bg-gray-900 animate-pulse flex items-center justify-center">
             <div className="w-8 h-8 border-2 border-yellow-500 border-t-transparent rounded-full animate-spin" />
           </div>
         )}
 
         <img
-          src={cachedImageUrl}
+          src={contact.image}
           alt={contact.name}
           className="w-full h-full object-cover transition-transform duration-700 ease-in-out"
           style={{
             transform: isHovered ? 'scale(1.1)' : 'scale(1)',
             filter: isHovered ? 'grayscale(0%)' : 'grayscale(20%)',
-            opacity: imageLoading ? 0 : 1,
+            opacity: imageLoaded ? 1 : 0,
           }}
-          onLoad={() => setImageLoading(false)}
+          onLoad={() => setImageLoaded(true)}
         />
 
         {/* Gradient Overlay */}
@@ -345,30 +290,10 @@ const VenueSection = () => {
 
 export default function ContactPage() {
   const [activeTab, setActiveTab] = useState<'contacts' | 'venue'>('contacts');
-  const [imagesPreloaded, setImagesPreloaded] = useState(false);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
     setIsClient(true);
-  }, []);
-
-  useEffect(() => {
-    const preloadAllImages = async () => {
-      const allImageUrls = contactData.flatMap((section) =>
-        section.contacts.map((contact) => contact.image)
-      );
-      const cachePromises = allImageUrls.map((url) => cacheImage(url));
-
-      try {
-        await Promise.all(cachePromises);
-        setImagesPreloaded(true);
-      } catch (error) {
-        console.error('Error preloading images:', error);
-        setImagesPreloaded(true);
-      }
-    };
-
-    preloadAllImages();
   }, []);
 
   return (
@@ -425,20 +350,6 @@ export default function ContactPage() {
             />
           ))}
       </div>
-
-      {!imagesPreloaded && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black">
-          <div className="text-center">
-            <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p
-              className="text-yellow-500 tracking-widest uppercase text-sm"
-              style={{ fontFamily: 'Metal Mania' }}
-            >
-              Establishing Connection...
-            </p>
-          </div>
-        </div>
-      )}
 
       <div className="relative z-10 container mx-auto px-4 py-20 lg:py-24">
         <div className="mb-6 text-center relative">

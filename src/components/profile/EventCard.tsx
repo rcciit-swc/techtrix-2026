@@ -14,6 +14,7 @@ import {
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import type { TeamMember } from '@/lib/types';
+import { useUser } from '@/lib/stores';
 
 interface EventCardProps {
   event_id: string;
@@ -25,6 +26,7 @@ interface EventCardProps {
   team_details: TeamMember[] | null;
   transaction_screenshot: string | null;
   transaction_verified?: string | null;
+  event_category_id?: string;
 }
 
 export default function EventCard({
@@ -35,6 +37,7 @@ export default function EventCard({
   team_details,
   transaction_screenshot,
   transaction_verified,
+  event_category_id,
 }: EventCardProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<'team' | 'payment'>('team');
@@ -57,7 +60,19 @@ export default function EventCard({
     }
   })();
 
-  const isPaymentPending = registration_fees > 0 && !transaction_verified;
+  // SWC-paid logic: same category IDs as RegisterButton/EventDetails
+  const { swcData } = useUser();
+  const isSWCPaid = !!swcData;
+  const SWC_FREE_CATEGORY_IDS = [
+    'fb17b092-1622-4a3d-90a9-650fd860f6a0', // Automata
+    '441aa4ca-49ad-4b57-bb7f-6a1c5cc63a32', // Out of the Box
+    'a8609025-6132-4d69-8c61-3313ef082db4', // Flagship
+  ];
+  const isEligibleForSWCFree =
+    isSWCPaid && SWC_FREE_CATEGORY_IDS.includes(event_category_id ?? '');
+  const effectiveFees = isEligibleForSWCFree ? 0 : registration_fees;
+
+  const isPaymentPending = effectiveFees > 0 && !transaction_verified;
 
   const renderModal = () => {
     if (!mounted || !isModalOpen) return null;
@@ -190,7 +205,7 @@ export default function EventCard({
                             className="text-gray-600 mx-auto mb-4"
                           />
                           <p className="text-gray-400 text-lg">
-                            {registration_fees > 0
+                            {effectiveFees > 0
                               ? 'Payment pending / No screenshot'
                               : 'Free event'}
                           </p>
@@ -287,7 +302,9 @@ export default function EventCard({
                 {
                   icon: IndianRupee,
                   label: 'Fee',
-                  value: `₹ ${registration_fees || 0}`,
+                  value: isEligibleForSWCFree
+                    ? 'SWC Free'
+                    : `₹ ${registration_fees || 0}`,
                 },
               ].map((item, i) => (
                 <div

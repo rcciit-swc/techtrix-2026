@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 
 export default function AboutSection() {
   return (
@@ -83,11 +82,16 @@ export default function AboutSection() {
 
           {/* CTA + STATUS */}
           <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 mb-4 md:mb-10">
-            <Link href="/#events">
-              <button className="font-orbitron font-bold tracking-wider px-6 py-3 md:px-8 md:py-4 rounded-full bg-yellow-400 text-black hover:bg-yellow-300 transition-all duration-300 hover:scale-105">
-                JOIN THE ALLIANCE →
-              </button>
-            </Link>
+            <button
+              onClick={() => {
+                document
+                  .getElementById('events')
+                  ?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="font-orbitron font-bold tracking-wider px-6 py-3 md:px-8 md:py-4 rounded-full bg-yellow-400 text-black hover:bg-yellow-300 transition-all duration-300 hover:scale-105 cursor-pointer"
+            >
+              JOIN THE ALLIANCE →
+            </button>
 
             <span className="text-xs text-green-400 font-mono tracking-widest">
               ● SYSTEMS ONLINE

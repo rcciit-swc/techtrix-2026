@@ -266,6 +266,7 @@ export default function ProfilePage() {
                         event.transaction_screenshot ?? null
                       }
                       transaction_verified={event.transaction_verified}
+                      event_category_id={event.event_category_id}
                     />
                   </motion.div>
                 ))}

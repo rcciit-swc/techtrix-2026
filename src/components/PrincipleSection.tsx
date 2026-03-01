@@ -2,7 +2,6 @@
 
 import { ChevronDown, ChevronUp } from 'lucide-react';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useState } from 'react';
 
 export default function PrincipalDesk() {
@@ -156,16 +155,21 @@ export default function PrincipalDesk() {
         </div>
 
         <div className="flex justify-center w-full lg:mt-16 pb-16">
-          <Link href="/#events">
-            <button className="relative w-[580px] h-[330px] transition-transform hover:scale-105 active:scale-95">
-              <Image
-                src="/principlesection/Button.svg"
-                alt="Register Now"
-                fill
-                className="object-contain"
-              />
-            </button>
-          </Link>
+          <button
+            onClick={() => {
+              document
+                .getElementById('events')
+                ?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="relative w-[580px] h-[330px] transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+          >
+            <Image
+              src="/principlesection/Button.svg"
+              alt="Register Now"
+              fill
+              className="object-contain"
+            />
+          </button>
         </div>
       </div>
     </section>
