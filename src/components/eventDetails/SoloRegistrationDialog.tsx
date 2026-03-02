@@ -39,6 +39,9 @@ interface SoloEventRegistrationDialogProps {
   eventID: string;
   eventFees: number;
   onRegistrationComplete?: () => void;
+  onPaymentPhaseChange?: (
+    phase: 'creating-order' | 'verifying-payment' | null
+  ) => void;
 }
 
 // Schema for solo (team lead) details.
@@ -57,6 +60,7 @@ export function SoloEventRegistration({
   eventID,
   eventFees,
   onRegistrationComplete,
+  onPaymentPhaseChange,
 }: SoloEventRegistrationDialogProps) {
   const { userData } = useUser();
   const {
@@ -73,7 +77,8 @@ export function SoloEventRegistration({
   );
   const [showSuccess, setShowSuccess] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const { initiatePayment, isProcessing } = useRazorpay();
+  const { initiatePayment, isProcessing, isLoading, isVerifying } =
+    useRazorpay();
 
   // Stop Lenis smooth scroll when modal is open
   useEffect(() => {
@@ -93,6 +98,17 @@ export function SoloEventRegistration({
       }
     };
   }, [isOpen]);
+
+  // Sync payment phase to parent
+  useEffect(() => {
+    if (isRegistering && !isVerifying) {
+      onPaymentPhaseChange?.('creating-order');
+    } else if (isVerifying) {
+      onPaymentPhaseChange?.('verifying-payment');
+    } else {
+      onPaymentPhaseChange?.(null);
+    }
+  }, [isRegistering, isVerifying, onPaymentPhaseChange]);
 
   // Form for solo lead details.
   const {
@@ -255,6 +271,7 @@ export function SoloEventRegistration({
     setSoloLeadData(null);
     setStep(1);
     resetSoloLead();
+    onPaymentPhaseChange?.(null);
     onClose();
   };
 

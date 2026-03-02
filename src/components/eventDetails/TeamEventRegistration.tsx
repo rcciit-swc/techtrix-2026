@@ -38,7 +38,6 @@ import {
   Pencil,
   Plus,
   UserCheck,
-  UserPlus,
   Loader2,
   Eye,
 } from 'lucide-react';
@@ -52,6 +51,9 @@ interface EventRegistrationDialogProps {
   eventID: string;
   eventFees: number;
   onRegistrationComplete?: () => void;
+  onPaymentPhaseChange?: (
+    phase: 'creating-order' | 'verifying-payment' | null
+  ) => void;
 }
 
 // Zod schema for the Team Lead (Step 1)
@@ -73,6 +75,7 @@ export function TeamEventRegistration({
   eventID,
   eventFees,
   onRegistrationComplete,
+  onPaymentPhaseChange,
 }: EventRegistrationDialogProps) {
   const { userData } = useUser();
   const {
@@ -105,7 +108,8 @@ export function TeamEventRegistration({
   const [isRegistering, setIsRegistering] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
-  const { initiatePayment, isProcessing } = useRazorpay();
+  const { initiatePayment, isProcessing, isLoading, isVerifying } =
+    useRazorpay();
 
   // Stop Lenis smooth scroll when modal is open
   useEffect(() => {
@@ -125,6 +129,17 @@ export function TeamEventRegistration({
       }
     };
   }, [isOpen]);
+
+  // Sync payment phase to parent
+  useEffect(() => {
+    if (isRegistering && !isVerifying) {
+      onPaymentPhaseChange?.('creating-order');
+    } else if (isVerifying) {
+      onPaymentPhaseChange?.('verifying-payment');
+    } else {
+      onPaymentPhaseChange?.(null);
+    }
+  }, [isRegistering, isVerifying, onPaymentPhaseChange]);
 
   const {
     register: registerTeamLead,
@@ -318,6 +333,8 @@ export function TeamEventRegistration({
       teamMembers: teamMembers,
       ref: userData?.referral_code || 'GOT2026',
       account_holder_name: teamLeadData!.name,
+      paymentMode: 'SWC_PAID',
+      regMode: 'ONLINE',
     };
     try {
       const teamId = await registerTeamWithParticipants(
@@ -330,7 +347,7 @@ export function TeamEventRegistration({
       const eventData = eventsData?.find((event) => event.event_id === eventID);
       const emailData = {
         eventName: eventData?.name,
-        year: '2025',
+        year: '2026',
         festName: 'Game of Thrones',
         teamName: teamLeadData!.teamName,
         leaderName: teamLeadData!.name,
@@ -388,6 +405,7 @@ export function TeamEventRegistration({
     setEditingMemberIndex(null);
     setIsRegistering(false);
     setShowSuccess(false);
+    onPaymentPhaseChange?.(null);
   };
 
   const handleDialogClose = () => {

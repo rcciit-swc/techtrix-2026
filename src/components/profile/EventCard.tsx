@@ -25,7 +25,7 @@ interface EventCardProps {
   schedule: string;
   team_details: TeamMember[] | null;
   transaction_screenshot: string | null;
-  transaction_verified?: string | null;
+  transaction_verified?: boolean | string | null;
   event_category_id?: string;
 }
 

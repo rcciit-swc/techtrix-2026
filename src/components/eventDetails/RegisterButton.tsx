@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { PaymentLoadingOverlay } from './PaymentLoadingOverlay';
 import { SoloEventRegistration } from './SoloRegistrationDialog';
 import { TeamEventRegistration } from './TeamEventRegistration';
 interface RegisterButtonProps {
@@ -19,14 +20,16 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
   const searchParams = useSearchParams();
   const { userData, userLoading, swcData } = useUser();
   const { markEventAsRegistered, setEventsData, eventsData } = useEvents();
-  const { initiatePayment, isProcessing, isLoading } = useRazorpay();
+  const { initiatePayment, isProcessing, isLoading, isVerifying } =
+    useRazorpay();
   const [isSoloOpen, setIsSoloOpen] = useState(false);
   const [isTeamOpen, setIsTeamOpen] = useState(false);
+  const [paymentActionState, setPaymentActionState] = useState<
+    'creating-order' | 'verifying-payment' | null
+  >(null);
 
   // Use event from store if available (contains updated registration status)
   const event = eventsData.find((e) => e.id === eventId);
-  console.log(event);
-  console.log(userData);
 
   // SWC-paid users don't need to pay registration fees for eligible categories
   const isSWCPaid = !!swcData;
@@ -41,10 +44,11 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
 
   // Determine registration state
   const isFullyRegistered =
-    event?.registered &&
-    (event?.transaction_verified != null || effectiveFees === 0);
+    event?.registered && (!!event?.transaction_verified || effectiveFees === 0);
   const isPendingPayment =
     event?.registered && !isFullyRegistered && event?.registered_team_id;
+  //debug the payment
+  console.log(isFullyRegistered, isPendingPayment);
 
   const SHUTTERSCAPE_EVENT_ID = '49c435f3-ddca-412b-bb9a-b652af49315e';
   const SHUTTERSCAPE_FORM_URL =
@@ -377,6 +381,16 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
         />
       </motion.button>
 
+      {/* Global Payment loading overlay */}
+      {(paymentActionState || isLoading || isVerifying) && (
+        <PaymentLoadingOverlay
+          phase={
+            paymentActionState ||
+            (isVerifying ? 'verifying-payment' : 'creating-order')
+          }
+        />
+      )}
+
       <SoloEventRegistration
         isOpen={isSoloOpen}
         onClose={() => setIsSoloOpen(false)}
@@ -384,6 +398,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
         eventID={event?.id || ''}
         eventFees={effectiveFees}
         onRegistrationComplete={openShuttercapeForm}
+        onPaymentPhaseChange={setPaymentActionState}
       />
 
       <TeamEventRegistration
@@ -395,6 +410,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
         eventID={event?.id || ''}
         eventFees={effectiveFees}
         onRegistrationComplete={openShuttercapeForm}
+        onPaymentPhaseChange={setPaymentActionState}
       />
     </>
   );

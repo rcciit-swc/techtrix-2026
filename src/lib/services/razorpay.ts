@@ -79,7 +79,7 @@ export async function createRazorpayOrder(params: CreateOrderParams) {
   const receipt = `t_${shortTeamId}_${Date.now()}`.slice(0, 40);
 
   const order = await razorpay.orders.create({
-    amount: amount * 100, // Convert to paise
+    amount: amount,
     currency: 'INR',
     receipt,
     notes: {
