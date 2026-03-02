@@ -181,19 +181,16 @@ export default function EditProfileDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[550px] md:max-w-[550px] max-w-[360px] max-h-[90vh] overflow-hidden border border-white/10 rounded-[24px] p-0 bg-[#090b0d] shadow-2xl flex flex-col w-full">
+      <DialogContent className="sm:max-w-[550px] md:max-w-[550px] max-w-[360px] max-h-[90vh] overflow-hidden border border-white/10 rounded-[24px] p-0 bg-[#000000] shadow-2xl flex flex-col w-full">
         <VisuallyHidden>
           <DialogTitle>Edit Profile</DialogTitle>
         </VisuallyHidden>
 
         {/* Fixed Background */}
         <div
-          className="absolute inset-0 opacity-50 pointer-events-none"
+          className="absolute inset-0 opacity-50 pointer-events-none bg-[length:100%_auto] md:bg-[length:auto_100%] bg-center bg-no-repeat"
           style={{
             backgroundImage: 'url(/profile/edited-photo.png)',
-            backgroundSize: 'auto 100%',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
           }}
         />
 
