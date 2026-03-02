@@ -186,49 +186,29 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
 
     if (whatsappLink) {
       return (
-        <motion.a
-          href={whatsappLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          whileHover={{
-            scale: 1.08,
-            y: -3,
-            boxShadow: '0 15px 35px rgba(37, 211, 102, 0.6)',
-          }}
-          whileTap={{ scale: 0.96 }}
-          animate={{
-            boxShadow: [
-              '0 10px 20px rgba(37, 211, 102, 0.3)',
-              '0 12px 30px rgba(37, 211, 102, 0.5)',
-              '0 10px 20px rgba(37, 211, 102, 0.3)',
-            ],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-          className="relative px-7 py-3 bg-gradient-to-r from-[#25D366] to-[#128C7E] text-white text-[18px] md:text-[20px] cursor-pointer font-['Irish_Grover'] rounded-[50px] hover:from-[#2be077] hover:to-[#25D366] transition-all duration-300 text-center border-2 border-[#25D366]/50 hover:border-[#25D366]/80 overflow-hidden group inline-block"
-        >
-          <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
+        <div className="flex items-stretch rounded-[50px] overflow-hidden border-2 border-[#25D366]/50 shadow-[0_10px_20px_rgba(37,211,102,0.3)] hover:shadow-[0_15px_35px_rgba(37,211,102,0.6)] transition-all duration-300 transform scale-95 sm:scale-100">
+          <motion.a
+            href={whatsappLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.1, backgroundColor: '#2be077' }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center justify-center pl-5 pr-3 sm:pl-6 sm:pr-4 bg-[#25D366] text-white cursor-pointer transition-colors border-r border-white/20"
+            title="Join WhatsApp Group"
+          >
             <motion.span
               animate={{ scale: [1, 1.15, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
+              className="text-[22px] sm:text-2xl"
             >
               💬
             </motion.span>
-            Join WhatsApp Group
-          </span>
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-[#25D366]/0 via-white/20 to-[#25D366]/0"
-            animate={{ x: ['-100%', '100%'] }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-              ease: 'linear',
-            }}
-          />
-        </motion.a>
+          </motion.a>
+          
+          <div className="flex items-center justify-center px-5 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-[#4FC879] to-[#1E8A4A] text-white text-[16px] sm:text-[18px] md:text-[20px] font-['Metal Mania']">
+            Registered
+          </div>
+        </div>
       );
     }
 

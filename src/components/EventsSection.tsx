@@ -14,7 +14,7 @@ export const categories = [
     id: '12e9931b-42f8-41a0-9f87-3fd641fe946e',
     name: 'Robotics',
     logo: '/events/logo2.png',
-    image: '/events/hero2.png',
+    image: '/events/cut.png',
   },
   {
     id: '441aa4ca-49ad-4b57-bb7f-6a1c5cc63a32',

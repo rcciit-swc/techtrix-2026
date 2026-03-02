@@ -299,13 +299,13 @@ export default function EventDetails({ event }: Props) {
 
         {/* Content Container - Three Column Layout */}
         <div
-          className="relative flex justify-center items-center min-h-screen py-6 px-2 sm:px-4 lg:py-8 lg:px-0"
+          className="relative flex justify-center items-start lg:items-center min-h-[50vh] pt-20 pb-4 px-2 sm:px-4 lg:py-8 lg:px-0"
           style={{ zIndex: 10 }}
         >
           {/* Left Sidebar Spacer - Desktop only */}
           <div className="hidden lg:block w-[200px] xl:w-[220px] flex-shrink-0" />
           {/* Main Content Panel - Centered */}
-          <div className="w-full lg:max-w-[950px] xl:max-w-[900px] lg:my-8 rounded-2xl lg:rounded-3xl border border-white/10 bg-black/40 backdrop-blur-md mx-2 sm:mx-4 lg:mx-6 flex justify-center items-center">
+          <div className="w-full lg:max-w-[950px] xl:max-w-[900px] lg:my-8 rounded-2xl lg:rounded-3xl border border-white/10 bg-black/40 backdrop-blur-md mx-0 sm:mx-4 lg:mx-6 flex justify-center items-center">
             {/* Inner Content */}
             <div className="w-full flex flex-col items-center py-4 px-3 sm:py-6 sm:px-5 lg:py-8 lg:px-8">
               {/* Header Row: Back + Title + Register (single row) */}
@@ -382,31 +382,29 @@ export default function EventDetails({ event }: Props) {
           <div className="hidden lg:block w-[200px] xl:w-[220px] flex-shrink-0" />
         </div>
 
-        {/* Character Image - Fixed Right Side (Desktop only) */}
+        {/* Character Image - Absolute Right Side (Desktop only) */}
         <div
-          className="hidden lg:block fixed right-0 bottom-0 w-[350px] xl:w-[400px] pointer-events-none"
-          style={{ zIndex: 5 }}
+          className="hidden lg:block absolute right-0 bottom-0 h-[75vh] w-auto pointer-events-none z-[5] max-w-[35vw]"
         >
-          <Image
+          <img
             src={eventImages.char}
             alt="Character"
-            width={400}
-            height={600}
-            className="w-full h-auto object-contain"
+            className="h-full w-auto object-contain object-right-bottom"
             onLoad={() => setCharLoaded(true)}
-            priority
           />
         </div>
 
-        {/* Event Sidebar - Fixed Left Side */}
-        <EventSidebar
-          activeId={event.id}
-          items={relatedEvents.map((e) => ({
-            id: e.id || '',
-            title: e.name || '',
-            image: getEventImages(e.id || 'default', e.name).bg,
-          }))}
-        />
+        {/* Event Sidebar - Absolute Left Side */}
+        <div className="absolute left-0 top-0 w-full h-full pointer-events-none z-[20]">
+          <EventSidebar
+            activeId={event.id}
+            items={relatedEvents.map((e) => ({
+              id: e.id || '',
+              title: e.name || '',
+              image: getEventImages(e.id || 'default', e.name).bg,
+            }))}
+          />
+        </div>
       </div>
     </>
   );
