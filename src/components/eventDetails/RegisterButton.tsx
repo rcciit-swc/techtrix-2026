@@ -117,7 +117,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
   };
 
   // State 1: Registration closed
-  if (false) {
+  if (!event?.reg_status) {
     return (
       <motion.button
         whileHover={{
@@ -177,7 +177,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
   }
 
   // State 2: Fully registered (payment verified or free event)
-  if (true) {
+  if (isFullyRegistered) {
     const whatsappLink = getEventWhatsAppLink(eventId);
 
     if (whatsappLink) {
@@ -370,8 +370,8 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
         isOpen={isTeamOpen}
         onClose={() => setIsTeamOpen(false)}
         eventName={event?.name || ''}
-        minTeamSize={event?.min_team_size ?? 1}
-        maxTeamSize={event?.max_team_size ?? 1}
+        minTeamSize={event?.min_team_size}
+        maxTeamSize={event?.max_team_size}
         eventID={event?.id || ''}
         eventFees={effectiveFees}
         onRegistrationComplete={openShuttercapeForm}
