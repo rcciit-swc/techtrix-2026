@@ -2,6 +2,7 @@ import { supabase } from '@/lib/supabase/client';
 import { events } from '@/lib/types/events';
 import { toast } from 'sonner';
 import { CURRENT_FEST_ID } from '../constants';
+import { useAuth } from '@/lib/stores/auth';
 
 export const getEventCategories = async () => {
   try {
@@ -18,8 +19,8 @@ export const getEventCategories = async () => {
 
 export const getEventsData = async (): Promise<events[] | null> => {
   try {
-    const { data: authData } = await supabase.auth.getSession();
-    const userId = authData?.session?.user?.id ?? null;
+    // Read userId from auth store (populated by Firebase auth flow)
+    const userId = useAuth.getState().userId ?? null;
 
     const { data, error } = await supabase.rpc(
       'get_events_with_participants_by_fest',

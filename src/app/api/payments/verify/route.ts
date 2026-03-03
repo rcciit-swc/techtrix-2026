@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { createServer } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/supabase/server-auth';
 import { verifyPaymentSignature } from '@/lib/services/razorpay';
 
 export async function POST(request: NextRequest) {
@@ -29,16 +29,11 @@ export async function POST(request: NextRequest) {
       );
     }
     console.log('Signature verified successfully');
-    // Create Supabase client for auth
-    const supabase = await createServer();
 
-    // Get the current user
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
+    // Verify the user via the custom JWT cookie
+    const user = await getAuthenticatedUser();
 
-    if (authError || !user) {
+    if (!user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

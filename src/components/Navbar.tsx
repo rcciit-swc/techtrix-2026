@@ -2,8 +2,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { FloatingDock } from '@/components/ui/floating-dock';
 import { login } from '@/lib/services/auth';
-import { useUser } from '@/lib/stores';
-import { supabase } from '@/lib/supabase/client';
+import { useUser, useAuth } from '@/lib/stores';
 import {
   IconCalendarEvent,
   IconHome,
@@ -17,7 +16,7 @@ import { useEffect, useRef, useState } from 'react';
 
 export function Navbar() {
   const { userData } = useUser();
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const { profileImage: authProfileImage } = useAuth();
   const [isPlaying, setIsPlaying] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -56,17 +55,6 @@ export function Navbar() {
       setIsPlaying(true);
     }
   };
-
-  // Fetch user session only once on mount
-  useEffect(() => {
-    const readUserSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data?.session?.user.user_metadata?.avatar_url) {
-        setProfileImage(data.session.user.user_metadata.avatar_url);
-      }
-    };
-    readUserSession();
-  }, []);
 
   const handleUserClick = () => {
     if (userData) {
@@ -108,7 +96,7 @@ export function Navbar() {
       title: userData ? 'Profile' : 'Login',
       icon: userData ? (
         <Avatar className="h-full w-full">
-          <AvatarImage src={profileImage || ''} alt="Profile" />
+          <AvatarImage src={authProfileImage || ''} alt="Profile" />
           <AvatarFallback className="bg-neutral-500 text-white text-xs">
             {userData.name ? userData.name.charAt(0).toUpperCase() : 'U'}
           </AvatarFallback>

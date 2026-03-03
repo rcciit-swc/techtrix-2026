@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
-import { createServer } from '@/lib/supabase/server';
+import { getAuthenticatedUser } from '@/lib/supabase/server-auth';
 import { createRazorpayOrder } from '@/lib/services/razorpay';
 import { calculateRazorpayChargeInPaise } from '@/lib/utils/razorpay';
 
@@ -16,19 +16,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create Supabase client for auth (needs cookies to get current user)
-    const supabase = await createServer();
+    // Verify the user via the custom JWT cookie
+    const user = await getAuthenticatedUser();
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabase.auth.getUser();
-
-    if (authError || !user) {
-      console.log(
-        '[create-order] User not authenticated:',
-        authError?.message || 'No user found'
-      );
+    if (!user) {
+      console.log('[create-order] User not authenticated');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

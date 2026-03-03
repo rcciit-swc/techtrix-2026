@@ -1,38 +1,45 @@
-import { supabase } from '@/lib/supabase/client';
+import { signInWithGoogle, firebaseSignOut } from '@/lib/firebase/auth';
+import { setSupabaseToken } from '@/lib/supabase/client';
+import { useAuth } from '@/lib/stores/auth';
 
-export const login = async (next?: string) => {
-  const redirectPath =
-    next || window.location.pathname + window.location.search;
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo:
-        location.origin +
-        '/api/auth/callback?next=' +
-        encodeURIComponent(redirectPath),
-    },
-  });
-  if (error) {
-    console.log('some error ocurred ');
-    console.error('Login Error:', error);
+/**
+ * Trigger Google sign-in via Firebase popup.
+ * The popup closes once the user picks their account, then
+ * onAuthStateChanged fires in SessionProvider which handles the token exchange.
+ */
+export const login = async (_next?: string) => {
+  try {
+    console.log('[auth] Starting Google sign-in popup…');
+    const result = await signInWithGoogle();
+    console.log('[auth] Popup resolved, user:', result?.user?.email);
+    // SessionProvider's onAuthStateChanged will handle the rest
+  } catch (error) {
+    console.error('[auth] Login Error:', error);
     return null;
   }
-  return data;
 };
 
+/**
+ * Sign out: Firebase + clear Supabase token + clear server cookie.
+ */
 export const logout = async () => {
-  const { data: session } = await supabase.auth.getSession();
+  try {
+    // Sign out from Firebase
+    await firebaseSignOut();
 
-  if (!session || !session.session) {
-    console.warn('No active session found.');
-    window.location.href = '/'; // Redirect anyway
-    return;
+    // Clear Supabase token (rebuilds client without auth)
+    setSupabaseToken(null);
+
+    // Clear auth store
+    useAuth.getState().clearAuth();
+
+    // Clear server-side cookie
+    await fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+
+    // Redirect to home
+    window.location.href = '/';
+  } catch (error) {
+    console.error('Logout failed:', error);
+    window.location.href = '/';
   }
-
-  const { error } = await supabase.auth.signOut();
-  if (error) {
-    console.error('Logout failed:', error.message);
-  }
-
-  window.location.href = '/';
 };

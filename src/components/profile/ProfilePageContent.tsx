@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useUser, useEvents } from '@/lib/stores';
-import { supabase } from '@/lib/supabase/client';
+import { useUser, useEvents, useAuth } from '@/lib/stores';
+import { logout } from '@/lib/services/auth';
 import EditProfileDialog from './EditProfileDialog';
 import GoogleFormDialog from './GoogleFormDialog';
 import type { events } from '@/lib/types';
@@ -20,28 +20,33 @@ export default function ProfilePage() {
   const [isGoogleFormOpen, setIsGoogleFormOpen] = useState(false);
   const { userData, userLoading, updateUserData, clearUserData } = useUser();
   const { eventsData } = useEvents();
-  const [profileImage, setProfileImage] = useState<string>();
+  const { profileImage: authProfileImage, displayName: authDisplayName } =
+    useAuth();
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [name, setName] = useState<string>();
   const router = useRouter();
   const searchParams = useSearchParams();
   const isOnboarding = searchParams.get('onboarding') === 'true';
   const [registeredEvents, setRegisteredEvents] = useState<events[]>([]);
+
+  // Derive profile image and name from auth store (Firebase data)
+  const profileImage = authProfileImage || undefined;
+  const name = authDisplayName || undefined;
 
   useEffect(() => {
     if (searchParams.get('onboarding') === 'true') {
       setIsEditModalOpen(true);
       toast.info('Finish your profile first');
     }
-    const readUserSession = async () => {
-      const { data } = await supabase.auth.getSession();
-      if (data?.session?.user.user_metadata) {
-        setName(data.session.user.user_metadata.full_name);
-        setProfileImage(data.session.user.user_metadata.avatar_url);
-      }
-    };
-    readUserSession();
-  }, [searchParams, router]);
+  }, [searchParams]);
+
+  // When the edit modal is dismissed during onboarding, strip the query param
+  // so it doesn't re-open on the next render.
+  const handleEditOpenChange = (open: boolean) => {
+    setIsEditModalOpen(open);
+    if (!open && isOnboarding) {
+      router.replace('/profile', { scroll: false });
+    }
+  };
 
   useEffect(() => {
     if (eventsData.length > 0)
@@ -49,10 +54,7 @@ export default function ProfilePage() {
   }, [eventsData]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    localStorage.removeItem('sb-session');
-    clearUserData();
-    router.push('/');
+    await logout();
   };
 
   const handleProfileSave = async (formData: FormData) => {
@@ -80,7 +82,7 @@ export default function ProfilePage() {
         <ProfileSkeleton />
         <EditProfileDialog
           open={isEditModalOpen}
-          onOpenChange={setIsEditModalOpen}
+          onOpenChange={handleEditOpenChange}
           userData={userData}
           profileImage={profileImage}
           onSave={handleProfileSave}
@@ -294,7 +296,7 @@ export default function ProfilePage() {
 
       <EditProfileDialog
         open={isEditModalOpen}
-        onOpenChange={setIsEditModalOpen}
+        onOpenChange={handleEditOpenChange}
         userData={userData}
         profileImage={profileImage}
         onSave={handleProfileSave}

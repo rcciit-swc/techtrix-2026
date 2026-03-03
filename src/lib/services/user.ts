@@ -1,20 +1,21 @@
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase/client';
 import { createServer } from '@/lib/supabase/server';
+import { useAuth } from '@/lib/stores/auth';
 
 export const getUserData = async () => {
   try {
-    const { data, error } = await supabase.auth.getSession();
+    // Read userId from the auth store (populated by Firebase auth flow)
+    const { userId } = useAuth.getState();
 
-    // If there's no session or an error, return early without throwing
-    if (error || !data?.session) {
+    if (!userId) {
       return null;
     }
 
     const userdetails = await supabase
       .from('users')
       .select('*')
-      .eq('id', data.session.user.id);
+      .eq('id', userId);
 
     if (userdetails && userdetails.data && userdetails.data.length > 0) {
       const swcData = await supabase
