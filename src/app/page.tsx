@@ -3,6 +3,7 @@
 import AboutSection from '@/components/about/About';
 import EventsSection from '@/components/EventsSection';
 import Hero from '@/components/Hero';
+import PartnerSection from '@/components/PartnerSection';
 import PrincipalDesk from '@/components/PrincipleSection';
 import SplashLoader from '@/components/SplashLoader';
 import SponsorSection from '@/components/SponsorSection';
@@ -46,6 +47,7 @@ const page = () => {
         <AboutSection />
         <EventsSection />
         <SponsorSection />
+        <PartnerSection />
         <SponsorshipProposition />
         <PrincipalDesk />
       </div>

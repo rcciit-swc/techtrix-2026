@@ -99,6 +99,11 @@ export function Navbar() {
       icon: <IconUsers className="h-full w-full text-[#00f7ff]" />,
       href: '/teams',
     },
+    // {
+    //   title: 'Partners',
+    //   icon: <IconStar className="h-full w-full text-[#00f7ff]" />,
+    //   href: '/#partners',
+    // },
     {
       title: 'Contact',
       icon: <IconMessageCircle className="h-full w-full text-[#00f7ff]" />,
