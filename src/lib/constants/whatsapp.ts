@@ -1,12 +1,15 @@
 export const EVENT_WHATSAPP_LINKS: Record<string, string> = {
   // Battle of Wits
-  'b9543b25-177d-4046-9635-93b015ea30eb': '',
+  'b9543b25-177d-4046-9635-93b015ea30eb':
+    'https://chat.whatsapp.com/CVeFaVfxb9yFdMhLYhQb6L',
 
   // FC MOBILE 25
-  'cfb5a041-076b-4856-8bed-46f2a580725c': '',
+  'cfb5a041-076b-4856-8bed-46f2a580725c':
+    'https://chat.whatsapp.com/E7gYSxU6rzQJcb90O7C0pp',
 
   // Software Development
-  '23e45f0c-c0a7-4b72-86df-7d9bfb4882aa': '',
+  '23e45f0c-c0a7-4b72-86df-7d9bfb4882aa':
+    'https://chat.whatsapp.com/CTZPdzrscAwBJKHo1pTK9c',
 
   // Final Kick
   'a9b39ac7-2985-4c04-8d02-92a9ef82c41a': '',
@@ -47,7 +50,8 @@ export const EVENT_WHATSAPP_LINKS: Record<string, string> = {
   '17b81e27-e7f1-4195-8535-e3a354755e79': '',
 
   // Startup Autopsy
-  '1b0af2ef-1101-4f43-8061-3ac42db45167': '',
+  '1b0af2ef-1101-4f43-8061-3ac42db45167':
+    'https://chat.whatsapp.com/Lv5OyKlPbbILFc99LqgCjd',
 
   // Capture The Flag (CTF)
   '6b738e60-2dcc-4ba5-883b-b82d5e98651d':
@@ -92,22 +96,26 @@ export const EVENT_WHATSAPP_LINKS: Record<string, string> = {
   'a8953835-cec2-49dc-bdf1-453d0a03bd20': '',
 
   // Design It Hard
-  'ad92689b-9c96-4f1a-a81a-3e3cea31ab1d': '',
+  'ad92689b-9c96-4f1a-a81a-3e3cea31ab1d':
+    'https://chat.whatsapp.com/IUzh6zHHjH4AcLDlKc7an3',
 
   // BGMI (SQUAD TDM)
   'f11f0af6-5a23-4084-9aa2-ad6d515c0ce4': '',
 
   // CLASH ROYALE
-  '5b99960f-03cf-4c59-a73e-607dc4f00bec': '',
+  '5b99960f-03cf-4c59-a73e-607dc4f00bec':
+    'https://chat.whatsapp.com/EYPEqYriYPS4WngjMT1H8y',
 
   // BGMI (SQUAD)
   'bcff7603-f956-4334-a072-283c13abd97e': '',
 
   // Treasure Hunt-Murder Mystery
-  '137c5b2d-2f37-4c7e-adbd-1f7852a6faba': '',
+  '137c5b2d-2f37-4c7e-adbd-1f7852a6faba':
+    'https://chat.whatsapp.com/DKNhuswxyGOI3pXSBcknDJ',
 
   // Crack The Interview
-  '199e5134-39c4-488f-8c10-8bc256c39f84': '',
+  '199e5134-39c4-488f-8c10-8bc256c39f84':
+    'https://chat.whatsapp.com/EHszyTA0HE07zobYosmUne',
 };
 
 export const getEventWhatsAppLink = (eventId: string): string | null => {
