@@ -18,9 +18,9 @@ export async function GET(request: Request) {
 
       if (user) {
         // Check if user exists in public.users table
-        const { error: fetchError } = await supabase
+        const { data: existingUser, error: fetchError } = await supabase
           .from('users')
-          .select('id')
+          .select('*')
           .eq('email', user.email)
           .single();
 
@@ -35,10 +35,25 @@ export async function GET(request: Request) {
 
           if (insertError) {
             console.error('Error creating user:', insertError);
-            // Still redirect to home, user can try again or profile will be created later
           }
+
+          // New user — redirect to onboarding
+          const onboardingUrl = `/profile?onboarding=true${next && next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}`;
+          return NextResponse.redirect(`${origin}${onboardingUrl}`);
         } else if (fetchError) {
           console.error('Error checking user:', fetchError);
+        } else {
+          // User exists — check if profile is complete
+          const isProfileComplete =
+            existingUser?.name &&
+            existingUser?.phone &&
+            existingUser?.college &&
+            existingUser?.gender;
+
+          if (!isProfileComplete) {
+            const onboardingUrl = `/profile?onboarding=true${next && next !== '/' ? `&next=${encodeURIComponent(next)}` : ''}`;
+            return NextResponse.redirect(`${origin}${onboardingUrl}`);
+          }
         }
       }
 

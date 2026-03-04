@@ -54,13 +54,13 @@ export default function EventSidebar({ items, activeId }: Props) {
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden lg:flex absolute left-0 top-24 z-[200] flex-col gap-2 max-h-[80vh] overflow-y-auto pr-2 custom-scrollbar">
+      <div className="hidden lg:flex absolute left-0 top-[50vh] -translate-y-1/2 z-[200] flex-col gap-1.5 max-h-[90vh] overflow-y-auto pr-2 py-2 custom-scrollbar pointer-events-auto">
         {items.map((item) => (
           <Link
             key={item.id}
             href={`/event/${item.id}`}
             className={`
-              relative w-[180px] xl:w-[200px] h-[130px] xl:h-[140px] rounded-r-[30px] overflow-hidden
+              relative w-[160px] xl:w-[180px] h-[120px] xl:h-[130px] rounded-r-[20px] overflow-hidden flex-shrink-0
               transition-all duration-300 group border-[3px]
               ${
                 activeId === item.id

@@ -58,6 +58,7 @@ interface InitiatePaymentParams {
 export function useRazorpay() {
   const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const initiatePayment = useCallback(
     async (params: InitiatePaymentParams): Promise<PaymentResult> => {
@@ -100,6 +101,7 @@ export function useRazorpay() {
               color: '#6366f1', // Indigo color
             },
             handler: async (response: RazorpayResponse) => {
+              setIsVerifying(true);
               // Step 3: Verify payment
               try {
                 const verifyResponse = await fetch('/api/payments/verify', {
@@ -130,6 +132,7 @@ export function useRazorpay() {
                 );
                 resolve({ success: false, error: 'Verification failed' });
               } finally {
+                setIsVerifying(false);
                 setIsProcessing(false);
               }
             },
@@ -172,5 +175,6 @@ export function useRazorpay() {
     initiatePayment,
     isLoading,
     isProcessing,
+    isVerifying,
   };
 }

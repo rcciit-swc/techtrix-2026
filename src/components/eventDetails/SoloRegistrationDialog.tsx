@@ -30,6 +30,7 @@ import {
   Loader2,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { calculateGatewayFee } from '@/lib/utils/razorpay';
 
 interface SoloEventRegistrationDialogProps {
   isOpen: boolean;
@@ -37,6 +38,10 @@ interface SoloEventRegistrationDialogProps {
   eventName: string;
   eventID: string;
   eventFees: number;
+  onRegistrationComplete?: () => void;
+  onPaymentPhaseChange?: (
+    phase: 'creating-order' | 'verifying-payment' | null
+  ) => void;
 }
 
 // Schema for solo (team lead) details.
@@ -54,6 +59,8 @@ export function SoloEventRegistration({
   eventName,
   eventID,
   eventFees,
+  onRegistrationComplete,
+  onPaymentPhaseChange,
 }: SoloEventRegistrationDialogProps) {
   const { userData } = useUser();
   const {
@@ -70,7 +77,8 @@ export function SoloEventRegistration({
   );
   const [showSuccess, setShowSuccess] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
-  const { initiatePayment, isProcessing } = useRazorpay();
+  const { initiatePayment, isProcessing, isLoading, isVerifying } =
+    useRazorpay();
 
   // Stop Lenis smooth scroll when modal is open
   useEffect(() => {
@@ -90,6 +98,17 @@ export function SoloEventRegistration({
       }
     };
   }, [isOpen]);
+
+  // Sync payment phase to parent
+  useEffect(() => {
+    if (isRegistering && !isVerifying) {
+      onPaymentPhaseChange?.('creating-order');
+    } else if (isVerifying) {
+      onPaymentPhaseChange?.('verifying-payment');
+    } else {
+      onPaymentPhaseChange?.(null);
+    }
+  }, [isRegistering, isVerifying, onPaymentPhaseChange]);
 
   // Form for solo lead details.
   const {
@@ -206,6 +225,7 @@ export function SoloEventRegistration({
         setShowSuccess(true);
         triggerConfetti();
         await sendConfirmationEmail();
+        onRegistrationComplete?.();
         setTimeout(() => {
           handleDialogClose();
         }, 3000);
@@ -228,6 +248,7 @@ export function SoloEventRegistration({
         setShowSuccess(true);
         triggerConfetti();
         await sendConfirmationEmail();
+        onRegistrationComplete?.();
         setTimeout(() => {
           handleDialogClose();
         }, 3000);
@@ -250,6 +271,7 @@ export function SoloEventRegistration({
     setSoloLeadData(null);
     setStep(1);
     resetSoloLead();
+    onPaymentPhaseChange?.(null);
     onClose();
   };
 
@@ -494,14 +516,48 @@ export function SoloEventRegistration({
                       {soloLeadData?.email}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-2">
-                    <span className="text-white/40 text-sm">Fee</span>
-                    <span
-                      className={`font-bold text-lg text-right ${isFreeEvent ? 'text-green-400' : 'text-yellow-400'}`}
-                    >
-                      {isFreeEvent ? 'Free' : `₹ ${eventFees}`}
-                    </span>
-                  </div>
+                  {!isFreeEvent &&
+                    (() => {
+                      const { gatewayFee, totalAmount } =
+                        calculateGatewayFee(eventFees);
+                      return (
+                        <>
+                          <div className="flex justify-between items-center py-2">
+                            <span className="text-white/40 text-sm">
+                              Registration Fee
+                            </span>
+                            <span className="text-white font-medium text-right text-sm">
+                              ₹ {eventFees}
+                            </span>
+                          </div>
+                          <div className="flex justify-between items-center py-1">
+                            <span className="text-white/40 text-sm">
+                              Gateway Fee
+                            </span>
+                            <span className="text-white/50 text-right text-sm">
+                              + ₹ {gatewayFee}
+                            </span>
+                          </div>
+                          <div className="border-t border-dashed border-white/10 my-1" />
+                          <div className="flex justify-between items-center py-2">
+                            <span className="text-white/60 text-sm font-medium">
+                              Total
+                            </span>
+                            <span className="font-bold text-lg text-right text-yellow-400">
+                              ₹ {totalAmount}
+                            </span>
+                          </div>
+                        </>
+                      );
+                    })()}
+                  {isFreeEvent && (
+                    <div className="flex justify-between items-center py-2">
+                      <span className="text-white/40 text-sm">Fee</span>
+                      <span className="font-bold text-lg text-right text-green-400">
+                        Free
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -522,7 +578,7 @@ export function SoloEventRegistration({
                       <span className="tracking-wide">
                         {isFreeEvent
                           ? 'CONFIRM REGISTRATION'
-                          : `PAY ₹${eventFees} & REGISTER`}
+                          : `PAY ₹${calculateGatewayFee(eventFees).totalAmount} & REGISTER`}
                       </span>
                       <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
                     </>

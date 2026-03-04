@@ -2,7 +2,7 @@
 'use client';
 
 import { getEventImages } from '@/lib/constants/eventImages';
-import { useEvents } from '@/lib/stores';
+import { useEvents, useUser } from '@/lib/stores';
 import { events } from '@/lib/types/events';
 import { AnimatePresence } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
@@ -24,6 +24,21 @@ export default function EventDetails({ event }: Props) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<EventTab>('info');
   const eventsData = useEvents((state) => state.eventsData);
+
+  // Get registration status from store (updated after registration)
+  const storeEvent = eventsData.find((e) => e.id === event.id);
+  const isRegistered = storeEvent?.registered ?? false;
+
+  // SWC-paid logic
+  const { swcData } = useUser();
+  const isSWCPaid = !!swcData;
+  const SWC_FREE_CATEGORY_IDS = [
+    'fb17b092-1622-4a3d-90a9-650fd860f6a0', // Automata
+    '441aa4ca-49ad-4b57-bb7f-6a1c5cc63a32', // Out of the Box
+    'a8609025-6132-4d69-8c61-3313ef082db4', // Flagship
+  ];
+  const isEligibleForSWCFree =
+    isSWCPaid && SWC_FREE_CATEGORY_IDS.includes(event?.event_category_id ?? '');
 
   // Asset loading state
   const [bgLoaded, setBgLoaded] = useState(false);
@@ -86,11 +101,25 @@ export default function EventDetails({ event }: Props) {
                     className="text-[#00ff41] font-normal text-base sm:text-2xl group-hover:text-[#00ff41] transition-colors drop-shadow-[0_0_8px_rgba(0,255,65,0.5)] leading-tight"
                     style={{ fontFamily: "'Metal Mania', cursive" }}
                   >
-                    {event.registration_fees === 0
-                      ? 'FREE'
-                      : event.registration_fees
-                        ? `₹${event.registration_fees}`
-                        : 'To be Announced'}
+                    {isEligibleForSWCFree && event.registration_fees > 0 ? (
+                      <span className="flex flex-col items-center gap-0.5">
+                        <span>
+                          <span className="line-through text-white/40 text-sm sm:text-lg">
+                            ₹{event.registration_fees}
+                          </span>{' '}
+                          <span>₹0</span>
+                        </span>
+                        <span className="text-[8px] sm:text-[10px] bg-[#00ff41]/20 text-[#00ff41] px-1.5 py-0.5 rounded-full border border-[#00ff41]/30 uppercase tracking-wider font-sans font-medium">
+                          SWC Paid
+                        </span>
+                      </span>
+                    ) : event.registration_fees === 0 ? (
+                      'FREE'
+                    ) : event.registration_fees ? (
+                      `₹${event.registration_fees}`
+                    ) : (
+                      'To be Announced'
+                    )}
                   </p>
                 </div>
               </div>
@@ -270,51 +299,43 @@ export default function EventDetails({ event }: Props) {
 
         {/* Content Container - Three Column Layout */}
         <div
-          className="relative flex justify-center py-6 px-2 sm:px-4 lg:py-8 lg:px-0"
+          className="relative flex justify-center items-start lg:items-center min-h-[50vh] pt-20 pb-4 px-2 sm:px-4 lg:py-8 lg:px-0"
           style={{ zIndex: 10 }}
         >
           {/* Left Sidebar Spacer - Desktop only */}
           <div className="hidden lg:block w-[200px] xl:w-[220px] flex-shrink-0" />
           {/* Main Content Panel - Centered */}
-          <div className="w-full lg:max-w-[950px] xl:max-w-[900px] lg:my-8 rounded-2xl lg:rounded-3xl border border-white/10 bg-black/40 backdrop-blur-md mx-2 sm:mx-4 lg:mx-6 flex justify-center items-center">
+          <div className="w-full lg:max-w-[950px] xl:max-w-[900px] lg:my-8 rounded-2xl lg:rounded-3xl border border-white/10 bg-black/40 backdrop-blur-md mx-0 sm:mx-4 lg:mx-6 flex justify-center items-center">
             {/* Inner Content */}
             <div className="w-full flex flex-col items-center py-4 px-3 sm:py-6 sm:px-5 lg:py-8 lg:px-8">
-              {/* Header Row: Title + Buttons */}
-              <div className="w-full flex flex-col md:flex-row justify-between items-center sm:items-start mb-4 sm:mb-5 gap-3 md:gap-2">
-                {/* Top Row for Mobile (Back + Register), Inline for Desktop */}
-                <div className="w-full md:w-auto flex justify-between items-center md:justify-start">
-                  <button
-                    onClick={() =>
-                      router.push(`/events/${event.event_category_id}`)
-                    }
-                    className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-black/80 border border-white/40 text-white hover:bg-black transition-all cursor-pointer group"
-                  >
-                    <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" />
-                    <span
-                      className="hidden sm:inline text-xs sm:text-sm"
-                      style={{ fontFamily: "'Metal Mania'" }}
-                    >
-                      BACK
-                    </span>
-                  </button>
-                  {/* Show Register Button here on mobile, hide on md+ */}
-                  <div className="block md:hidden">
-                    <RegisterButton eventId={event.id || ''} />
-                  </div>
-                </div>
-
-                {/* Title - Centered */}
-                <div className="flex justify-center w-full md:flex-1 px-1">
-                  <h1
-                    className="text-2xl sm:text-xl lg:text-2xl xl:text-3xl text-white tracking-wider text-center leading-tight"
+              {/* Header Row: Back + Title + Register (single row) */}
+              <div className="w-full flex items-center justify-between mb-4 sm:mb-5 gap-2 sm:gap-3">
+                {/* Back Button */}
+                <button
+                  onClick={() =>
+                    router.push(`/events/${event.event_category_id}`)
+                  }
+                  className="flex items-center gap-1 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-full bg-black/80 border border-white/40 text-white hover:bg-black transition-all cursor-pointer group shrink-0"
+                >
+                  <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 group-hover:-translate-x-1 transition-transform" />
+                  <span
+                    className="hidden sm:inline text-xs sm:text-sm"
                     style={{ fontFamily: "'Metal Mania'" }}
                   >
-                    {event.name}
-                  </h1>
-                </div>
+                    BACK
+                  </span>
+                </button>
 
-                {/* Show Register Button here on desktop, hide on mobile */}
-                <div className="hidden md:block">
+                {/* Title - Centered */}
+                <h1
+                  className="ml-12 text-lg sm:text-2xl lg:text-3xl xl:text-4xl text-transparent bg-clip-text bg-gradient-to-r from-[#EDF526] via-white to-[#EDF526] tracking-widest text-center leading-tight flex-1 min-w-0 drop-shadow-[0_0_12px_rgba(237,245,38,0.4)]"
+                  style={{ fontFamily: "'Metal Mania'" }}
+                >
+                  {event.name}
+                </h1>
+
+                {/* Register Button */}
+                <div className="shrink-0">
                   <RegisterButton eventId={event.id || ''} />
                 </div>
               </div>
@@ -361,30 +382,27 @@ export default function EventDetails({ event }: Props) {
           <div className="hidden lg:block w-[200px] xl:w-[220px] flex-shrink-0" />
         </div>
 
-        {/* Character Image - Fixed Right Side (Desktop only) */}
-        <div
-          className="hidden lg:block absolute -right-10 -bottom-10 w-[350px] xl:w-[400px] h-[85vh] pointer-events-none"
-          style={{ zIndex: 5 }}
-        >
-          <Image
+        {/* Character Image - Absolute Right Side (Desktop only) */}
+        <div className="hidden lg:block absolute right-0 bottom-0 h-[75vh] w-auto pointer-events-none z-[5] max-w-[35vw]">
+          <img
             src={eventImages.char}
             alt="Character"
-            fill
-            className="object-contain object-bottom"
+            className="h-full w-auto object-contain object-right-bottom"
             onLoad={() => setCharLoaded(true)}
-            priority
           />
         </div>
 
-        {/* Event Sidebar - Fixed Left Side */}
-        <EventSidebar
-          activeId={event.id}
-          items={relatedEvents.map((e) => ({
-            id: e.id || '',
-            title: e.name || '',
-            image: getEventImages(e.id || 'default', e.name).bg,
-          }))}
-        />
+        {/* Event Sidebar - Absolute Left Side */}
+        <div className="absolute left-0 top-0 w-full h-full pointer-events-none z-[20]">
+          <EventSidebar
+            activeId={event.id}
+            items={relatedEvents.map((e) => ({
+              id: e.id || '',
+              title: e.name || '',
+              image: getEventImages(e.id || 'default', e.name).bg,
+            }))}
+          />
+        </div>
       </div>
     </>
   );

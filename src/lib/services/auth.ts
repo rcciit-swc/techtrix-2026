@@ -1,10 +1,15 @@
 import { supabase } from '@/lib/supabase/client';
 
-export const login = async () => {
+export const login = async (next?: string) => {
+  const redirectPath =
+    next || window.location.pathname + window.location.search;
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: location.origin + '/api/auth/callback?next=',
+      redirectTo:
+        location.origin +
+        '/api/auth/callback?next=' +
+        encodeURIComponent(redirectPath),
     },
   });
   if (error) {

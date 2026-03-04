@@ -18,7 +18,7 @@ export const getUserData = async () => {
 
     if (userdetails && userdetails.data && userdetails.data.length > 0) {
       const swcData = await supabase
-        .from('SWC-2025')
+        .from('SWC-2026')
         .select('*')
         .eq('email', userdetails.data[0].email);
       const returnValue = {
@@ -125,7 +125,7 @@ export const handleSaveChanges = async (
 export const getSWCData = async (collegeRoll: string, email: string) => {
   try {
     const { data } = await supabase
-      .from('SWC-2025')
+      .from('SWC-2026')
       .select('*')
       .or(`roll.ilike.${collegeRoll},email.eq.${email}`);
     return data && data.length > 0;

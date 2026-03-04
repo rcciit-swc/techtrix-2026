@@ -22,6 +22,7 @@ import {
   RegisterTeamParams,
   registerTeamWithParticipants,
 } from '@/lib/services/register';
+import { calculateGatewayFee } from '@/lib/utils/razorpay';
 import { useRazorpay } from '@/hooks/useRazorpay';
 import {
   User,
@@ -37,7 +38,6 @@ import {
   Pencil,
   Plus,
   UserCheck,
-  UserPlus,
   Loader2,
   Eye,
 } from 'lucide-react';
@@ -50,6 +50,10 @@ interface EventRegistrationDialogProps {
   maxTeamSize: number;
   eventID: string;
   eventFees: number;
+  onRegistrationComplete?: () => void;
+  onPaymentPhaseChange?: (
+    phase: 'creating-order' | 'verifying-payment' | null
+  ) => void;
 }
 
 // Zod schema for the Team Lead (Step 1)
@@ -70,6 +74,8 @@ export function TeamEventRegistration({
   maxTeamSize,
   eventID,
   eventFees,
+  onRegistrationComplete,
+  onPaymentPhaseChange,
 }: EventRegistrationDialogProps) {
   const { userData } = useUser();
   const {
@@ -102,7 +108,8 @@ export function TeamEventRegistration({
   const [isRegistering, setIsRegistering] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
-  const { initiatePayment, isProcessing } = useRazorpay();
+  const { initiatePayment, isProcessing, isLoading, isVerifying } =
+    useRazorpay();
 
   // Stop Lenis smooth scroll when modal is open
   useEffect(() => {
@@ -122,6 +129,17 @@ export function TeamEventRegistration({
       }
     };
   }, [isOpen]);
+
+  // Sync payment phase to parent
+  useEffect(() => {
+    if (isRegistering && !isVerifying) {
+      onPaymentPhaseChange?.('creating-order');
+    } else if (isVerifying) {
+      onPaymentPhaseChange?.('verifying-payment');
+    } else {
+      onPaymentPhaseChange?.(null);
+    }
+  }, [isRegistering, isVerifying, onPaymentPhaseChange]);
 
   const {
     register: registerTeamLead,
@@ -281,6 +299,7 @@ export function TeamEventRegistration({
           }),
         });
 
+        onRegistrationComplete?.();
         setTimeout(() => {
           handleDialogClose();
         }, 3000);
@@ -313,7 +332,9 @@ export function TeamEventRegistration({
       teamLeadEmail: teamLeadData!.email,
       teamMembers: teamMembers,
       ref: userData?.referral_code || 'GOT2026',
-      account_holder_name: '',
+      account_holder_name: teamLeadData!.name,
+      paymentMode: 'SWC_PAID',
+      regMode: 'ONLINE',
     };
     try {
       const teamId = await registerTeamWithParticipants(
@@ -326,7 +347,7 @@ export function TeamEventRegistration({
       const eventData = eventsData?.find((event) => event.event_id === eventID);
       const emailData = {
         eventName: eventData?.name,
-        year: '2025',
+        year: '2026',
         festName: 'Game of Thrones',
         teamName: teamLeadData!.teamName,
         leaderName: teamLeadData!.name,
@@ -359,6 +380,7 @@ export function TeamEventRegistration({
       setShowSuccess(true);
       toast.success('Registered successfully');
       triggerConfetti();
+      onRegistrationComplete?.();
       setTimeout(() => {
         handleDialogClose();
       }, 3000);
@@ -383,6 +405,7 @@ export function TeamEventRegistration({
     setEditingMemberIndex(null);
     setIsRegistering(false);
     setShowSuccess(false);
+    onPaymentPhaseChange?.(null);
   };
 
   const handleDialogClose = () => {
@@ -898,14 +921,49 @@ export function TeamEventRegistration({
                           <span className="text-white/40">Members</span>
                           <span className="text-white">{totalTeamCount}</span>
                         </div>
-                        <div className="flex justify-between text-sm py-2">
-                          <span className="text-white/40">Total Fee</span>
-                          <span
-                            className={`font-bold ${eventFees === 0 ? 'text-green-400' : 'text-yellow-400'}`}
-                          >
-                            {eventFees === 0 ? 'Free' : `₹ ${eventFees}`}
-                          </span>
-                        </div>
+                        {eventFees > 0 &&
+                          (() => {
+                            const { gatewayFee, totalAmount } =
+                              calculateGatewayFee(eventFees);
+                            return (
+                              <>
+                                <div className="flex justify-between text-sm py-2">
+                                  <span className="text-white/40">
+                                    Registration Fee
+                                  </span>
+                                  <span className="text-white">
+                                    ₹ {eventFees}.00
+                                  </span>
+                                </div>
+                                <div className="flex justify-between text-sm -pt-1 -mt-2 pb-2">
+                                  <span className="text-white/40">
+                                    Gateway Fee
+                                  </span>
+                                  <span className="text-white/50">
+                                    {' '}
+                                    ₹ {gatewayFee}
+                                  </span>
+                                </div>
+                                <div className="border-t border-dashed border-white/10 my-1" />
+                                <div className="flex justify-between text-sm py-2">
+                                  <span className="text-white/60 font-medium">
+                                    Total
+                                  </span>
+                                  <span className="font-bold text-yellow-400">
+                                    ₹ {totalAmount}
+                                  </span>
+                                </div>
+                              </>
+                            );
+                          })()}
+                        {eventFees === 0 && (
+                          <div className="flex justify-between text-sm py-2">
+                            <span className="text-white/40">Total Fee</span>
+                            <span className="font-bold text-green-400">
+                              Free
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -925,7 +983,7 @@ export function TeamEventRegistration({
                           <span className="tracking-wide">
                             {eventFees === 0
                               ? 'CONFIRM REGISTRATION'
-                              : `PAY ₹${eventFees} & REGISTER`}
+                              : `PAY ₹${eventFees > 0 ? calculateGatewayFee(eventFees).totalAmount : 0} & REGISTER`}
                           </span>
                           <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
                         </>

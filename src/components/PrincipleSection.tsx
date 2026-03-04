@@ -26,7 +26,7 @@ export default function PrincipalDesk() {
             style={{ fontFamily: 'KungFuMaster' }}
             className="text-white text-[55px] font-normal underline decoration-solid underline-offset-auto decoration-auto"
           >
-            Principal's Desk
+            Principal&apos;s Desk
           </h2>
         </div>
 
@@ -155,7 +155,14 @@ export default function PrincipalDesk() {
         </div>
 
         <div className="flex justify-center w-full lg:mt-16 pb-16">
-          <button className="relative w-[580px] h-[330px] transition-transform hover:scale-105 active:scale-95">
+          <button
+            onClick={() => {
+              document
+                .getElementById('events')
+                ?.scrollIntoView({ behavior: 'smooth' });
+            }}
+            className="relative w-[580px] h-[330px] transition-transform hover:scale-105 active:scale-95 cursor-pointer"
+          >
             <Image
               src="/principlesection/Button.svg"
               alt="Register Now"

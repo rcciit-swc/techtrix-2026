@@ -14,7 +14,7 @@ export const categories = [
     id: '12e9931b-42f8-41a0-9f87-3fd641fe946e',
     name: 'Robotics',
     logo: '/events/logo2.png',
-    image: '/events/hero2.png',
+    image: '/events/cut.png',
   },
   {
     id: '441aa4ca-49ad-4b57-bb7f-6a1c5cc63a32',
@@ -39,7 +39,7 @@ export const categories = [
 export default function EventsSection() {
   return (
     <section id="events">
-      <div className="min-h-screen md:min-h-0 md:bg-[#000000] py-8 md:py-12 relative overflow-hidden flex flex-col">
+      <div className="min-h-screen md:min-h-0 md:bg-[#000000] py-6 md:py-8 relative overflow-hidden flex flex-col">
         {/* Animated Background */}
         <DynamicBackground variant="events" />
         {/* Mobile Background Image 
@@ -55,15 +55,15 @@ export default function EventsSection() {
         </div>*/}
 
         {/* Header */}
-        <div className="text-center mb-16 px-4 relative z-10">
+        <div className="text-center mb-8 md:mb-8 px-4 relative z-10">
           <h1
-            className="text-6xl md:text-7xl font-bold text-[#FFFFFF] tracking-wider uppercase"
+            className="text-5xl md:text-6xl font-bold text-[#FFFFFF] tracking-wider uppercase"
             style={{ fontFamily: 'KungFuMaster' }}
           >
             Events
           </h1>
           <p
-            className="text-white text-2xl md:text-3xl mt-4 tracking-wide"
+            className="text-white text-xl md:text-2xl mt-3 tracking-wide"
             style={{ fontFamily: 'Metal Mania' }}
           >
             Events Branch from the Tree of Innovation - Choose Your Destiny
@@ -97,7 +97,7 @@ export default function EventsSection() {
         {/* Main Container */}
         <div className="relative w-full flex-1 flex flex-col md:flex-row z-10 md:bg-transparent">
           {/* Left Section - Yellow Box */}
-          <div className="relative w-full md:w-[65%] h-auto md:h-[46.875rem] lg:h-[53.125rem] flex flex-col">
+          <div className="relative w-full md:w-[65%] h-auto md:h-[44rem] lg:h-[49rem] flex flex-col border-2 border-[#000000]">
             {/* Top left chevrons - Black */}
             <div className="absolute top-4 left-2 z-20">
               <div className="flex flex-col gap-0.5">

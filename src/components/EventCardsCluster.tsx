@@ -9,6 +9,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useMemo } from 'react';
 import { categories } from './EventsSection';
+import GenericLoader from './GenericLoader';
 
 export default function EventCardsCluster() {
   const params = useParams();
@@ -31,15 +32,10 @@ export default function EventCardsCluster() {
     return category?.name || 'Events';
   }, [categoryId]);
 
-  if (eventsLoading) {
+  if (eventsLoading || eventsData.length === 0) {
     return (
       <div className="relative w-full min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-white text-xl font-['Metal_Mania'] tracking-wider">
-            Loading events...
-          </p>
-        </div>
+        <GenericLoader />
       </div>
     );
   }
@@ -49,9 +45,11 @@ export default function EventCardsCluster() {
       <div className="relative w-full min-h-screen flex items-center justify-center">
         <div className="text-center">
           <p className="text-white text-2xl mb-2 font-['Metal_Mania'] tracking-wider">
-            No events found
+            No events found in this category
           </p>
-          <p className="text-gray-400">Check back later for upcoming events</p>
+          <p className="text-gray-400 font-['Rajdhani']">
+            Check back later for upcoming events
+          </p>
         </div>
       </div>
     );

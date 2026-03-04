@@ -118,7 +118,7 @@ export function HeroContent() {
           letterSpacing: '0.05em',
         }}
       >
-        RCCIIT's Annual Inter-College National Level Techno-Management Fest
+        RCCIIT&apos;s Annual Inter-College National Level Techno-Management Fest
       </motion.p>
 
       <motion.div
@@ -129,8 +129,14 @@ export function HeroContent() {
         className="flex flex-wrap justify-center gap-4 md:gap-4 mt-6 md:mt-4"
       >
         {userData ? (
-          <Link
+          <a
             href="#events"
+            onClick={(e) => {
+              e.preventDefault();
+              document
+                .getElementById('events')
+                ?.scrollIntoView({ behavior: 'smooth' });
+            }}
             className="group relative flex items-center gap-2 md:gap-3 px-6 py-3 md:px-8 md:py-4 rounded-[24px] bg-[#EDF526] shadow-[0_10px_30px_-10px_rgba(237,245,38,0.5)] hover:scale-105 transition-all duration-300 overflow-hidden text-base md:text-lg lg:text-xl"
             style={{
               color: '#050816',
@@ -150,7 +156,7 @@ export function HeroContent() {
                 className="group-hover:rotate-12 transition-transform"
               />
             </span>
-          </Link>
+          </a>
         ) : (
           <button
             onClick={() => login()}
