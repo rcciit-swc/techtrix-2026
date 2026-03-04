@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import { userActionsType, userStateType } from '../types';
 import { populateUserDetails, update_and_populate } from '../actions';
+import { userActionsType, userStateType } from '../types';
 
 const userState: userStateType = {
   userData: null,
@@ -10,7 +10,7 @@ const userState: userStateType = {
 };
 export const useUser = create<userActionsType & userStateType>((set) => ({
   ...userState,
-  setUserData: () => populateUserDetails(set),
+  setUserData: (background?: boolean) => populateUserDetails(set, background),
   clearUserData: () => set({ userData: null, userLoading: false }),
   updateUserData: (data: any) => update_and_populate(set, data),
   setLoaded: (isLoaded: boolean) => set({ isLoaded }),

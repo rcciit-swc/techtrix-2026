@@ -22,7 +22,7 @@ export const getEventsData = async (): Promise<events[] | null> => {
     const userId = authData?.session?.user?.id ?? null;
 
     const { data, error } = await supabase.rpc(
-      'get_events_with_participants_by_fest',
+      'get_events_with_participants_and_extras_by_fest',
       {
         p_fest_id: CURRENT_FEST_ID,
         p_user_id: userId,

@@ -39,6 +39,7 @@ export interface events {
   registered_team_id?: string | null;
   team_details?: TeamMember[] | null;
   transaction_screenshot?: string | null;
+  extra_fields?: string[];
 }
 
 export interface eventCategories {

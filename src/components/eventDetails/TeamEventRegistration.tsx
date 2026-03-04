@@ -1,46 +1,44 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ViewTeamMembers } from '@/components/eventDetails/ViewTeamMembers';
+import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
-import { useUser } from '@/lib/stores';
-import { toast, Toaster } from 'sonner';
-import { useEvents } from '@/lib/stores';
-import confetti from 'canvas-confetti';
-import { ViewTeamMembers } from '@/components/eventDetails/ViewTeamMembers';
+import { useRazorpay } from '@/hooks/useRazorpay';
 import {
   RegisterTeamParams,
   registerTeamWithParticipants,
 } from '@/lib/services/register';
+import { useEvents, useUser } from '@/lib/stores';
 import { calculateGatewayFee } from '@/lib/utils/razorpay';
-import { useRazorpay } from '@/hooks/useRazorpay';
+import { zodResolver } from '@hookform/resolvers/zod';
+import confetti from 'canvas-confetti';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
-  User,
-  Phone,
-  Mail,
-  Building,
-  CreditCard,
-  ArrowRight,
   ArrowLeft,
+  ArrowRight,
+  Building,
   Check,
-  X,
-  Users,
-  Pencil,
-  Plus,
-  UserCheck,
-  Loader2,
+  CreditCard,
   Eye,
+  Loader2,
+  Mail,
+  Pencil,
+  Phone,
+  Plus,
+  User,
+  UserCheck,
+  Users,
+  X,
 } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast, Toaster } from 'sonner';
+import { z } from 'zod';
 
 interface EventRegistrationDialogProps {
   isOpen: boolean;
@@ -63,6 +61,7 @@ const teamLeadSchema = z.object({
   phone: z.string().min(1, 'Team lead phone is required'),
   email: z.string().email('Invalid email'),
   collegeName: z.string().min(1, 'College name is required'),
+  extras: z.record(z.string(), z.any()).optional(),
 });
 type TeamLeadFormValues = z.infer<typeof teamLeadSchema>;
 
@@ -85,10 +84,24 @@ export function TeamEventRegistration({
     eventsData,
   } = useEvents();
 
+  const eventData = useMemo(
+    () =>
+      eventsData?.find(
+        (event) => event.id === eventID || event.event_id === eventID
+      ) as any,
+    [eventsData, eventID]
+  );
+  const extraFields: string[] = useMemo(
+    () => eventData?.extra_fields || [],
+    [eventData]
+  );
+  console.log(extraFields);
   const teamMemberSchema = z.object({
     name: z.string().min(1, 'Name is required'),
     phone: z.string().regex(/^\d{10,}$/, 'Phone must be at least 10 digits'),
     email: z.string().email('Invalid email'),
+    college: z.string().min(1, 'College name is required'),
+    extras: z.record(z.string(), z.any()).optional(),
   });
   type TeamMemberFormValues = z.infer<typeof teamMemberSchema>;
 
@@ -235,6 +248,7 @@ export function TeamEventRegistration({
         teamLeadName: teamLeadData.name,
         teamLeadPhone: teamLeadData.phone,
         teamLeadEmail: teamLeadData.email,
+        teamLeadExtras: teamLeadData.extras,
         teamMembers: teamMembers,
         ref: userData?.referral_code || 'GOT2026',
         account_holder_name: teamLeadData.name,
@@ -263,7 +277,7 @@ export function TeamEventRegistration({
 
       if (result.success) {
         const eventData = eventsData?.find(
-          (event) => event.event_id === eventID
+          (event) => event.id === eventID || event.event_id === eventID
         );
         toast.success('Registration successful!');
         markEventAsRegistered(eventID);
@@ -302,7 +316,7 @@ export function TeamEventRegistration({
         onRegistrationComplete?.();
         setTimeout(() => {
           handleDialogClose();
-        }, 3000);
+        }, 5000);
       } else {
         console.error(result.error);
         toast.error(result.error || 'Payment failed. Please try again.');
@@ -330,6 +344,7 @@ export function TeamEventRegistration({
       teamLeadName: teamLeadData!.name,
       teamLeadPhone: teamLeadData!.phone,
       teamLeadEmail: teamLeadData!.email,
+      teamLeadExtras: teamLeadData!.extras,
       teamMembers: teamMembers,
       ref: userData?.referral_code || 'GOT2026',
       account_holder_name: teamLeadData!.name,
@@ -344,7 +359,9 @@ export function TeamEventRegistration({
       if (teamId) {
         markEventAsPending(eventID, teamId);
       }
-      const eventData = eventsData?.find((event) => event.event_id === eventID);
+      const eventData = eventsData?.find(
+        (event) => event.id === eventID || event.event_id === eventID
+      );
       const emailData = {
         eventName: eventData?.name,
         year: '2026',
@@ -383,7 +400,7 @@ export function TeamEventRegistration({
       onRegistrationComplete?.();
       setTimeout(() => {
         handleDialogClose();
-      }, 3000);
+      }, 5000);
       return true;
     } catch (error) {
       console.error('Failed to register team:', error);
@@ -427,14 +444,44 @@ export function TeamEventRegistration({
 
   return (
     <>
+      <AnimatePresence>
+        {isRegistering && (!isProcessing || isVerifying) && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-black/60 backdrop-blur-md"
+          >
+            <Loader2 className="w-12 h-12 text-yellow-400 animate-spin mb-4" />
+            <h3
+              className="text-white text-xl md:text-2xl tracking-widest mb-2 text-center"
+              style={{ fontFamily: "'Metal Mania'" }}
+            >
+              {isVerifying ? 'VERIFYING TRANSACTION...' : 'PROCESSING...'}
+            </h3>
+            <p className="text-white/60 text-sm">
+              Please do not refresh or close this page
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <Dialog
         open={isOpen}
         onOpenChange={(open) => {
-          if (!open) handleDialogClose();
+          if (!open && !isProcessing && !isRegistering && !isVerifying) {
+            handleDialogClose();
+          }
         }}
-        modal={!isProcessing}
+        modal={!isProcessing && !isVerifying}
       >
-        <DialogContent className="sm:max-w-[450px] max-h-[90vh] bg-black/80 backdrop-blur-xl border border-white/20 p-6 md:p-8 shadow-2xl rounded-2xl overflow-hidden my-scrollbar">
+        <DialogContent
+          className="sm:max-w-[450px] max-h-[90vh] bg-black/80 backdrop-blur-xl border border-white/20 p-6 md:p-8 shadow-2xl rounded-2xl overflow-hidden my-scrollbar"
+          onInteractOutside={(e) => {
+            if (isProcessing || isRegistering || isVerifying) {
+              e.preventDefault();
+            }
+          }}
+        >
           <DialogHeader className="relative z-10 mb-2">
             <DialogTitle
               className="text-center text-white text-xl md:text-2xl tracking-widest"
@@ -511,9 +558,16 @@ export function TeamEventRegistration({
                 <p className="text-white/60 text-center mb-4 text-sm px-4">
                   Your team "{teamLeadData?.teamName}" has been registered.
                 </p>
-                <p className="text-yellow-400 font-medium text-sm">
+                <p className="text-yellow-400 font-medium text-sm mb-6">
                   Get ready for the battle!
                 </p>
+                <Button
+                  onClick={handleDialogClose}
+                  className="bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center gap-2 px-6 rounded-full transition-all duration-300"
+                >
+                  <X size={16} />
+                  <span>Close</span>
+                </Button>
               </motion.div>
             ) : (
               <>
@@ -643,6 +697,28 @@ export function TeamEventRegistration({
                         </p>
                       )}
                     </div>
+
+                    {extraFields.map((field: string) => (
+                      <div key={field} className="space-y-1.5">
+                        <label className="flex items-center gap-2 text-white/60 text-xs uppercase tracking-wider pl-1">
+                          <UserCheck size={14} />
+                          <span>{field.replace(/_/g, ' ')}</span>
+                        </label>
+                        <div className="relative group">
+                          <input
+                            {...registerTeamLead(`extras.${field}` as any)}
+                            defaultValue={teamLeadData?.extras?.[field] || ''}
+                            className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/20 focus:outline-none text-white rounded-lg p-2.5 pl-9 text-sm transition-all duration-300 placeholder:text-white/20 capitalize"
+                            placeholder={`Enter ${field.replace(/_/g, ' ')}`}
+                            required
+                          />
+                          <UserCheck
+                            size={16}
+                            className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
+                          />
+                        </div>
+                      </div>
+                    ))}
 
                     <div className="flex justify-end gap-3 mt-4 pt-2">
                       <Button
@@ -778,6 +854,36 @@ export function TeamEventRegistration({
                             </p>
                           )}
                         </div>
+
+                        <div className="space-y-1.5">
+                          <label className="text-white/60 text-xs uppercase tracking-wider pl-1">
+                            College
+                          </label>
+                          <input
+                            {...registerTeamMember('college')}
+                            className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 text-white rounded-lg p-2.5 text-sm"
+                            placeholder="College Name"
+                          />
+                          {teamMemberErrors.college && (
+                            <p className="text-red-400 text-xs">
+                              {teamMemberErrors.college.message}
+                            </p>
+                          )}
+                        </div>
+
+                        {extraFields.map((field: string) => (
+                          <div key={field} className="space-y-1.5">
+                            <label className="text-white/60 text-xs uppercase tracking-wider pl-1">
+                              {field.replace(/_/g, ' ')}
+                            </label>
+                            <input
+                              {...registerTeamMember(`extras.${field}` as any)}
+                              className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 text-white rounded-lg p-2.5 text-sm capitalize"
+                              placeholder={`Enter ${field.replace(/_/g, ' ')}`}
+                              required
+                            />
+                          </div>
+                        ))}
 
                         <div className="flex gap-2 justify-end pt-2">
                           <Button

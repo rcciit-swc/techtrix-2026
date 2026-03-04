@@ -81,7 +81,9 @@ export default function EventDetails({ event }: Props) {
                     style={{ fontFamily: "'Metal Mania', cursive" }}
                   >
                     {event?.max_team_size > 1
-                      ? `${event.min_team_size} - ${event.max_team_size}`
+                      ? event.min_team_size === event.max_team_size
+                        ? event.min_team_size
+                        : `${event.min_team_size} - ${event.max_team_size}`
                       : 'Solo'}
                   </p>
                 </div>

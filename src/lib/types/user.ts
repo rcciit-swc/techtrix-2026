@@ -28,7 +28,7 @@ export interface userStateType {
 }
 
 export interface userActionsType {
-  setUserData: () => void;
+  setUserData: (background?: boolean) => void;
   updateUserData: (data: any) => void;
   clearUserData: () => void;
   setLoaded: (isLoaded: boolean) => void;

@@ -1,7 +1,10 @@
 import { getUserData, updateUserData } from '@/lib/services';
 
-export const populateUserDetails = async (set: any) => {
-  set({ userLoading: true });
+export const populateUserDetails = async (
+  set: any,
+  background: boolean = false
+) => {
+  if (!background) set({ userLoading: true });
   const data = await getUserData();
   if (data) {
     set({ userData: data.data, swcData: data.swcData, userLoading: false });

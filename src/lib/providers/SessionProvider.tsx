@@ -1,7 +1,7 @@
 'use client';
 
-import { useUser } from '@/lib/stores/user';
 import { useEvents } from '@/lib/stores';
+import { useUser } from '@/lib/stores/user';
 import { supabase } from '@/lib/supabase/client';
 import { useEffect } from 'react';
 
@@ -20,11 +20,11 @@ const SessionProvider = () => {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        setUser();
-        setEvent();
+        setUser(true);
+        setEvent(true);
       } else if (event === 'SIGNED_OUT') {
         clearUser();
-        setEvent();
+        setEvent(true);
       }
     });
 

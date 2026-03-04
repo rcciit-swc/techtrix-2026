@@ -1,13 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { motion, AnimatePresence } from 'framer-motion';
-import { toast } from 'sonner';
-import { useUser } from '@/lib/stores';
-import { useEvents } from '@/lib/stores';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -15,22 +7,30 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { registerSoloEvent } from '@/lib/services/register';
 import { useRazorpay } from '@/hooks/useRazorpay';
-import {
-  User,
-  Phone,
-  Mail,
-  Building,
-  CreditCard,
-  ArrowRight,
-  ArrowLeft,
-  Check,
-  X,
-  Loader2,
-} from 'lucide-react';
-import confetti from 'canvas-confetti';
+import { registerSoloEvent } from '@/lib/services/register';
+import { useEvents, useUser } from '@/lib/stores';
 import { calculateGatewayFee } from '@/lib/utils/razorpay';
+import { zodResolver } from '@hookform/resolvers/zod';
+import confetti from 'canvas-confetti';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Building,
+  Check,
+  CreditCard,
+  Loader2,
+  Mail,
+  Phone,
+  User,
+  UserCheck,
+  X,
+} from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 interface SoloEventRegistrationDialogProps {
   isOpen: boolean;
@@ -50,6 +50,7 @@ const soloLeadSchema = z.object({
   phone: z.string().regex(/^\d{10,}$/, 'Phone must be at least 10 digits'),
   email: z.string().email('Invalid email'),
   college: z.string().min(1, 'College is required'),
+  extras: z.record(z.string(), z.string()).optional(),
 });
 type SoloLeadFormValues = z.infer<typeof soloLeadSchema>;
 
@@ -70,6 +71,10 @@ export function SoloEventRegistration({
     eventsData,
   } = useEvents();
   const eventData = eventsData?.find((event) => event.event_id === eventID);
+  const extraFields: string[] = useMemo(
+    () => eventData?.extra_fields || [],
+    [eventData]
+  );
 
   const [step, setStep] = useState(1);
   const [soloLeadData, setSoloLeadData] = useState<SoloLeadFormValues | null>(
@@ -123,6 +128,7 @@ export function SoloEventRegistration({
       phone: userData?.phone || '',
       email: userData?.email || '',
       college: userData?.college || '',
+      extras: {},
     },
   });
 
@@ -135,6 +141,7 @@ export function SoloEventRegistration({
         phone: userData.phone || '',
         email: userData.email || '',
         college: userData.college || '',
+        extras: {},
       });
     }
   }, [userData, resetSoloLead]);
@@ -206,6 +213,7 @@ export function SoloEventRegistration({
         account_holder_name: soloLeadData.name,
         paymentMode: isFreeEvent ? 'SWC_PAID' : 'RAZORPAY',
         regMode: 'ONLINE',
+        extras: soloLeadData.extras,
       };
 
       const teamId = await registerSoloEvent(registrationParams);
@@ -228,7 +236,7 @@ export function SoloEventRegistration({
         onRegistrationComplete?.();
         setTimeout(() => {
           handleDialogClose();
-        }, 3000);
+        }, 5000);
         return;
       }
 
@@ -251,7 +259,7 @@ export function SoloEventRegistration({
         onRegistrationComplete?.();
         setTimeout(() => {
           handleDialogClose();
-        }, 3000);
+        }, 5000);
       } else {
         console.error(result.error);
         toast.error(result.error || 'Payment failed. Please try again.');
@@ -328,9 +336,16 @@ export function SoloEventRegistration({
               <p className="text-white/60 text-center mb-4 text-sm">
                 You have successfully registered for {eventName}
               </p>
-              <p className="text-yellow-400 font-medium text-sm">
+              <p className="text-yellow-400 font-medium text-sm mb-6">
                 We&apos;ll see you at the fest!
               </p>
+              <Button
+                onClick={handleDialogClose}
+                className="bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center gap-2 px-6 rounded-full transition-all duration-300"
+              >
+                <X size={16} />
+                <span>Close</span>
+              </Button>
             </motion.div>
           ) : step === 1 ? (
             <motion.form
@@ -456,6 +471,28 @@ export function SoloEventRegistration({
                     </p>
                   )}
                 </div>
+
+                {extraFields.map((field: string) => (
+                  <div key={field} className="space-y-1.5">
+                    <label className="flex items-center gap-2 text-white/60 text-xs uppercase tracking-wider pl-1">
+                      <UserCheck size={14} />
+                      <span>{field.replace(/_/g, ' ')}</span>
+                    </label>
+                    <div className="relative group">
+                      <input
+                        {...registerSoloLead(`extras.${field}` as any)}
+                        defaultValue={soloLeadData?.extras?.[field] || ''}
+                        className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/20 focus:outline-none text-white rounded-lg p-2.5 pl-9 text-sm transition-all duration-300 placeholder:text-white/20 capitalize"
+                        placeholder={`Enter ${field.replace(/_/g, ' ')}`}
+                        required
+                      />
+                      <UserCheck
+                        size={16}
+                        className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/30 group-focus-within:text-yellow-400/70 transition-colors"
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div className="flex justify-end gap-3 mt-8 pt-4">

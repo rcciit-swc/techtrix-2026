@@ -1,5 +1,5 @@
-import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase/client';
+import { toast } from 'sonner';
 
 export interface RegisterSoloParams {
   userId: string;
@@ -11,6 +11,7 @@ export interface RegisterSoloParams {
   paymentMode?: string;
   regMode?: string;
   account_holder_name?: string;
+  extras?: any;
 }
 
 export async function registerSoloEvent(
@@ -26,11 +27,12 @@ export async function registerSoloEvent(
     paymentMode,
     regMode,
     account_holder_name,
+    extras,
   } = params;
 
-  // Call the RPC named 'register_solo_event' with the required parameters.
+  // Call the RPC named 'register_solo_event_with_extras' with the required parameters.
   const { data, error } = await supabase.rpc(
-    'register_solo_event_with_details',
+    'register_solo_event_with_extras',
     {
       p_account_holder_name: account_holder_name,
       p_attendance: false,
@@ -42,10 +44,15 @@ export async function registerSoloEvent(
       p_transaction_id: transactionId,
       p_transaction_screenshot: transactionScreenshot,
       p_user_id: userId,
+      p_extras: extras || {},
     }
   );
+
+  console.log('[registerSoloEvent] RPC Result -> data:', data, 'error:', error);
+
   if (error) {
     toast.error(`Registration failed: ${error.message}`);
+    throw new Error(error.message);
   }
 
   return data;
@@ -55,6 +62,8 @@ export interface TeamMember {
   name: string;
   phone: string;
   email: string;
+  college: string;
+  extras?: any;
 }
 
 export interface RegisterTeamParams {
@@ -67,6 +76,7 @@ export interface RegisterTeamParams {
   teamLeadName: string;
   teamLeadPhone: string;
   teamLeadEmail: string;
+  teamLeadExtras?: any;
   teamMembers: TeamMember[];
   ref: string;
   paymentMode?: string;
@@ -125,6 +135,7 @@ export async function registerTeamWithParticipants(
     teamLeadName,
     teamLeadPhone,
     teamLeadEmail,
+    teamLeadExtras,
     teamMembers,
     ref,
     regMode,
@@ -132,9 +143,9 @@ export async function registerTeamWithParticipants(
     account_holder_name,
   } = params;
 
-  // Call the RPC function 'register_team_with_participants'
+  // Call the RPC function 'register_team_with_participants_and_extras'
   const { data, error } = await supabase.rpc(
-    'register_team_with_new_participants',
+    'register_team_with_participants_and_extras',
     {
       p_user_id: userId,
       p_event_id: eventId,
@@ -145,6 +156,7 @@ export async function registerTeamWithParticipants(
       p_team_lead_name: teamLeadName,
       p_team_lead_phone: teamLeadPhone,
       p_team_lead_email: teamLeadEmail,
+      p_team_lead_extras: teamLeadExtras || {},
       p_team_members: teamMembers || [],
       p_reg_mode: regMode || 'ONLINE',
       p_payment_mode: paymentMode || 'UPI',

@@ -30,8 +30,11 @@ export default function EventPage() {
     return eventsData.find((e) => e.id === eventId);
   }, [eventsData, eventId]);
 
-  // Show loading while data is being fetched
-  if (eventsLoading || (eventsData.length === 0 && !hasAttemptedLoad)) {
+  // Show loading while data is being fetched and we don't have it yet
+  if (
+    (eventsLoading && eventsData.length === 0) ||
+    (eventsData.length === 0 && !hasAttemptedLoad)
+  ) {
     return <EventLoader />;
   }
 
