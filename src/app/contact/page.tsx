@@ -202,11 +202,11 @@ const VenueSection = () => {
       landmark: 'Near Paribesh Bhavan / Narkeldanga Police Station',
       transport: 'Nearest Metro: Sealdah / Phoolbagan',
       events: [
-        'Table Tennis',
-        'Chess',
-        'Carrom',
-        'Esports (BGMI/Valo)',
-        'Badminton',
+        // 'Table Tennis',
+        // 'Chess',
+        // 'Carrom',
+        // 'Esports (BGMI/Valo)',
+        // 'Badminton',
       ],
       mapSrc:
         'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3684.6383827402633!2d88.39673931495925!3d22.56012898518931!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a02743203255595%3A0x9c37b30c00660fab!2sRCC%20Institute%20of%20Information%20Technology!5e0!3m2!1sen!2sin!4v1634567890123!5m2!1sen!2sin',
