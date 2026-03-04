@@ -214,6 +214,15 @@ export function SoloEventRegistration({
         paymentMode: isFreeEvent ? 'SWC_PAID' : 'RAZORPAY',
         regMode: 'ONLINE',
         extras: soloLeadData.extras,
+        ref:
+          userData?.referral ||
+          (typeof document !== 'undefined'
+            ? document.cookie
+                .split('; ')
+                .find((row) => row.startsWith('tt_referral='))
+                ?.split('=')[1]
+            : null) ||
+          'GOT2026',
       };
 
       const teamId = await registerSoloEvent(registrationParams);

@@ -34,6 +34,9 @@ const rajdhani = Rajdhani({
   variable: '--font-rajdhani',
 });
 
+import { ReferralTracker } from '@/components/ReferralTracker';
+import { Suspense } from 'react';
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -44,6 +47,9 @@ export default function RootLayout({
       <body
         className={`${orbitron.className} ${cinzel.variable} ${rajdhani.variable} antialiased`}
       >
+        <Suspense fallback={null}>
+          <ReferralTracker />
+        </Suspense>
         {children}
         <Navbar />
         <Footer />

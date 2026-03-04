@@ -249,7 +249,15 @@ export function TeamEventRegistration({
         teamLeadEmail: teamLeadData.email,
         teamLeadExtras: teamLeadData.extras,
         teamMembers: teamMembers,
-        ref: userData?.referral_code || 'GOT2026',
+        ref:
+          userData?.referral ||
+          (typeof document !== 'undefined'
+            ? document.cookie
+                .split('; ')
+                .find((row) => row.startsWith('tt_referral='))
+                ?.split('=')[1]
+            : null) ||
+          'TECHTRIX2026',
         account_holder_name: teamLeadData.name,
         paymentMode: 'RAZORPAY',
         regMode: 'ONLINE',
@@ -345,7 +353,15 @@ export function TeamEventRegistration({
       teamLeadEmail: teamLeadData!.email,
       teamLeadExtras: teamLeadData!.extras,
       teamMembers: teamMembers,
-      ref: userData?.referral_code || 'GOT2026',
+      ref:
+        userData?.referral ||
+        (typeof document !== 'undefined'
+          ? document.cookie
+              .split('; ')
+              .find((row) => row.startsWith('tt_referral='))
+              ?.split('=')[1]
+          : null) ||
+        'GOT2026',
       account_holder_name: teamLeadData!.name,
       paymentMode: 'SWC_PAID',
       regMode: 'ONLINE',
