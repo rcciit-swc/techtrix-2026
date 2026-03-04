@@ -204,7 +204,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
               💬
             </motion.span>
           </motion.a>
-          
+
           <div className="flex items-center justify-center px-5 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-[#4FC879] to-[#1E8A4A] text-white text-[16px] sm:text-[18px] md:text-[20px] font-['Metal Mania']">
             Registered
           </div>

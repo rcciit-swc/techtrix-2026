@@ -383,9 +383,7 @@ export default function EventDetails({ event }: Props) {
         </div>
 
         {/* Character Image - Absolute Right Side (Desktop only) */}
-        <div
-          className="hidden lg:block absolute right-0 bottom-0 h-[75vh] w-auto pointer-events-none z-[5] max-w-[35vw]"
-        >
+        <div className="hidden lg:block absolute right-0 bottom-0 h-[75vh] w-auto pointer-events-none z-[5] max-w-[35vw]">
           <img
             src={eventImages.char}
             alt="Character"
