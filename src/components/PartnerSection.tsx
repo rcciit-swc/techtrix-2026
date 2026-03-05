@@ -10,22 +10,22 @@ const PartnerSection = () => {
   const communityPartnersTiers = [
     {
       tier: 'Tier 1',
-      registrations: '300+ Registrations',
+      registrations: '200+ Registrations',
       benefits: [
-        'Single Techtrix 2026 Merchandise and Goodies',
+        'Techtrix 2026 Merchandise + Goodies (1)',
         'Social Media Shoutout',
-        'Special Entry with Card in Techtrix 2026',
-        'Community (4) Pass for RCCIIT’s Cultural Fest - Regalia 2026',
+        'Special Entry Card',
+        '4 Community Passes for RCCIIT Cultural Fest - Regalia 2026',
       ],
     },
     {
       tier: 'Tier 2',
-      registrations: '200+ Registrations',
+      registrations: '150+ Registrations',
       benefits: [
-        'Single Person Techtrix 2026 Goodies',
+        'Techtrix 2026 Goodies (1)',
         'Social Media Shoutout',
-        'Special Entry with Card in Techtrix 2026',
-        'Couple (1+1) Pass for RCCIIT’s Cultural Fest - Regalia 2026',
+        'Special Entry Card',
+        '1+1 Couple Pass for RCCIIT Cultural Fest - Regalia 2026',
       ],
     },
     {
@@ -33,8 +33,8 @@ const PartnerSection = () => {
       registrations: '100+ Registrations',
       benefits: [
         'Social Media Shoutout',
-        'Special Entry with Card in Techtrix 2026',
-        'Single Pass for RCCIIT’s Cultural Fest - Regalia 2026',
+        'Special Entry Card',
+        '1 Single Pass for RCCIIT Cultural Fest - Regalia 2026',
       ],
     },
   ];
@@ -42,22 +42,22 @@ const PartnerSection = () => {
   const evangelistsTiers = [
     {
       tier: 'Tier 1',
-      registrations: '100+ Registrations',
+      registrations: '80+ Registrations',
       benefits: [
-        'Single Techtrix 2026 Merchandise and Goodies',
+        'Techtrix 2026 Merchandise + Goodies (1)',
         'Social Media Shoutout',
-        'Special Entry with Card in Techtrix 2026',
-        'Couple (1+1) Pass for RCCIIT’s Cultural Fest - Regalia 2026',
+        'Special Entry Card for Techtrix 2026',
+        '1+1 Couple Pass for RCCIIT Cultural Fest - Regalia 2026',
       ],
     },
     {
       tier: 'Tier 2',
       registrations: '60+ Registrations',
       benefits: [
-        'Single Person Techtrix 2026 Goodies',
+        'Techtrix 2026 Goodies (1)',
         'Social Media Shoutout',
-        'Special Entry with Card in Techtrix 2026',
-        'Single Pass for RCCIIT’s Cultural Fest - Regalia 2026',
+        'Special Entry Card for Techtrix 2026',
+        '1 Single Pass for RCCIIT Cultural Fest - Regalia 2026',
       ],
     },
     {
@@ -65,7 +65,7 @@ const PartnerSection = () => {
       registrations: '40+ Registrations',
       benefits: [
         'Social Media Shoutout',
-        'Special Entry with Card in Techtrix 2026',
+        'Special Entry Card for Techtrix 2026',
       ],
     },
   ];
