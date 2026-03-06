@@ -1,19 +1,19 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { motion, AnimatePresence } from 'framer-motion';
+import EventsCard from '@/components/profile/EventCard';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useUser, useEvents } from '@/lib/stores';
+import { useEvents, useUser } from '@/lib/stores';
 import { supabase } from '@/lib/supabase/client';
+import type { events } from '@/lib/types';
+import { motion } from 'framer-motion';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import EditProfileDialog from './EditProfileDialog';
 import GoogleFormDialog from './GoogleFormDialog';
-import type { events } from '@/lib/types';
-import EventsCard from '@/components/profile/EventCard';
-import { toast } from 'sonner';
 import ProfileSkeleton from './ProfileSkeleton';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export default function ProfilePage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -71,6 +71,8 @@ export default function ProfilePage() {
     const next = searchParams.get('next');
     if (next) {
       router.replace(next);
+    } else if (isOnboarding) {
+      router.replace('/');
     }
   };
 

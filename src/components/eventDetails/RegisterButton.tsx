@@ -82,7 +82,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
       const currentRef = searchParams?.get('ref');
       const callbackPath = `/event/${event?.id}${currentRef ? `?ref=${currentRef}` : ''}`;
       router.push(
-        `/profile?onboarding=true&callback=${encodeURIComponent(callbackPath)}`
+        `/profile?onboarding=true&next=${encodeURIComponent(callbackPath)}`
       );
       return;
     }
