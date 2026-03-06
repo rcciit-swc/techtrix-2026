@@ -1,6 +1,7 @@
 'use client';
 
 import AboutSection from '@/components/about/About';
+import CommunityPartners from '@/components/CommunityPartners';
 import EventsSection from '@/components/EventsSection';
 import Hero from '@/components/Hero';
 import PartnerSection from '@/components/PartnerSection';
@@ -48,6 +49,7 @@ const page = () => {
         <EventsSection />
         <SponsorSection />
         <PartnerSection />
+        <CommunityPartners />
         <SponsorshipProposition />
         <PrincipalDesk />
       </div>

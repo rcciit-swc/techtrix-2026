@@ -1,6 +1,6 @@
-import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase/client';
 import { createServer } from '@/lib/supabase/server';
+import { toast } from 'sonner';
 
 export const getUserData = async () => {
   try {
@@ -166,7 +166,7 @@ export const verifyCommunityReferralCode = async (code: string) => {
   try {
     const supabase = await createServer();
     const { data, error } = await supabase
-      .from('referral_codes')
+      .from('community_partners')
       .select('*')
       .eq('code', code);
   } catch (err) {
