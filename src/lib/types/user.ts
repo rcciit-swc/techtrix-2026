@@ -23,6 +23,7 @@ export interface swcDataType {
 }
 export interface userStateType {
   userData: userDataType | null;
+  communityData: any | null;
   swcData: swcDataType | null;
   userLoading: boolean;
   isLoaded: boolean;
@@ -30,6 +31,7 @@ export interface userStateType {
 
 export interface userActionsType {
   setUserData: (background?: boolean) => void;
+  setCommunityData: (data: any | null) => void;
   updateUserData: (data: any) => void;
   clearUserData: () => void;
   setLoaded: (isLoaded: boolean) => void;

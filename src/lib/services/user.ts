@@ -21,10 +21,18 @@ export const getUserData = async () => {
         .from('SWC-2026')
         .select('*')
         .eq('email', userdetails.data[0].email);
+
+      const communityData = await supabase
+        .from('community_partners')
+        .select('*')
+        .eq('community_email', userdetails.data[0].email)
+        .single();
+
       const returnValue = {
         data: userdetails.data[0],
         swcData:
           swcData.data && swcData.data.length > 0 ? swcData.data[0] : null,
+        communityData: communityData.data || null,
       };
       return returnValue;
     }
