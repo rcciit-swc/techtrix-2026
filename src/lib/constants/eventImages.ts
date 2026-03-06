@@ -185,6 +185,11 @@ export const EVENT_IMAGES: Record<string, EventImages> = {
     char: 'https://i.postimg.cc/GhyHGMT3/treasure.png',
   },
 
+  '41bfd746-3c24-491c-80cd-d5ede5d78d9c': {
+    bg: 'https://i.postimg.cc/cLG7q9SQ/174682176e67d46e886cc42171e8591c9963386a.jpg',
+    char: 'https://i.postimg.cc/SxbL0Thg/bd6588238621c1d0c7fac908d03c4e19b3871f87.png',
+  },
+
   // Default fallback
   default: {
     bg: '/eventDetails/codeAndSeek/lokiBg.png',
