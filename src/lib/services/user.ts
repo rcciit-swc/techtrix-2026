@@ -1,5 +1,4 @@
 import { supabase } from '@/lib/supabase/client';
-import { createServer } from '@/lib/supabase/server';
 import { toast } from 'sonner';
 
 export const getUserData = async () => {
@@ -170,15 +169,21 @@ export async function fetchRegistrationDetails(
   return data;
 }
 
-export const verifyCommunityReferralCode = async (code: string) => {
+export const validateReferralCode = async (code: string) => {
   try {
-    const supabase = await createServer();
     const { data, error } = await supabase
       .from('community_partners')
-      .select('*')
-      .eq('code', code);
+      .select('referral_code')
+      .eq('referral_code', code)
+      .single();
+
+    if (error || !data) {
+      return false;
+    }
+    return true;
   } catch (err) {
-    console.log(err);
+    console.error('Error validating referral code:', err);
+    return false;
   }
 };
 

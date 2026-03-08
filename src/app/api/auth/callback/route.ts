@@ -25,21 +25,12 @@ export async function GET(request: Request) {
           .single();
 
         if (fetchError && fetchError.code === 'PGRST116') {
-          // Get referral code from cookie
-          const referralCode =
-            request.headers
-              .get('cookie')
-              ?.split('; ')
-              .find((row) => row.startsWith('tt_referral='))
-              ?.split('=')[1] || null;
-
           // User doesn't exist, create a new user
           const { error: insertError } = await supabase.from('users').insert({
             id: user.id,
             email: user.email,
             name:
               user.user_metadata?.full_name || user.user_metadata?.name || null,
-            referral: referralCode,
           });
 
           if (insertError) {
