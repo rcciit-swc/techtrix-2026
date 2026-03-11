@@ -1,36 +1,34 @@
 'use client';
-import type { Variants } from 'framer-motion';
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
 import {
   Drawer,
   DrawerContent,
+  DrawerDescription,
   DrawerHeader,
   DrawerTitle,
-  DrawerDescription,
 } from '@/components/ui/drawer';
-import { Button } from '@/components/ui/button';
 import {
-  User,
-  Phone,
-  Mail,
-  Users,
-  Edit,
-  Trash2,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
+import type { Variants } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import {
+  ArrowRight,
   CreditCard,
   Crown,
-  Check,
+  Edit,
   Loader2,
-  X,
-  ArrowRight,
+  Mail,
+  Phone,
+  Trash2,
+  User,
+  Users,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface TeamMember {
   name: string;
@@ -299,7 +297,7 @@ export function ViewTeamMembers({
   if (isMobile) {
     return (
       <Drawer open={isOpen} onOpenChange={onOpenChange} modal={true}>
-        <DrawerContent className="bg-[#0A0A0A] border-t border-white/20 max-h-[85vh] flex flex-col">
+        <DrawerContent className="bg-[#0A0A0A] border-t border-white/20 h-[85vh] max-h-[85vh] flex flex-col overflow-hidden">
           <motion.div
             variants={mobileDrawerVariants}
             initial="hidden"
@@ -319,12 +317,12 @@ export function ViewTeamMembers({
               </DrawerDescription>
             </DrawerHeader>
 
-            <div className="px-4 flex-1 overflow-y-auto my-scrollbar">
+            <div className="px-4 flex-1 overflow-y-auto custom-scrollbar min-h-0 py-2">
               <Content />
             </div>
 
             {showConfirmTeam && (
-              <div className="p-4 border-t border-white/10 bg-black/20 backdrop-blur-md">
+              <div className="p-4 pb-10 border-t border-white/10 bg-black/20 backdrop-blur-md">
                 <Button
                   onClick={confirmTeam}
                   disabled={registerLoading}
@@ -383,12 +381,12 @@ export function ViewTeamMembers({
             </SheetDescription>
           </SheetHeader>
 
-          <div className="flex-1 overflow-y-auto px-6 pb-6 my-scrollbar">
+          <div className="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar min-h-0">
             <Content />
           </div>
 
           {showConfirmTeam && (
-            <div className="p-6 border-t border-white/10 bg-black/40 backdrop-blur-md">
+            <div className="p-6 pb-10 border-t border-white/10 bg-black/40 backdrop-blur-md">
               <Button
                 onClick={confirmTeam}
                 disabled={registerLoading}

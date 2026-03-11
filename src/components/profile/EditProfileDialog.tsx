@@ -195,7 +195,7 @@ export default function EditProfileDialog({
         />
 
         {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto my-scrollbar relative z-10 w-full h-full">
+        <div className="flex-1 overflow-y-auto custom-scrollbar relative z-10 w-full h-full">
           <AnimatePresence mode="wait">
             {showSuccess ? (
               <motion.div
