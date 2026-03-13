@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -67,22 +67,20 @@ export default function FeaturedEvents() {
       <div className="container mx-auto px-4 relative z-10">
         {/* Header Section */}
         <div className="text-center mb-16 relative">
-          {/* Title Burst Background (Halftone Circle) */}
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#EEFF00] rounded-full blur-[80px] opacity-[0.08]" />
 
           <motion.div
-            initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
-            whileInView={{ opacity: 1, scale: 1, rotate: 0 }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             className="inline-block relative z-10"
           >
             <h2
-              className="text-5xl md:text-8xl font-bold text-[#EEFF00] uppercase tracking-[0.3em] font-kungfu drop-shadow-[10px_10px_0_rgba(0,0,0,0.5)]"
+              className="text-5xl md:text-8xl font-bold text-[#EEFF00] uppercase tracking-[0.3em] drop-shadow-[10px_10px_0_rgba(0,0,0,0.5)]"
               style={{ fontFamily: 'KungFuMaster' }}
             >
               Featured Events
             </h2>
-            {/* Action Line Decorators */}
             <div className="absolute -left-12 top-1/2 -translate-y-1/2 w-10 h-1 bg-[#EEFF00] hidden md:block" />
             <div className="absolute -right-12 top-1/2 -translate-y-1/2 w-10 h-1 bg-[#EEFF00] hidden md:block" />
           </motion.div>
@@ -100,64 +98,72 @@ export default function FeaturedEvents() {
         </div>
 
         {/* Event Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 max-w-5xl mx-auto px-4">
           {featuredEvents.map((event, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{
-                y: -12,
-                scale: 1.04,
-                transition: { type: 'spring', stiffness: 300, damping: 20 },
-              }}
+              whileHover="hover"
               className="relative group cursor-pointer"
             >
-              {/* Comic Box Shadow / Frame */}
-              <div className="absolute -inset-1.5 bg-[#EEFF00] opacity-30 group-hover:opacity-80 transition-opacity rounded-sm shadow-[0_0_30px_rgba(238,255,0,0.3)] group-hover:shadow-[0_0_50px_rgba(238,255,0,0.6)]" />
+              {/* CLEAN COMIC GLOW (No Shadow) */}
+              <div className="absolute -inset-1.5 bg-[#EEFF00] opacity-30 group-hover:opacity-100 transition-all duration-300 rounded-sm group-hover:shadow-[0_0_40px_rgba(238,255,0,0.6)]" />
               <div className="absolute -inset-0.5 bg-black rounded-sm" />
 
-              {/* Image Container with strict 4:5 Aspect Ratio */}
-              <div className="relative z-10 border-2 border-[#EEFF00]/50 overflow-hidden shadow-2xl">
+              {/* Image Container with 4:5 Aspect Ratio */}
+              <div className="relative z-10 border-2 border-[#EEFF00]/50 overflow-hidden group-hover:border-[#EEFF00] transition-colors duration-300">
                 <Link
                   href={event.link}
                   target="_blank"
                   className="block relative aspect-[4/5] w-full overflow-hidden"
                 >
-                  <motion.div
-                    className="w-full h-full"
-                    whileHover={{ scale: 1.1 }}
-                    transition={{ duration: 0.6, ease: 'easeOut' }}
-                  >
-                    <Image
-                      src={event.image}
-                      alt={event.title}
-                      fill
-                      className="object-cover filter saturate-[0.8] group-hover:saturate-[1.3] transition-all duration-500"
-                      unoptimized
-                    />
-                  </motion.div>
+                  <Image
+                    src={event.image}
+                    alt={event.title}
+                    fill
+                    className="object-cover filter saturate-[0.8] group-hover:saturate-[1.4] transition-all duration-500 scale-100 group-hover:scale-105"
+                    unoptimized
+                  />
 
-                  {/* Comic Overlay Text (POP!) */}
+                  {/* LIGHT SWEEP SHEEN EFFECT */}
                   <motion.div
-                    className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center p-4"
-                    initial={false}
-                  >
+                    variants={{
+                      hover: { x: ['-100%', '200%'] },
+                    }}
+                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                    className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-[-25deg] pointer-events-none"
+                  />
+
+                  {/* PUNCHY MARVEL RSVP OVERLAY */}
+                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                     <motion.span
-                      whileHover={{ scale: 1.15, rotate: -5 }}
-                      className="bg-[#EEFF00] text-black px-10 py-5 text-4xl font-black uppercase transform -rotate-2 -skew-x-12 shadow-[10px_10px_0_rgba(0,0,0,0.9)] border-4 border-black"
+                      variants={{
+                        hover: { scale: [0, 1.2, 1], rotate: [-10, -2, -2] },
+                      }}
+                      transition={{
+                        type: 'spring',
+                        stiffness: 400,
+                        damping: 15,
+                      }}
+                      className="bg-[#EEFF00] text-black px-10 py-5 text-4xl font-black uppercase transform shadow-[10px_10px_0_rgba(0,0,0,1)] border-4 border-black"
                       style={{ fontFamily: 'KungFuMaster' }}
                     >
                       RSVP!
                     </motion.span>
-                  </motion.div>
+                  </div>
                 </Link>
 
-                {/* Comic Panel Border Accents */}
-                <div className="absolute bottom-0 right-0 w-16 h-16 pointer-events-none z-20">
-                  <div className="absolute bottom-0 right-0 w-full h-full bg-[#EEFF00] rotate-45 translate-x-1/2 translate-y-1/2" />
+                {/* COMIC PANEL DECORATIVE ACCENTS (Rivets) */}
+                <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-black/40 border border-[#EEFF00]/30 z-20" />
+                <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-black/40 border border-[#EEFF00]/30 z-20" />
+                <div className="absolute bottom-2 left-2 w-2 h-2 rounded-full bg-black/40 border border-[#EEFF00]/30 z-20" />
+
+                {/* Comic Panel Corner Cut */}
+                <div className="absolute bottom-0 right-0 w-16 h-16 pointer-events-none z-20 overflow-hidden">
+                  <div className="absolute bottom-0 right-0 w-full h-full bg-[#EEFF00] rotate-45 translate-x-1/2 translate-y-1/2 group-hover:scale-110 transition-transform duration-300" />
                 </div>
               </div>
             </motion.div>
