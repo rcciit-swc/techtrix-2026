@@ -13,7 +13,21 @@ const CommunityPartners = () => {
   const [communities, setCommunities] = useState<CommunityStats[]>([]);
 
   useEffect(() => {
-    getCommunityLeaderboard().then(setCommunities);
+    getCommunityLeaderboard().then((data) => {
+      const updatedData = data.map((community) => {
+        if (
+          community.community_name.toLowerCase() ===
+          'gdg on campus rcciit'.toLowerCase()
+        ) {
+          return {
+            ...community,
+            community_image: 'https://i.postimg.cc/0jsLmDqm/gdgc-3.png',
+          };
+        }
+        return community;
+      });
+      setCommunities(updatedData);
+    });
   }, []);
 
   if (communities.length === 0) return null;
