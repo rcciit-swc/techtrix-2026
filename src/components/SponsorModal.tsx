@@ -24,8 +24,15 @@ export default function SponsorModal() {
     markShown,
   } = useSponsor();
   const [isOpen, setIsOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     // Already shown this session or already verified — skip
     if (hasBeenShown || isVerified) return;
 
@@ -62,13 +69,14 @@ export default function SponsorModal() {
     };
 
     checkVisibility();
-  }, [hasBeenShown, isVerified, setVerified, setChecked, markShown]);
+  }, [hasBeenShown, isVerified, setVerified, setChecked, markShown, isMounted]);
 
   const handleClose = (open: boolean) => {
     setIsOpen(open);
     if (!open) markShown();
   };
 
+  if (!isMounted) return null;
   if (!isOpen) return null;
 
   return (
