@@ -54,7 +54,12 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
   const SHUTTERSCAPE_FORM_URL =
     'https://docs.google.com/forms/d/e/1FAIpQLSd4VjRSB1kp0NTcSKPwFQRG6J2l9YK-sc5jc1GO50JipbNUjQ/viewform';
 
+  const UNSTOP_EVENT_ID = '1b0af2ef-1101-4f43-8061-3ac42db45167';
+  const UNSTOP_FORM_URL =
+    'https://unstop.com/o/vGiOo53?lb=N84Gpz8e&utm_medium=Share&utm_source=techt2024854&utm_campaign=Competitions';
+
   const isShutterscape = eventId === SHUTTERSCAPE_EVENT_ID;
+  const isUnstopEvent = eventId === UNSTOP_EVENT_ID;
 
   const openShuttercapeForm = () => {
     if (isShutterscape) {
@@ -63,6 +68,14 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
   };
 
   const handleRegister = async () => {
+    if (isUnstopEvent) {
+      toast.info('Redirecting to competition page...', { duration: 3000 });
+      setTimeout(() => {
+        window.open(UNSTOP_FORM_URL, '_blank');
+      }, 1000);
+      return;
+    }
+
     if (userLoading) {
       toast.info('Please wait while we check your login status');
       return;
