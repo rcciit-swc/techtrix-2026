@@ -3,6 +3,7 @@ import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createServer } from '@/lib/supabase/server';
 import { createRazorpayOrder } from '@/lib/services/razorpay';
 import { calculateRazorpayChargeInPaise } from '@/lib/utils/razorpay';
+import { verifyTeamMembership } from '../auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
       eventId
     );
 
-    // Verify team exists and belongs to this user
+    // Verify team exists.
     const { data: team, error: teamError } = await supabaseAdmin
       .from('teams')
       .select('team_id, team_name, team_lead_id, event_id')
@@ -51,10 +52,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Team not found' }, { status: 404 });
     }
 
-    if (team.team_lead_id !== user.id) {
+    const isAuthorizedTeamMember = await verifyTeamMembership(
+      teamId,
+      user.id,
+      user.email,
+      team.team_lead_id
+    );
+
+    if (!isAuthorizedTeamMember) {
       return NextResponse.json(
         { error: 'You are not authorized to pay for this team' },
         { status: 403 }
+      );
+    }
+
+    if (team.event_id !== eventId) {
+      return NextResponse.json(
+        { error: 'Team does not belong to this event' },
+        { status: 400 }
       );
     }
 

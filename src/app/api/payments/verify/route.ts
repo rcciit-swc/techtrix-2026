@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/supabase/admin';
 import { createServer } from '@/lib/supabase/server';
 import { verifyPaymentSignature } from '@/lib/services/razorpay';
+import { verifyTeamMembership } from '../auth';
 
 export async function POST(request: NextRequest) {
   try {
@@ -56,8 +57,18 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Verify the payment belongs to this user
-    if (payment.user_id !== user.id) {
+    // Verify the payment belongs to this user or another member of the same team.
+    let isAuthorizedPayer = payment.user_id === user.id;
+
+    if (!isAuthorizedPayer && payment.team_id) {
+      isAuthorizedPayer = await verifyTeamMembership(
+        payment.team_id,
+        user.id,
+        user.email
+      );
+    }
+
+    if (!isAuthorizedPayer) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 });
     }
 

@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast, Toaster } from 'sonner';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 interface EventRegistrationDialogProps {
@@ -1158,7 +1158,7 @@ export function TeamEventRegistration({
         }}
       />
 
-      <Toaster position="top-center" richColors />
+      {/* <Toaster position="top-center" richColors /> */}
     </>
   );
 }
