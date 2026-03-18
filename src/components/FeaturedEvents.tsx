@@ -115,11 +115,7 @@ export default function FeaturedEvents() {
 
               {/* Image Container with 4:5 Aspect Ratio */}
               <div className="relative z-10 border-2 border-[#EEFF00]/50 overflow-hidden group-hover:border-[#EEFF00] transition-colors duration-300">
-                <Link
-                  href={event.link}
-                  target="_blank"
-                  className="block relative aspect-[4/5] w-full overflow-hidden"
-                >
+                <div className="block relative aspect-[4/5] w-full overflow-hidden">
                   <Image
                     src={event.image}
                     alt={event.title}
@@ -138,23 +134,23 @@ export default function FeaturedEvents() {
                   />
 
                   {/* PUNCHY MARVEL RSVP OVERLAY */}
-                  <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                    <motion.span
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                    <motion.div
                       variants={{
-                        hover: { scale: [0, 1.2, 1], rotate: [-10, -2, -2] },
+                        hover: { scale: [0, 1.1, 1], rotate: [-10, -2, -2] },
                       }}
                       transition={{
                         type: 'spring',
                         stiffness: 400,
                         damping: 15,
                       }}
-                      className="bg-[#EEFF00] text-black px-10 py-5 text-4xl font-black uppercase transform shadow-[10px_10px_0_rgba(0,0,0,1)] border-4 border-black"
+                      className="bg-gray-600 text-white px-10 py-5 text-4xl font-black uppercase transform shadow-[10px_10px_0_rgba(0,0,0,1)] border-4 border-black cursor-not-allowed opacity-90"
                       style={{ fontFamily: 'KungFuMaster' }}
                     >
-                      RSVP!
-                    </motion.span>
+                      RSVP Closed
+                    </motion.div>
                   </div>
-                </Link>
+                </div>
 
                 {/* COMIC PANEL DECORATIVE ACCENTS (Rivets) */}
                 <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-black/40 border border-[#EEFF00]/30 z-20" />

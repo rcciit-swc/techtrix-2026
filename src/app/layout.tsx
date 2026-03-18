@@ -36,6 +36,7 @@ const rajdhani = Rajdhani({
 
 import { ReferralTracker } from '@/components/ReferralTracker';
 import SponsorModal from '@/components/SponsorModal';
+import AudioPlayer from '@/components/AudioPlayer';
 import { Suspense } from 'react';
 
 export default function RootLayout({
@@ -48,6 +49,7 @@ export default function RootLayout({
       <body
         className={`${orbitron.className} ${cinzel.variable} ${rajdhani.variable} antialiased`}
       >
+        <AudioPlayer />
         <Suspense fallback={null}>
           <ReferralTracker />
         </Suspense>

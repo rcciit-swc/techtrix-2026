@@ -60,7 +60,7 @@ export function HeroContent() {
         initial="hidden"
         animate="visible"
         variants={titleReveal}
-        className="text-[100px] sm:text-[90px] md:text-[110px] lg:text-[180px] xl:text-[160px] font-medium text-white leading-none"
+        className="text-[100px] mb-2 sm:text-[90px] md:text-[110px] lg:text-[180px] xl:text-[160px] font-medium text-white leading-none"
         style={{ fontFamily: 'Golden Sentry' }}
       >
         TECHTRIX

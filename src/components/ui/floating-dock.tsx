@@ -11,6 +11,8 @@ import {
 
 import { useRef } from 'react';
 
+import Link from 'next/link';
+
 export const FloatingDock = ({
   items,
   desktopClassName,
@@ -133,7 +135,7 @@ function IconContainer({
       </motion.span>
     </button>
   ) : (
-    <a href={href} className="flex flex-col items-center gap-2 group">
+    <Link href={href || '/'} className="flex flex-col items-center gap-2 group">
       <motion.div
         ref={ref}
         style={{
@@ -156,6 +158,6 @@ function IconContainer({
       >
         {title}
       </motion.span>
-    </a>
+    </Link>
   );
 }
