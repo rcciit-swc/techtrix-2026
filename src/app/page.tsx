@@ -3,6 +3,7 @@
 import AboutSection from '@/components/about/About';
 import CommunityPartners from '@/components/CommunityPartners';
 import EventsSection from '@/components/EventsSection';
+import FeaturedEvents from '@/components/FeaturedEvents';
 import Hero from '@/components/Hero';
 import PartnerSection from '@/components/PartnerSection';
 import PrincipalDesk from '@/components/PrincipleSection';
@@ -47,6 +48,7 @@ const page = () => {
         <Hero />
         <AboutSection />
         <EventsSection />
+        <FeaturedEvents />
         <SponsorSection />
         <PartnerSection />
         <CommunityPartners />

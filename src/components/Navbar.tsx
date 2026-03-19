@@ -13,49 +13,20 @@ import {
   IconUsers,
 } from '@tabler/icons-react';
 import { Music, VolumeX } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useMusicStore } from '@/lib/stores/useMusicStore';
+import { useRouter } from 'next/navigation';
 
 export function Navbar() {
   const { userData } = useUser();
+  const router = useRouter();
   const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { isPlaying, toggleMusic } = useMusicStore();
+  const [mounted, setMounted] = useState(false);
 
-  // Initialize and handle audio playback
   useEffect(() => {
-    audioRef.current = new Audio('/Theme.mp3');
-    audioRef.current.loop = true;
-
-    // Attempt to autoplay
-    const playAudio = async () => {
-      try {
-        await audioRef.current?.play();
-        setIsPlaying(true);
-      } catch {
-        // Autoplay was blocked
-        setIsPlaying(false);
-      }
-    };
-
-    playAudio();
-
-    return () => {
-      audioRef.current?.pause();
-      audioRef.current = null;
-    };
+    setMounted(true);
   }, []);
-
-  const toggleMusic = () => {
-    if (!audioRef.current) return;
-
-    if (isPlaying) {
-      audioRef.current.pause();
-      setIsPlaying(false);
-    } else {
-      audioRef.current.play();
-      setIsPlaying(true);
-    }
-  };
 
   // Fetch user session only once on mount
   useEffect(() => {
@@ -71,7 +42,7 @@ export function Navbar() {
   const handleUserClick = () => {
     if (userData) {
       // If logged in, go to profile
-      window.location.href = '/profile';
+      router.push('/profile');
     } else {
       // If not logged in, login
       login();
@@ -132,10 +103,14 @@ export function Navbar() {
         className="fixed top-6 right-6 z-50 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white backdrop-blur-sm border border-white/20 transition-all duration-300 group"
         aria-label={isPlaying ? 'Pause music' : 'Play music'}
       >
-        {isPlaying ? (
-          <Music className="w-4 h-4 animate-pulse text-[#00f7ff]" />
+        {mounted ? (
+          isPlaying ? (
+            <Music className="w-4 h-4 animate-pulse text-[#00f7ff]" />
+          ) : (
+            <VolumeX className="w-4 h-4 text-gray-400" />
+          )
         ) : (
-          <VolumeX className="w-4 h-4 text-gray-400" />
+          <Music className="w-4 h-4 text-gray-400" />
         )}
       </button>
 
