@@ -142,7 +142,7 @@ export default function Footer() {
                 className="text-[#F2EFE9] text-[13px] md:text-[14px] font-medium"
                 style={{ fontFamily: 'Maname' }}
               >
-                26TH - 29TH MARCH 2026
+                14TH - 17TH MAY 2026
               </p>
             </div>
 

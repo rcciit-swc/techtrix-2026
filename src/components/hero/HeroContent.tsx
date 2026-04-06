@@ -99,7 +99,7 @@ export function HeroContent() {
             textShadow: '0 0 12px rgba(237, 245, 38, 0.6)',
           }}
         >
-          26th - 29th March 2026
+          14th - 17th May 2026
         </p>
       </motion.div>
 
