@@ -11,6 +11,7 @@ export const populateUserDetails = async (
       userData: data.data,
       swcData: data.swcData,
       communityData: data.communityData,
+      evangelistData: data.evangelistData,
       userLoading: false,
     });
   } else {

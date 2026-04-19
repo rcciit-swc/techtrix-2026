@@ -1,22 +1,26 @@
 'use client';
 
-import {
-  CommunityStats,
-  getCommunityLeaderboard,
-} from '@/lib/actions/communities';
+import { getEvangelistsList } from '@/lib/actions/evangelists';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { DynamicBackground } from './AnimatedBackground';
 
-const CommunityPartners = () => {
-  const [communities, setCommunities] = useState<CommunityStats[]>([]);
+interface EvangelistItem {
+  referral_code: string;
+  name: string;
+  image: string | null;
+  college: string | null;
+}
+
+const Evangelists = () => {
+  const [evangelists, setEvangelists] = useState<EvangelistItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getCommunityLeaderboard().then((data) => {
-      setCommunities(data);
+    getEvangelistsList().then((data) => {
+      setEvangelists(data);
       setLoading(false);
     });
   }, []);
@@ -33,7 +37,7 @@ const CommunityPartners = () => {
             {Array.from({ length: 4 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl bg-white/5 animate-pulse h-64"
+                className="rounded-2xl bg-white/5 animate-pulse h-72"
               />
             ))}
           </div>
@@ -42,7 +46,7 @@ const CommunityPartners = () => {
     );
   }
 
-  if (communities.length === 0) return null;
+  if (evangelists.length === 0) return null;
 
   return (
     <section className="relative w-full py-16 md:py-24 bg-gradient-to-b from-black via-[#0a0a0a] to-black overflow-hidden">
@@ -61,46 +65,46 @@ const CommunityPartners = () => {
             className="text-3xl md:text-5xl lg:text-6xl font-bold text-white uppercase tracking-wide mb-4"
             style={{ fontFamily: 'Metal Mania' }}
           >
-            Our Community Partners
+            Our Evangelists
           </h2>
-          <div className="w-32 h-1 bg-gradient-to-r from-red-500 via-yellow-400 to-red-500 mx-auto" />
+          <div className="w-32 h-1 bg-gradient-to-r from-cyan-500 via-blue-400 to-cyan-500 mx-auto" />
           <p className="mt-4 text-white/50 text-sm md:text-base max-w-lg mx-auto">
-            Proud communities powering TechTrix 2026
+            The faces spreading the word about TechTrix 2026
           </p>
         </motion.div>
 
-        {/* Community Grid */}
+        {/* Evangelists Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 md:gap-5">
-          {communities.map((community, index) => (
+          {evangelists.map((evangelist, index) => (
             <motion.div
-              key={community.referral_code}
+              key={evangelist.referral_code}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: index * 0.06, duration: 0.5 }}
-              className="group relative flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-b from-white/[0.04] to-black/60 backdrop-blur-sm transition-all duration-300 hover:border-yellow-500/40 hover:shadow-[0_0_30px_rgba(234,179,8,0.12)] hover:-translate-y-1"
+              className="group relative flex flex-col rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-b from-white/[0.04] to-black/60 backdrop-blur-sm transition-all duration-300 hover:border-cyan-500/40 hover:shadow-[0_0_30px_rgba(0,247,255,0.1)] hover:-translate-y-1"
             >
               {/* Corner accents */}
-              <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-yellow-500/50 rounded-tl-2xl z-10 pointer-events-none" />
-              <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-yellow-500/20 rounded-tr-2xl z-10 pointer-events-none" />
+              <div className="absolute top-0 left-0 w-6 h-6 border-t-2 border-l-2 border-cyan-500/50 rounded-tl-2xl z-10 pointer-events-none" />
+              <div className="absolute top-0 right-0 w-6 h-6 border-t-2 border-r-2 border-cyan-500/20 rounded-tr-2xl z-10 pointer-events-none" />
 
-              {/* Image area */}
-              <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-gray-900 to-black">
+              {/* Avatar area */}
+              <div className="relative w-full aspect-square overflow-hidden bg-gradient-to-br from-cyan-900/20 to-black">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent z-10 pointer-events-none" />
-                {community.community_image ? (
+                {evangelist.image ? (
                   <Image
-                    src={community.community_image}
-                    alt={community.community_name}
+                    src={evangelist.image}
+                    alt={evangelist.name}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <span
-                      className="text-5xl md:text-6xl font-bold text-yellow-500/50"
+                      className="text-5xl md:text-6xl font-bold text-cyan-500/50"
                       style={{ fontFamily: 'Metal Mania' }}
                     >
-                      {community.community_name.charAt(0)}
+                      {evangelist.name.charAt(0)}
                     </span>
                   </div>
                 )}
@@ -110,28 +114,35 @@ const CommunityPartners = () => {
               <div className="flex flex-col gap-2.5 p-3 md:p-4 border-t border-white/8">
                 {/* Name */}
                 <p
-                  className="text-white text-sm md:text-base font-bold leading-tight line-clamp-2 group-hover:text-yellow-400 transition-colors duration-300"
+                  className="text-white text-sm md:text-base font-bold leading-tight line-clamp-1 group-hover:text-cyan-400 transition-colors duration-300"
                   style={{ fontFamily: 'Metal Mania' }}
                 >
-                  {community.community_name}
+                  {evangelist.name}
                 </p>
 
+                {/* College */}
+                {evangelist.college && (
+                  <p className="text-white/40 text-[10px] md:text-xs leading-tight line-clamp-1 -mt-1.5">
+                    {evangelist.college}
+                  </p>
+                )}
+
                 {/* Referral code row */}
-                <div className="flex items-center justify-between gap-2 bg-black/50 border border-yellow-500/15 rounded-lg px-2.5 py-1.5">
+                <div className="flex items-center justify-between gap-2 bg-black/50 border border-cyan-500/15 rounded-lg px-2.5 py-1.5">
                   <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="text-yellow-500/50 text-[9px] uppercase tracking-widest font-semibold shrink-0">
+                    <span className="text-cyan-500/50 text-[9px] uppercase tracking-widest font-semibold shrink-0">
                       REF
                     </span>
-                    <span className="text-yellow-400 text-[11px] md:text-xs font-mono font-bold truncate">
-                      {community.referral_code}
+                    <span className="text-cyan-400 text-[11px] md:text-xs font-mono font-bold truncate">
+                      {evangelist.referral_code}
                     </span>
                   </div>
                   <button
                     onClick={() => {
-                      navigator.clipboard.writeText(community.referral_code);
+                      navigator.clipboard.writeText(evangelist.referral_code);
                       toast.success('Referral code copied!');
                     }}
-                    className="shrink-0 p-1 rounded-md text-yellow-500/50 hover:text-yellow-400 hover:bg-yellow-500/10 transition-all"
+                    className="shrink-0 p-1 rounded-md text-cyan-500/50 hover:text-cyan-400 hover:bg-cyan-500/10 transition-all"
                     title="Copy referral code"
                   >
                     <svg
@@ -158,4 +169,4 @@ const CommunityPartners = () => {
   );
 };
 
-export default CommunityPartners;
+export default Evangelists;

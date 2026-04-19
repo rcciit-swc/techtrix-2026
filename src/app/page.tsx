@@ -2,6 +2,7 @@
 
 import AboutSection from '@/components/about/About';
 import CommunityPartners from '@/components/CommunityPartners';
+import Evangelists from '@/components/Evangelists';
 import EventsSection from '@/components/EventsSection';
 import FeaturedEvents from '@/components/FeaturedEvents';
 import Hero from '@/components/Hero';
@@ -52,6 +53,7 @@ const page = () => {
         <SponsorSection />
         <PartnerSection />
         <CommunityPartners />
+        <Evangelists />
         <SponsorshipProposition />
         <PrincipalDesk />
       </div>

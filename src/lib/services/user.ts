@@ -27,11 +27,18 @@ export const getUserData = async () => {
         .eq('community_email', userdetails.data[0].email)
         .maybeSingle();
 
+      const evangelistData = await supabase
+        .from('evangelists')
+        .select('*')
+        .eq('email', userdetails.data[0].email)
+        .maybeSingle();
+
       const returnValue = {
         data: userdetails.data[0],
         swcData:
           swcData.data && swcData.data.length > 0 ? swcData.data[0] : null,
         communityData: communityData.data || null,
+        evangelistData: evangelistData.data || null,
       };
       return returnValue;
     }
