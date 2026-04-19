@@ -27,6 +27,7 @@ import {
   UserCheck,
   X,
 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -63,6 +64,7 @@ export function SoloEventRegistration({
   onRegistrationComplete,
   onPaymentPhaseChange,
 }: SoloEventRegistrationDialogProps) {
+  const searchParams = useSearchParams();
   const { userData } = useUser();
   const {
     markEventAsRegistered,
@@ -215,14 +217,14 @@ export function SoloEventRegistration({
         regMode: 'ONLINE',
         extras: soloLeadData.extras,
         ref:
+          searchParams.get('ref') ||
           userData?.referral ||
           (typeof document !== 'undefined'
             ? document.cookie
                 .split('; ')
                 .find((row) => row.startsWith('tt_referral='))
                 ?.split('=')[1]
-            : null) ||
-          'GOT2026',
+            : null),
       };
 
       const teamId = await registerSoloEvent(registrationParams);

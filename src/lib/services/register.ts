@@ -7,7 +7,7 @@ export interface RegisterSoloParams {
   transactionId: string;
   transactionScreenshot: string | null;
   college: string;
-  ref?: string;
+  ref?: string | null;
   paymentMode?: string;
   regMode?: string;
   account_holder_name?: string;
@@ -39,7 +39,7 @@ export async function registerSoloEvent(
       p_college: college,
       p_event_id: eventId,
       p_payment_mode: paymentMode || 'UPI',
-      p_referral_code: ref || 'GOT2026',
+      p_referral_code: ref ?? null,
       p_reg_mode: regMode || 'ONLINE',
       p_transaction_id: transactionId,
       p_transaction_screenshot: transactionScreenshot,
@@ -78,7 +78,7 @@ export interface RegisterTeamParams {
   teamLeadEmail: string;
   teamLeadExtras?: any;
   teamMembers: TeamMember[];
-  ref: string;
+  ref: string | null;
   paymentMode?: string;
   regMode?: string;
   account_holder_name?: string;

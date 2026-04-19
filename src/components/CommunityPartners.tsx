@@ -11,24 +11,35 @@ import { DynamicBackground } from './AnimatedBackground';
 
 const CommunityPartners = () => {
   const [communities, setCommunities] = useState<CommunityStats[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     getCommunityLeaderboard().then((data) => {
-      const updatedData = data.map((community) => {
-        if (
-          community.community_name.toLowerCase() ===
-          'gdg on campus rcciit'.toLowerCase()
-        ) {
-          return {
-            ...community,
-            community_image: 'https://i.postimg.cc/0jsLmDqm/gdgc-3.png',
-          };
-        }
-        return community;
-      });
-      setCommunities(updatedData);
+      setCommunities(data);
+      setLoading(false);
     });
   }, []);
+
+  if (loading) {
+    return (
+      <section className="relative w-full py-16 md:py-24 bg-gradient-to-b from-black via-[#0a0a0a] to-black overflow-hidden">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
+          <div className="text-center mb-12 md:mb-16">
+            <div className="h-10 w-64 bg-white/5 rounded-lg mx-auto mb-4 animate-pulse" />
+            <div className="w-32 h-1 bg-white/10 mx-auto" />
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5 md:gap-6">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex flex-col items-center gap-3">
+                <div className="w-full aspect-square rounded-2xl bg-white/5 animate-pulse" />
+                <div className="h-3 w-3/4 bg-white/5 rounded animate-pulse" />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   if (communities.length === 0) return null;
 

@@ -36,9 +36,7 @@ export default function EditCommunityDialog({
   const [communityName, setCommunityName] = useState(
     communityData.community_name
   );
-  const [communityEmail, setCommunityEmail] = useState(
-    communityData.community_email || ''
-  );
+  const communityEmail = communityData.community_email || '';
   const [communityImage, setCommunityImage] = useState(
     communityData.community_image || ''
   );
@@ -110,12 +108,14 @@ export default function EditCommunityDialog({
 
       toast.success('Community profile updated!');
       setShowSuccess(true);
-      onSaved({
+      const updated = {
         ...communityData,
         community_name: communityName.trim(),
         community_image: communityImage || null,
         community_email: communityEmail.trim() || null,
-      });
+      };
+      onSaved(updated);
+      setCommunityData(updated);
 
       setTimeout(() => {
         setShowSuccess(false);

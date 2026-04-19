@@ -1,6 +1,8 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { login } from '@/lib/services/auth';
+import { supabase } from '@/lib/supabase/client';
 import { uploadToImgBB } from '@/lib/utils/imgbb';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
@@ -14,19 +16,40 @@ interface InvitationData {
   fest_id: string | null;
 }
 
-type PageState = 'loading' | 'invalid' | 'form' | 'submitting' | 'success';
+type PageState =
+  | 'checking-auth'
+  | 'redirecting'
+  | 'loading'
+  | 'invalid'
+  | 'form'
+  | 'submitting'
+  | 'success';
+
+type ErrorType = 'general' | 'email-mismatch';
+
+function maskEmail(email: string): string {
+  const [local, domain] = email.split('@');
+  if (!domain) return email;
+  const masked =
+    local.length <= 2
+      ? local[0] + '***'
+      : local[0] + '***' + local[local.length - 1];
+  return `${masked}@${domain}`;
+}
 
 export default function CommunityPartnerOnboard() {
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
 
-  const [state, setState] = useState<PageState>('loading');
+  const [state, setState] = useState<PageState>('checking-auth');
   const [errorMessage, setErrorMessage] = useState('');
+  const [errorType, setErrorType] = useState<ErrorType>('general');
   const [invitation, setInvitation] = useState<InvitationData | null>(null);
+  const [loggedInEmail, setLoggedInEmail] = useState('');
 
   // Form fields
   const [communityName, setCommunityName] = useState('');
-  const [communityEmail, setCommunityEmail] = useState('');
+  const [communityEmail, setCommunityEmail] = useState(''); // set from invitation, not editable
   const [referralCode, setReferralCode] = useState('');
   const [communityImage, setCommunityImage] = useState('');
   const [referralCodeError, setReferralCodeError] = useState('');
@@ -34,17 +57,39 @@ export default function CommunityPartnerOnboard() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Verify token on mount
+  // Referral code availability check
+  const [isCheckingCode, setIsCheckingCode] = useState(false);
+  const [isCodeAvailable, setIsCodeAvailable] = useState<boolean | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Auth check → token verify on mount
   useEffect(() => {
     if (!token) {
       setErrorMessage(
         'No invitation token provided. Please use the link from your invitation email.'
       );
+      setErrorType('general');
       setState('invalid');
       return;
     }
 
-    const verifyToken = async () => {
+    const init = async () => {
+      // Step 1: check auth
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        // Not logged in — redirect to Google OAuth, come back here after
+        setState('redirecting');
+        await login();
+        return;
+      }
+
+      setLoggedInEmail(user.email ?? '');
+
+      // Step 2: verify the invitation token
+      setState('loading');
       try {
         const res = await fetch(
           `/api/community-partners/invite/verify?token=${encodeURIComponent(token)}`
@@ -53,6 +98,18 @@ export default function CommunityPartnerOnboard() {
 
         if (!res.ok || !data.valid) {
           setErrorMessage(data.error || 'Invalid invitation token.');
+          setErrorType('general');
+          setState('invalid');
+          return;
+        }
+
+        // Step 3: check email match
+        if (data.email.toLowerCase() !== (user.email ?? '').toLowerCase()) {
+          setInvitation(data); // store so we can show invitation email
+          setErrorType('email-mismatch');
+          setErrorMessage(
+            `This invitation was sent to ${maskEmail(data.email)}, but you are signed in as ${maskEmail(user.email ?? '')}.`
+          );
           setState('invalid');
           return;
         }
@@ -63,11 +120,12 @@ export default function CommunityPartnerOnboard() {
         setState('form');
       } catch {
         setErrorMessage('Failed to verify invitation. Please try again.');
+        setErrorType('general');
         setState('invalid');
       }
     };
 
-    verifyToken();
+    init();
   }, [token]);
 
   const validateReferralCode = useCallback((code: string) => {
@@ -87,6 +145,36 @@ export default function CommunityPartnerOnboard() {
     }
     setReferralCodeError('');
     return true;
+  }, []);
+
+  const checkCodeAvailability = useCallback((code: string) => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    const isFormatValid =
+      code.length >= 3 && code.length <= 30 && /^[a-zA-Z0-9_-]+$/.test(code);
+
+    if (!isFormatValid) {
+      setIsCodeAvailable(null);
+      setIsCheckingCode(false);
+      return;
+    }
+
+    setIsCheckingCode(true);
+    setIsCodeAvailable(null);
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `/api/community-partners/check-code?code=${encodeURIComponent(code)}`
+        );
+        const data = await res.json();
+        setIsCodeAvailable(data.available ?? false);
+      } catch {
+        setIsCodeAvailable(null);
+      } finally {
+        setIsCheckingCode(false);
+      }
+    }, 500);
   }, []);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,6 +213,10 @@ export default function CommunityPartnerOnboard() {
     e.preventDefault();
 
     if (!validateReferralCode(referralCode)) return;
+    if (!isCodeAvailable) {
+      toast.error('Please choose an available referral code');
+      return;
+    }
     if (!communityName.trim()) {
       toast.error('Community name is required');
       return;
@@ -189,7 +281,36 @@ export default function CommunityPartnerOnboard() {
 
         {/* Card */}
         <div className="bg-white/[0.03] border border-white/10 rounded-2xl backdrop-blur-md p-6 md:p-8 shadow-2xl">
-          {/* Loading State */}
+          {/* Checking Auth State */}
+          {state === 'checking-auth' && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center py-12 gap-4"
+            >
+              <div className="w-10 h-10 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin" />
+              <p className="text-white/60 text-sm">Checking your session...</p>
+            </motion.div>
+          )}
+
+          {/* Redirecting to Login State */}
+          {state === 'redirecting' && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex flex-col items-center py-12 gap-4 text-center"
+            >
+              <div className="w-10 h-10 border-2 border-yellow-400/30 border-t-yellow-400 rounded-full animate-spin" />
+              <p className="text-white/60 text-sm">
+                Redirecting you to sign in...
+              </p>
+              <p className="text-white/30 text-xs max-w-xs">
+                You&apos;ll be brought back here automatically after signing in.
+              </p>
+            </motion.div>
+          )}
+
+          {/* Loading / Verifying Token State */}
           {state === 'loading' && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -210,28 +331,78 @@ export default function CommunityPartnerOnboard() {
               animate={{ opacity: 1, scale: 1 }}
               className="flex flex-col items-center py-12 gap-4 text-center"
             >
-              <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
-                <svg
-                  className="w-8 h-8 text-red-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </div>
+              {errorType === 'email-mismatch' ? (
+                <div className="w-16 h-16 rounded-full bg-amber-500/10 flex items-center justify-center mb-2">
+                  <svg
+                    className="w-8 h-8 text-amber-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+              ) : (
+                <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mb-2">
+                  <svg
+                    className="w-8 h-8 text-red-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </div>
+              )}
+
               <h2
                 className="text-xl font-semibold text-white"
                 style={{ fontFamily: 'Metal Mania' }}
               >
-                Invitation Invalid
+                {errorType === 'email-mismatch'
+                  ? 'Wrong Account'
+                  : 'Invitation Invalid'}
               </h2>
               <p className="text-white/50 text-sm max-w-sm">{errorMessage}</p>
+
+              {errorType === 'email-mismatch' && (
+                <div className="w-full mt-2 space-y-3">
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-3 text-left space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/30 text-xs uppercase tracking-wider">
+                        Signed in as
+                      </span>
+                      <span className="text-white/60 text-xs font-mono">
+                        {maskEmail(loggedInEmail)}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-white/30 text-xs uppercase tracking-wider">
+                        Invitation for
+                      </span>
+                      <span className="text-amber-400/80 text-xs font-mono">
+                        {invitation ? maskEmail(invitation.email) : '—'}
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => login()}
+                    className="w-full py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white/70 hover:text-white text-sm rounded-xl transition-all"
+                  >
+                    Sign in with a different account
+                  </button>
+                </div>
+              )}
             </motion.div>
           )}
 
@@ -278,10 +449,12 @@ export default function CommunityPartnerOnboard() {
                 <input
                   type="email"
                   value={communityEmail}
-                  onChange={(e) => setCommunityEmail(e.target.value)}
-                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white text-sm placeholder-white/30 focus:outline-none focus:border-yellow-500/50 focus:ring-1 focus:ring-yellow-500/20 transition-all"
-                  placeholder="contact@community.com"
+                  disabled
+                  className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-2.5 text-white/50 text-sm cursor-not-allowed"
                 />
+                <p className="text-white/30 text-xs mt-1">
+                  Email is set from your invitation and cannot be changed
+                </p>
               </div>
 
               {/* Referral Code */}
@@ -289,30 +462,81 @@ export default function CommunityPartnerOnboard() {
                 <label className="block text-white/70 text-xs font-medium mb-1.5 uppercase tracking-wider">
                   Referral Code
                 </label>
-                <input
-                  type="text"
-                  value={referralCode}
-                  onChange={(e) => {
-                    setReferralCode(e.target.value);
-                    if (referralCodeError) validateReferralCode(e.target.value);
-                  }}
-                  onBlur={() => validateReferralCode(referralCode)}
-                  required
-                  className={`w-full bg-white/5 border rounded-lg px-4 py-2.5 text-white text-sm placeholder-white/30 focus:outline-none focus:ring-1 transition-all ${
-                    referralCodeError
-                      ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20'
-                      : 'border-white/10 focus:border-yellow-500/50 focus:ring-yellow-500/20'
-                  }`}
-                  placeholder="e.g. my-community-2026"
-                />
-                {referralCodeError && (
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={referralCode}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setReferralCode(val);
+                      if (referralCodeError) validateReferralCode(val);
+                      checkCodeAvailability(val);
+                    }}
+                    onBlur={() => validateReferralCode(referralCode)}
+                    required
+                    className={`w-full bg-white/5 border rounded-lg px-4 py-2.5 pr-10 text-white text-sm placeholder-white/30 focus:outline-none focus:ring-1 transition-all ${
+                      referralCodeError
+                        ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20'
+                        : isCodeAvailable === true
+                          ? 'border-green-500/50 focus:border-green-500/50 focus:ring-green-500/20'
+                          : isCodeAvailable === false
+                            ? 'border-red-500/50 focus:border-red-500/50 focus:ring-red-500/20'
+                            : 'border-white/10 focus:border-yellow-500/50 focus:ring-yellow-500/20'
+                    }`}
+                    placeholder="e.g. my-community-2026"
+                  />
+                  {/* Right-end indicator */}
+                  <div className="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                    {isCheckingCode ? (
+                      <div className="w-4 h-4 border-2 border-white/20 border-t-white/60 rounded-full animate-spin" />
+                    ) : isCodeAvailable === true ? (
+                      <svg
+                        className="w-4 h-4 text-green-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    ) : isCodeAvailable === false ? (
+                      <svg
+                        className="w-4 h-4 text-red-400"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        strokeWidth={2.5}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    ) : null}
+                  </div>
+                </div>
+                {referralCodeError ? (
                   <p className="text-red-400 text-xs mt-1">
                     {referralCodeError}
                   </p>
+                ) : isCodeAvailable === false ? (
+                  <p className="text-red-400 text-xs mt-1">
+                    This referral code is already taken
+                  </p>
+                ) : isCodeAvailable === true ? (
+                  <p className="text-green-400 text-xs mt-1">
+                    Referral code is available
+                  </p>
+                ) : (
+                  <p className="text-white/30 text-xs mt-1">
+                    This will be used to track registrations from your community
+                  </p>
                 )}
-                <p className="text-white/30 text-xs mt-1">
-                  This will be used to track registrations from your community
-                </p>
               </div>
 
               {/* Community Logo Upload */}
@@ -386,7 +610,12 @@ export default function CommunityPartnerOnboard() {
               {/* Submit */}
               <button
                 type="submit"
-                disabled={state === 'submitting' || imageUploading}
+                disabled={
+                  state === 'submitting' ||
+                  imageUploading ||
+                  isCheckingCode ||
+                  isCodeAvailable !== true
+                }
                 className="w-full mt-2 bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-400 hover:to-amber-500 text-black font-bold py-3 rounded-lg text-sm uppercase tracking-wider transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-yellow-500/10 hover:shadow-yellow-500/20"
               >
                 {state === 'submitting' ? (
@@ -508,7 +737,6 @@ export default function CommunityPartnerOnboard() {
                         }
                       }
                     } else {
-                      // Fallback to WhatsApp if native share is not available
                       const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareData.text}\n\n🔗 ${shareUrl}`)}`;
                       window.open(whatsappUrl, '_blank');
                     }

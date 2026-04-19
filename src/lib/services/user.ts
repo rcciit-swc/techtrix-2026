@@ -25,7 +25,7 @@ export const getUserData = async () => {
         .from('community_partners')
         .select('*')
         .eq('community_email', userdetails.data[0].email)
-        .single();
+        .maybeSingle();
 
       const returnValue = {
         data: userdetails.data[0],

@@ -35,6 +35,7 @@ import {
   Users,
   X,
 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -76,6 +77,7 @@ export function TeamEventRegistration({
   onRegistrationComplete,
   onPaymentPhaseChange,
 }: EventRegistrationDialogProps) {
+  const searchParams = useSearchParams();
   const { userData } = useUser();
   const {
     markEventAsRegistered,
@@ -250,6 +252,7 @@ export function TeamEventRegistration({
         teamLeadExtras: teamLeadData.extras,
         teamMembers: teamMembers,
         ref:
+          searchParams.get('ref') ||
           userData?.referral ||
           (typeof document !== 'undefined'
             ? document.cookie
@@ -354,6 +357,7 @@ export function TeamEventRegistration({
       teamLeadExtras: teamLeadData!.extras,
       teamMembers: teamMembers,
       ref:
+        searchParams.get('ref') ||
         userData?.referral ||
         (typeof document !== 'undefined'
           ? document.cookie
@@ -361,7 +365,7 @@ export function TeamEventRegistration({
               .find((row) => row.startsWith('tt_referral='))
               ?.split('=')[1]
           : null) ||
-        'GOT2026',
+        null,
       account_holder_name: teamLeadData!.name,
       paymentMode: 'SWC_PAID',
       regMode: 'ONLINE',

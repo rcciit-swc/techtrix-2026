@@ -1,8 +1,23 @@
 import { supabaseAdmin } from '@/lib/supabase/admin';
+import { createServer } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function PATCH(request: NextRequest) {
   try {
+    // Authenticate the request
+    const supabase = await createServer();
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { referral_code, community_name, community_image, community_email } =
       body;
@@ -21,10 +36,10 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
-    // Verify the community partner exists
+    // Verify the community partner exists and belongs to the authenticated user
     const { data: existing, error: fetchError } = await supabaseAdmin
       .from('community_partners')
-      .select('referral_code')
+      .select('referral_code, community_email')
       .eq('referral_code', referral_code)
       .single();
 
@@ -32,6 +47,17 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json(
         { success: false, error: 'Community partner not found' },
         { status: 404 }
+      );
+    }
+
+    // Verify the authenticated user owns this community
+    if (
+      !existing.community_email ||
+      existing.community_email.toLowerCase() !== user.email?.toLowerCase()
+    ) {
+      return NextResponse.json(
+        { success: false, error: 'Forbidden' },
+        { status: 403 }
       );
     }
 
