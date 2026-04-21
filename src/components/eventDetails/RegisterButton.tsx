@@ -28,8 +28,11 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
     'creating-order' | 'verifying-payment' | null
   >(null);
 
-  // Use event from store if available (contains updated registration status)
-  const event = eventsData.find((e) => e.id === eventId);
+  // Prefer eventsData (has live registration status); fall back to eventData (single-event fetch)
+  const eventData = useEvents((state) => state.eventData);
+  const eventFromList = eventsData.find((e) => e.id === eventId);
+  const event =
+    eventFromList ?? (eventData?.id === eventId ? eventData : undefined);
 
   // SWC-paid users don't need to pay registration fees for eligible categories
   const isSWCPaid = !!swcData;
@@ -40,15 +43,15 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
   ];
   const isEligibleForSWCFree =
     isSWCPaid && SWC_FREE_CATEGORY_IDS.includes(event?.event_category_id ?? '');
-  const effectiveFees = isEligibleForSWCFree ? 0 : event!.registration_fees;
+  const effectiveFees = isEligibleForSWCFree
+    ? 0
+    : (event?.registration_fees ?? 0);
 
   // Determine registration state
   const isFullyRegistered =
     event?.registered && (!!event?.transaction_verified || effectiveFees === 0);
   const isPendingPayment =
     event?.registered && !isFullyRegistered && event?.registered_team_id;
-  //debug the payment
-  console.log(isFullyRegistered, isPendingPayment);
 
   const SHUTTERSCAPE_EVENT_ID = '49c435f3-ddca-412b-bb9a-b652af49315e';
   const SHUTTERSCAPE_FORM_URL =
@@ -56,7 +59,7 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
 
   const UNSTOP_EVENT_ID = '1b0af2ef-1101-4f43-8061-3ac42db45167';
   const UNSTOP_FORM_URL =
-    'https://unstop.com/o/vGiOo53?lb=N84Gpz8e&utm_medium=Share&utm_source=techt2024854&utm_campaign=Competitions';
+    'https://unstop.com/p/startup-autopsy-techtrix-2026-rcc-institute-of-information-technology-rcciit-kolkata-1678211';
 
   const isShutterscape = eventId === SHUTTERSCAPE_EVENT_ID;
   const isUnstopEvent = eventId === UNSTOP_EVENT_ID;
@@ -73,6 +76,11 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
       setTimeout(() => {
         window.open(UNSTOP_FORM_URL, '_blank');
       }, 1000);
+      return;
+    }
+
+    if (isShutterscape) {
+      window.open(SHUTTERSCAPE_FORM_URL, '_blank');
       return;
     }
 
@@ -134,8 +142,11 @@ export default function RegisterButton({ eventId }: RegisterButtonProps) {
   };
 
   const renderButton = () => {
+    // Still loading event data
+    if (!event) return null;
+
     // State 1: Registration closed
-    if (!event?.reg_status) {
+    if (!event.reg_status) {
       return (
         <motion.button
           whileHover={{ scale: 1.02 }}

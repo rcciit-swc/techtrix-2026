@@ -38,7 +38,6 @@ export default function MasonryGallery() {
   const y = useTransform(scrollYProgress, [0, 1], [0, -50]);
 
   const handleImageError = (src: string) => {
-    console.error('Failed to load image:', src);
     setFailedImages((prev) => [...prev, src]);
   };
 
@@ -85,43 +84,29 @@ export default function MasonryGallery() {
           </p>
         </motion.div>
 
-        {/* Show failed images alert if any */}
-        {failedImages.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            className="mb-8 px-4"
-          >
-            <div className="bg-red-900/20 border border-red-500/50 rounded-lg p-4 text-red-200">
-              <h3 className="font-bold mb-2 flex items-center gap-2">
-                <span className="w-2 h-2 bg-red-500 rounded-full animate-pulse" />
-                Failed to load {failedImages.length} image(s)
-              </h3>
-            </div>
-          </motion.div>
-        )}
-
         {/* Gallery Section */}
         <motion.div style={{ y }} className="px-2 md:px-4 pb-20">
           <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 md:gap-6 space-y-4 md:space-y-6">
-            {images.map((src, index) => (
-              <motion.div
-                key={src}
-                initial={{ opacity: 0, y: 50, scale: 0.9 }}
-                whileInView={{ opacity: 1, y: 0, scale: 1 }}
-                transition={{
-                  duration: 0.6,
-                  delay: (index % 4) * 0.1, // Stagger based on column position roughly
-                  type: 'spring',
-                  stiffness: 50,
-                }}
-                viewport={{ once: true, margin: '-50px' }}
-                onMouseEnter={() => setHovered(index)}
-                onMouseLeave={() => setHovered(null)}
-                className="break-inside-avoid"
-              >
+            {images
+              .filter((src) => !failedImages.includes(src))
+              .map((src, index) => (
                 <motion.div
-                  className={`
+                  key={src}
+                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{
+                    duration: 0.6,
+                    delay: (index % 4) * 0.1, // Stagger based on column position roughly
+                    type: 'spring',
+                    stiffness: 50,
+                  }}
+                  viewport={{ once: true, margin: '-50px' }}
+                  onMouseEnter={() => setHovered(index)}
+                  onMouseLeave={() => setHovered(null)}
+                  className="break-inside-avoid"
+                >
+                  <motion.div
+                    className={`
                     group relative overflow-hidden rounded-xl border border-white/10 bg-gray-900/50
                     backdrop-blur-sm transition-all duration-500 ease-out
                     ${
@@ -130,39 +115,39 @@ export default function MasonryGallery() {
                         : 'blur-0 opacity-100 grayscale-0 shadow-[0_0_30px_-5px_rgba(250,204,21,0.3)]'
                     }
                   `}
-                  whileHover={{
-                    scale: 1.02,
-                    borderColor: 'rgba(250,204,21,0.5)',
-                    boxShadow: '0 0 40px -10px rgba(250,204,21,0.6)',
-                    zIndex: 10,
-                  }}
-                >
-                  <div className="relative aspect-auto">
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
+                    whileHover={{
+                      scale: 1.02,
+                      borderColor: 'rgba(250,204,21,0.5)',
+                      boxShadow: '0 0 40px -10px rgba(250,204,21,0.6)',
+                      zIndex: 10,
+                    }}
+                  >
+                    <div className="relative aspect-auto">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10" />
 
-                    <Image
-                      src={src}
-                      alt={`Gallery image ${index + 1}`}
-                      width={800}
-                      height={600}
-                      sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      className="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-110"
-                      loading="lazy"
-                      quality={90}
-                      onError={() => handleImageError(src)}
-                    />
+                      <Image
+                        src={src}
+                        alt={`Gallery image ${index + 1}`}
+                        width={800}
+                        height={600}
+                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        className="w-full h-auto object-cover transform transition-transform duration-700 ease-out group-hover:scale-110"
+                        loading="lazy"
+                        quality={90}
+                        onError={() => handleImageError(src)}
+                      />
 
-                    {/* Overlay Content */}
-                    <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
-                      <div className="h-0.5 w-12 bg-yellow-400 mb-2" />
-                      <p className="text-white text-sm font-light tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
-                        TECHTRIX 2026
-                      </p>
+                      {/* Overlay Content */}
+                      <div className="absolute bottom-0 left-0 right-0 p-4 translate-y-full group-hover:translate-y-0 transition-transform duration-300 z-20">
+                        <div className="h-0.5 w-12 bg-yellow-400 mb-2" />
+                        <p className="text-white text-sm font-light tracking-wider opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100">
+                          TECHTRIX 2025
+                        </p>
+                      </div>
                     </div>
-                  </div>
+                  </motion.div>
                 </motion.div>
-              </motion.div>
-            ))}
+              ))}
           </div>
         </motion.div>
       </div>

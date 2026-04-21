@@ -31,7 +31,7 @@ export const populateCategories = async (set: any) => {
 
 export const populateEventDetailsByID = async (set: any, id: string) => {
   try {
-    set({ eventsLoading: true });
+    set({ eventDetailsLoading: true });
     const eventData = await getEventByID(id);
     if (!eventData) {
       set({ eventData: {}, eventDetailsLoading: false });

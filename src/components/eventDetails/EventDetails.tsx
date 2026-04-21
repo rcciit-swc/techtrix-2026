@@ -44,7 +44,7 @@ export default function EventDetails({ event }: Props) {
 
   // Asset loading state
   const [bgLoaded, setBgLoaded] = useState(false);
-  const [charLoaded, setCharLoaded] = useState(false);
+  const [charLoaded, setCharLoaded] = useState(true); // decorative only, don't block page
   const [posterLoaded, setPosterLoaded] = useState(!event.image_url);
 
   const isFullyLoaded = bgLoaded && charLoaded && posterLoaded;
@@ -356,6 +356,7 @@ export default function EventDetails({ event }: Props) {
             fill
             className="object-cover"
             onLoad={() => setBgLoaded(true)}
+            onError={() => setBgLoaded(true)}
             priority
           />
         </div>
@@ -423,6 +424,7 @@ export default function EventDetails({ event }: Props) {
                         fill
                         className="object-cover"
                         onLoad={() => setPosterLoaded(true)}
+                        onError={() => setPosterLoaded(true)}
                         priority
                       />
                     </div>

@@ -12,33 +12,48 @@ export default function EventPage() {
 
   const eventsData = useEvents((state) => state.eventsData);
   const eventsLoading = useEvents((state) => state.eventsLoading);
+  const eventData = useEvents((state) => state.eventData);
+  const eventDetailsLoading = useEvents((state) => state.eventDetailsLoading);
   const setEventsData = useEvents((state) => state.setEventsData);
+  const getEventByID = useEvents((state) => state.getEventByID);
 
-  // Track if we've attempted to load
-  const [hasAttemptedLoad, setHasAttemptedLoad] = useState(false);
+  const [hasFetchedById, setHasFetchedById] = useState(false);
 
-  // Trigger data fetch if not already loaded
-  useEffect(() => {
-    if (eventsData.length === 0 && !eventsLoading && !hasAttemptedLoad) {
-      setEventsData();
-      setHasAttemptedLoad(true);
-    }
-  }, [eventsData.length, eventsLoading, hasAttemptedLoad, setEventsData]);
-
-  // Memoize event lookup to avoid recalculating on every render
-  const event = useMemo(() => {
+  // Fast path: event already in store (navigated from /events list)
+  const eventFromList = useMemo(() => {
     return eventsData.find((e) => e.id === eventId);
   }, [eventsData, eventId]);
 
-  // Show loading while data is being fetched and we don't have it yet
-  if (
-    (eventsLoading && eventsData.length === 0) ||
-    (eventsData.length === 0 && !hasAttemptedLoad)
-  ) {
+  useEffect(() => {
+    if (eventFromList) return; // Already have it, no fetch needed
+
+    if (!hasFetchedById) {
+      setHasFetchedById(true);
+      getEventByID(eventId); // Fast: single-row query by PK
+
+      // Background-load all events for the store without blocking the page
+      if (eventsData.length === 0 && !eventsLoading) {
+        setEventsData(true); // background=true: no loading spinner
+      }
+    }
+  }, [
+    eventId,
+    eventFromList,
+    hasFetchedById,
+    getEventByID,
+    eventsData.length,
+    eventsLoading,
+    setEventsData,
+  ]);
+
+  const event = eventFromList ?? eventData;
+  const isLoading = !eventFromList && (!hasFetchedById || eventDetailsLoading);
+
+  if (isLoading) {
     return <EventLoader />;
   }
 
-  if (!event) {
+  if (!event?.id) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-black">
         <div className="text-center">
