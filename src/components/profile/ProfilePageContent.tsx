@@ -1,12 +1,16 @@
 'use client';
 
-import EventsCard from '@/components/profile/EventCard';
+import RegistrationCard from '@/components/profile/RegistrationCard';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useEvents, useUser } from '@/lib/stores';
+import { useUser } from '@/lib/stores';
 import { supabase } from '@/lib/supabase/client';
-import type { events } from '@/lib/types';
+import { CURRENT_FEST_ID } from '@/lib/constants';
+import {
+  getMyRegistrations,
+  type MyRegistration,
+} from '@/lib/services/register';
 import { motion } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -32,14 +36,16 @@ export default function ProfilePage() {
     updateUserData,
     clearUserData,
   } = useUser();
-  const { eventsData } = useEvents();
   const [profileImage, setProfileImage] = useState<string>();
   const [imageLoaded, setImageLoaded] = useState(false);
   const [name, setName] = useState<string>();
   const router = useRouter();
   const searchParams = useSearchParams();
   const isOnboarding = searchParams.get('onboarding') === 'true';
-  const [registeredEvents, setRegisteredEvents] = useState<events[]>([]);
+  const [registeredEvents, setRegisteredEvents] = useState<MyRegistration[]>(
+    []
+  );
+  const [registrationsLoading, setRegistrationsLoading] = useState(false);
 
   useEffect(() => {
     if (searchParams.get('onboarding') === 'true') {
@@ -57,9 +63,12 @@ export default function ProfilePage() {
   }, [searchParams, router]);
 
   useEffect(() => {
-    if (eventsData.length > 0)
-      setRegisteredEvents(eventsData.filter((event) => event.registered));
-  }, [eventsData]);
+    if (!userData?.id) return;
+    setRegistrationsLoading(true);
+    getMyRegistrations(CURRENT_FEST_ID, userData.id)
+      .then((data) => setRegisteredEvents(data))
+      .finally(() => setRegistrationsLoading(false));
+  }, [userData?.id]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -476,30 +485,26 @@ export default function ProfilePage() {
               <div className="absolute bottom-0 left-1/2 h-1 bg-gradient-to-r from-transparent via-yellow-400 to-transparent w-[60%] -translate-x-1/2" />
             </h2>
 
-            {registeredEvents.length > 0 ? (
+            {registrationsLoading ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 justify-items-center">
-                {registeredEvents.map((event, index) => (
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="w-full max-w-[340px] h-[480px] rounded-[20px] bg-white/5 animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : registeredEvents.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 justify-items-center">
+                {registeredEvents.map((reg, index) => (
                   <motion.div
-                    key={index}
+                    key={reg.team_id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: 0.1 * index }}
                     className="w-full max-w-[340px]"
                   >
-                    <EventsCard
-                      event_id={event.event_id!}
-                      name={event.name}
-                      image_url={event.image_url}
-                      registration_fees={event.registration_fees}
-                      registered={event.registered}
-                      schedule={event.schedule}
-                      team_details={event.team_details ?? null}
-                      transaction_screenshot={
-                        event.transaction_screenshot ?? null
-                      }
-                      transaction_verified={event.transaction_verified}
-                      event_category_id={event.event_category_id}
-                    />
+                    <RegistrationCard registration={reg} />
                   </motion.div>
                 ))}
               </div>

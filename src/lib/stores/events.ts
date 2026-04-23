@@ -18,10 +18,10 @@ const eventState: EventsStateType = {
   approvalDashboardLoading: false,
 };
 
-export const useEvents = create<EventsStoreType>((set) => ({
+export const useEvents = create<EventsStoreType>((set, get) => ({
   ...eventState,
   setEventsData: (background?: boolean) =>
-    populateEventDetails(set, background),
+    populateEventDetails(set, get, background),
   getEventByID: (id: string) => populateEventDetailsByID(set, id),
   getEventCategories: () => populateCategories(set),
   markEventAsRegistered: (eventId: string) =>

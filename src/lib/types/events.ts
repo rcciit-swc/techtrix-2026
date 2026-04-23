@@ -40,6 +40,9 @@ export interface events {
   team_details?: TeamMember[] | null;
   transaction_screenshot?: string | null;
   extra_fields?: string[];
+  // team discovery fields (fetched separately)
+  invite_code?: string | null;
+  team_status?: 'pending' | 'active' | 'closed' | null;
 }
 
 export interface eventCategories {

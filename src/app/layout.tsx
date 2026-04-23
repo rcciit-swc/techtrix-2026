@@ -34,9 +34,8 @@ const rajdhani = Rajdhani({
   variable: '--font-rajdhani',
 });
 
-import { ReferralTracker } from '@/components/ReferralTracker';
-import SponsorModal from '@/components/SponsorModal';
 import AudioPlayer from '@/components/AudioPlayer';
+import { ReferralTracker } from '@/components/ReferralTracker';
 import { Suspense } from 'react';
 
 export default function RootLayout({
@@ -53,7 +52,6 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <ReferralTracker />
         </Suspense>
-        <SponsorModal />
         {children}
         <Navbar />
         <Footer />

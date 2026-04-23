@@ -2,22 +2,24 @@
 
 import EventDetails from '@/components/eventDetails/EventDetails';
 import EventLoader from '@/components/eventDetails/EventLoader';
+import { InviteJoinModal } from '@/components/eventDetails/InviteJoinModal';
 import { useEvents } from '@/lib/stores';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function EventPage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const eventId = params?.eventId as string;
+  const invCode = searchParams?.get('inv_code') ?? null;
 
   const eventsData = useEvents((state) => state.eventsData);
-  const eventsLoading = useEvents((state) => state.eventsLoading);
   const eventData = useEvents((state) => state.eventData);
   const eventDetailsLoading = useEvents((state) => state.eventDetailsLoading);
-  const setEventsData = useEvents((state) => state.setEventsData);
   const getEventByID = useEvents((state) => state.getEventByID);
 
   const [hasFetchedById, setHasFetchedById] = useState(false);
+  const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
   // Fast path: event already in store (navigated from /events list)
   const eventFromList = useMemo(() => {
@@ -25,26 +27,19 @@ export default function EventPage() {
   }, [eventsData, eventId]);
 
   useEffect(() => {
-    if (eventFromList) return; // Already have it, no fetch needed
-
+    if (eventFromList) return; // Already have it from store (navigated from /events list)
     if (!hasFetchedById) {
       setHasFetchedById(true);
-      getEventByID(eventId); // Fast: single-row query by PK
-
-      // Background-load all events for the store without blocking the page
-      if (eventsData.length === 0 && !eventsLoading) {
-        setEventsData(true); // background=true: no loading spinner
-      }
+      getEventByID(eventId);
     }
-  }, [
-    eventId,
-    eventFromList,
-    hasFetchedById,
-    getEventByID,
-    eventsData.length,
-    eventsLoading,
-    setEventsData,
-  ]);
+  }, [eventId, eventFromList, hasFetchedById, getEventByID]);
+
+  // Open invite modal when inv_code is present in URL
+  useEffect(() => {
+    if (invCode) {
+      setIsInviteModalOpen(true);
+    }
+  }, [invCode]);
 
   const event = eventFromList ?? eventData;
   const isLoading = !eventFromList && (!hasFetchedById || eventDetailsLoading);
@@ -66,5 +61,17 @@ export default function EventPage() {
     );
   }
 
-  return <EventDetails event={event} />;
+  return (
+    <>
+      <EventDetails event={event} />
+      {invCode && (
+        <InviteJoinModal
+          isOpen={isInviteModalOpen}
+          onClose={() => setIsInviteModalOpen(false)}
+          invCode={invCode}
+          eventId={eventId}
+        />
+      )}
+    </>
+  );
 }

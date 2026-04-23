@@ -92,7 +92,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Update team's transaction_verified status
+    // Update team's transaction_verified status and close the team
     if (payment.team_id) {
       const { error: updateTeamError } = await supabaseAdmin
         .from('teams')
@@ -100,6 +100,7 @@ export async function POST(request: NextRequest) {
           transaction_id: payment.id,
           transaction_verified: new Date().toISOString(),
           payment_mode: 'RAZORPAY',
+          team_status: 'closed',
         })
         .eq('team_id', payment.team_id);
 

@@ -9,9 +9,14 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useRazorpay } from '@/hooks/useRazorpay';
+import { postOpenTeam } from '@/lib/services/discovery';
 import {
+  createTeamDirect,
+  ExistingTeamData,
+  finalizeTeamRegistration,
   RegisterTeamParams,
   registerTeamWithParticipants,
+  updateExistingTeam,
 } from '@/lib/services/register';
 import { useEvents, useUser } from '@/lib/stores';
 import { calculateGatewayFee } from '@/lib/utils/razorpay';
@@ -23,8 +28,10 @@ import {
   ArrowRight,
   Building,
   Check,
+  Copy,
   CreditCard,
   Eye,
+  Link2,
   Loader2,
   Mail,
   Pencil,
@@ -50,9 +57,18 @@ interface EventRegistrationDialogProps {
   eventID: string;
   eventFees: number;
   onRegistrationComplete?: () => void;
+  onRegistrationWithInviteCode?: (
+    inviteCode: string,
+    teamStatus: 'pending' | 'active'
+  ) => void;
   onPaymentPhaseChange?: (
     phase: 'creating-order' | 'verifying-payment' | null
   ) => void;
+  onOpenFindTeammates?: (
+    intent: 'waitlist' | 'open_team',
+    registerAndPost?: () => Promise<void>
+  ) => void;
+  initialData?: ExistingTeamData;
 }
 
 // Zod schema for the Team Lead (Step 1)
@@ -75,7 +91,10 @@ export function TeamEventRegistration({
   eventID,
   eventFees,
   onRegistrationComplete,
+  onRegistrationWithInviteCode,
   onPaymentPhaseChange,
+  onOpenFindTeammates,
+  initialData,
 }: EventRegistrationDialogProps) {
   const searchParams = useSearchParams();
   const { userData } = useUser();
@@ -123,6 +142,13 @@ export function TeamEventRegistration({
   const [isRegistering, setIsRegistering] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
+  const [registrationResult, setRegistrationResult] = useState<{
+    inviteCode: string;
+    teamStatus: 'pending' | 'active';
+    teamId: string;
+    postedAsOpen: boolean;
+  } | null>(null);
+  const [isPostingOpen, setIsPostingOpen] = useState(false);
   const { initiatePayment, isProcessing, isLoading, isVerifying } =
     useRazorpay();
 
@@ -145,6 +171,41 @@ export function TeamEventRegistration({
     };
   }, [isOpen]);
 
+  // Pre-fill form with user profile data when dialog opens (normal flow)
+  useEffect(() => {
+    if (!isOpen || initialData) return; // edit mode has its own reset below
+    resetTeamLead({
+      teamName: '',
+      name: userData?.name ?? '',
+      phone: userData?.phone ?? '',
+      email: userData?.email ?? '',
+      collegeName: userData?.college ?? '',
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, userData?.id]);
+
+  // Pre-fill form when opened in edit mode with existing team data
+  useEffect(() => {
+    if (!isOpen || !initialData) return;
+    resetTeamLead({
+      teamName: initialData.team_name ?? '',
+      name: initialData.team_lead_name ?? userData?.name ?? '',
+      phone: initialData.team_lead_phone ?? userData?.phone ?? '',
+      email: initialData.team_lead_email ?? userData?.email ?? '',
+      collegeName: initialData.college ?? userData?.college ?? '',
+    });
+    setTeamMembers(
+      (initialData.participants ?? []).map((p) => ({
+        name: p.name,
+        phone: p.phone ?? '',
+        email: p.email,
+        college: p.college ?? '',
+        extras: p.extras ?? {},
+      }))
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, initialData]);
+
   // Sync payment phase to parent
   useEffect(() => {
     if (isRegistering && !isVerifying) {
@@ -164,10 +225,11 @@ export function TeamEventRegistration({
   } = useForm<TeamLeadFormValues>({
     resolver: zodResolver(teamLeadSchema),
     defaultValues: {
-      name: userData?.name,
-      phone: userData?.phone,
-      email: userData?.email,
-      collegeName: userData?.college,
+      teamName: '',
+      name: userData?.name ?? '',
+      phone: userData?.phone ?? '',
+      email: userData?.email ?? '',
+      collegeName: userData?.college ?? '',
     },
   });
 
@@ -212,17 +274,156 @@ export function TeamEventRegistration({
   const totalTeamCount = (teamLeadData ? 1 : 0) + teamMembers.length;
 
   const handleProceedToPayment = () => {
-    if (totalTeamCount < minTeamSize) {
-      toast.error(
-        `Minimum team size is ${minTeamSize}. Please add more team members.`
-      );
-    } else if (totalTeamCount > maxTeamSize) {
+    if (totalTeamCount > maxTeamSize) {
       toast.error(
         `Maximum team size is ${maxTeamSize}. Please remove some team members.`
       );
-    } else {
-      setShowConfirmTeam(true);
-      setIsSheetOpen(true);
+      return;
+    }
+    setShowConfirmTeam(true);
+    setIsSheetOpen(true);
+  };
+
+  const handlePartialRegister = async () => {
+    if (!teamLeadData) return;
+    setIsRegistering(true);
+    try {
+      let teamId: string;
+
+      if (initialData?.team_id) {
+        // Edit mode — update existing team
+        const ok = await updateExistingTeam({
+          teamId: initialData.team_id,
+          teamName: teamLeadData.teamName,
+          college: teamLeadData.collegeName,
+          teamLeadName: teamLeadData.name,
+          teamMembers,
+          accountHolderName: teamLeadData.name,
+        });
+        if (!ok) throw new Error('Failed to update team');
+        teamId = initialData.team_id;
+      } else {
+        const registrationParams: RegisterTeamParams = {
+          userId: userData?.id!,
+          eventId: eventID,
+          transactionId: null,
+          teamName: teamLeadData.teamName,
+          college: teamLeadData.collegeName,
+          transactionScreenshot: '',
+          teamLeadName: teamLeadData.name,
+          teamLeadPhone: teamLeadData.phone,
+          teamLeadEmail: teamLeadData.email,
+          teamLeadExtras: teamLeadData.extras,
+          teamMembers,
+          ref:
+            searchParams.get('ref') ||
+            userData?.referral ||
+            (typeof document !== 'undefined'
+              ? document.cookie
+                  .split('; ')
+                  .find((row) => row.startsWith('tt_referral='))
+                  ?.split('=')[1]
+              : null) ||
+            'TECHTRIX2026',
+          account_holder_name: teamLeadData.name,
+          paymentMode: 'RAZORPAY',
+          regMode: 'ONLINE',
+        };
+        const id = await registerTeamWithParticipants(
+          registrationParams,
+          false
+        );
+        if (!id) throw new Error('Failed to create registration');
+        teamId = id;
+      }
+
+      markEventAsPending(eventID, teamId);
+
+      const { invite_code, team_status } = await finalizeTeamRegistration(
+        teamId,
+        totalTeamCount,
+        minTeamSize,
+        eventID,
+        userData?.id
+      );
+
+      setRegistrationResult({
+        inviteCode: invite_code,
+        teamStatus: team_status,
+        teamId,
+        postedAsOpen: false,
+      });
+      onRegistrationWithInviteCode?.(invite_code, team_status);
+      setShowSuccess(true);
+      triggerConfetti();
+    } catch (error) {
+      console.error('Partial registration failed:', error);
+      toast.error('Registration failed. Please try again.');
+    } finally {
+      setIsRegistering(false);
+    }
+  };
+
+  // Register team with current members + immediately post to open team discovery
+  const handleRegisterAndPostOpen = async () => {
+    if (!teamLeadData || !userData?.id) return;
+    setIsRegistering(true);
+    try {
+      const teamId = await createTeamDirect({
+        userId: userData.id,
+        eventId: eventID,
+        teamName: teamLeadData.teamName,
+        college: teamLeadData.collegeName,
+        teamLeadEmail: teamLeadData.email,
+        teamLeadName: teamLeadData.name,
+        teamLeadPhone: teamLeadData.phone,
+        teamLeadExtras: teamLeadData.extras,
+        teamMembers: teamMembers,
+        ref:
+          searchParams.get('ref') ||
+          userData?.referral ||
+          (typeof document !== 'undefined'
+            ? document.cookie
+                .split('; ')
+                .find((row) => row.startsWith('tt_referral='))
+                ?.split('=')[1]
+            : null) ||
+          'TECHTRIX2026',
+        accountHolderName: teamLeadData.name,
+        paymentMode: 'RAZORPAY',
+        regMode: 'ONLINE',
+      });
+
+      if (!teamId) throw new Error('Failed to create team');
+
+      markEventAsPending(eventID, teamId);
+
+      const { invite_code, team_status } = await finalizeTeamRegistration(
+        teamId,
+        totalTeamCount,
+        minTeamSize,
+        eventID,
+        userData.id
+      );
+
+      // Post to open team discovery board
+      const slotsAvailable = maxTeamSize - totalTeamCount;
+      await postOpenTeam(eventID, userData.id, teamId, slotsAvailable, '');
+
+      setRegistrationResult({
+        inviteCode: invite_code,
+        teamStatus: team_status,
+        teamId,
+        postedAsOpen: true,
+      });
+      onRegistrationWithInviteCode?.(invite_code, team_status);
+      setShowSuccess(true);
+      triggerConfetti();
+    } catch (error) {
+      console.error('Register & post open failed:', error);
+      toast.error('Registration failed. Please try again.');
+    } finally {
+      setIsRegistering(false);
     }
   };
 
@@ -239,43 +440,61 @@ export function TeamEventRegistration({
     setIsRegistering(true);
 
     try {
-      const registrationParams: RegisterTeamParams = {
-        userId: userData?.id!,
-        eventId: eventID,
-        transactionId: null,
-        teamName: teamLeadData.teamName,
-        college: teamLeadData.collegeName,
-        transactionScreenshot: '',
-        teamLeadName: teamLeadData.name,
-        teamLeadPhone: teamLeadData.phone,
-        teamLeadEmail: teamLeadData.email,
-        teamLeadExtras: teamLeadData.extras,
-        teamMembers: teamMembers,
-        ref:
-          searchParams.get('ref') ||
-          userData?.referral ||
-          (typeof document !== 'undefined'
-            ? document.cookie
-                .split('; ')
-                .find((row) => row.startsWith('tt_referral='))
-                ?.split('=')[1]
-            : null) ||
-          'TECHTRIX2026',
-        account_holder_name: teamLeadData.name,
-        paymentMode: 'RAZORPAY',
-        regMode: 'ONLINE',
-      };
+      let teamId: string;
+      let invite_code: string;
+      let team_status: 'pending' | 'active';
 
-      const teamId = await registerTeamWithParticipants(
-        registrationParams,
-        false
-      );
+      if (initialData?.team_id) {
+        // Edit mode — reuse existing team_id; updates happen only after payment succeeds
+        teamId = initialData.team_id;
+        invite_code = initialData.invite_code ?? '';
+        team_status =
+          initialData.team_status === 'active' ? 'active' : 'pending';
+      } else {
+        const registrationParams: RegisterTeamParams = {
+          userId: userData?.id!,
+          eventId: eventID,
+          transactionId: null,
+          teamName: teamLeadData.teamName,
+          college: teamLeadData.collegeName,
+          transactionScreenshot: '',
+          teamLeadName: teamLeadData.name,
+          teamLeadPhone: teamLeadData.phone,
+          teamLeadEmail: teamLeadData.email,
+          teamLeadExtras: teamLeadData.extras,
+          teamMembers,
+          ref:
+            searchParams.get('ref') ||
+            userData?.referral ||
+            (typeof document !== 'undefined'
+              ? document.cookie
+                  .split('; ')
+                  .find((row) => row.startsWith('tt_referral='))
+                  ?.split('=')[1]
+              : null) ||
+            'TECHTRIX2026',
+          account_holder_name: teamLeadData.name,
+          paymentMode: 'RAZORPAY',
+          regMode: 'ONLINE',
+        };
 
-      if (!teamId) {
-        throw new Error('Failed to create registration');
+        const id = await registerTeamWithParticipants(
+          registrationParams,
+          false
+        );
+        if (!id) throw new Error('Failed to create registration');
+        teamId = id;
+
+        markEventAsPending(eventID, teamId);
+
+        ({ invite_code, team_status } = await finalizeTeamRegistration(
+          teamId,
+          totalTeamCount,
+          minTeamSize,
+          eventID,
+          userData?.id
+        ));
       }
-
-      markEventAsPending(eventID, teamId);
 
       const result = await initiatePayment({
         eventId: eventID,
@@ -286,6 +505,23 @@ export function TeamEventRegistration({
       });
 
       if (result.success) {
+        // Edit mode: update team + participants only after payment confirmed.
+        // Do NOT call finalizeTeamRegistration here — the verify endpoint already
+        // set team_status='closed'. Calling finalize would overwrite it back to 'active'.
+        if (initialData?.team_id) {
+          await updateExistingTeam({
+            teamId: initialData.team_id,
+            teamName: teamLeadData.teamName,
+            college: teamLeadData.collegeName,
+            teamLeadName: teamLeadData.name,
+            teamMembers,
+            accountHolderName: teamLeadData.name,
+          });
+          // invite_code and team_status were already set before initiatePayment;
+          // team_status is now 'closed' in DB (set by verify endpoint).
+          team_status = 'closed';
+        }
+
         const eventData = eventsData?.find(
           (event) => event.id === eventID || event.event_id === eventID
         );
@@ -294,6 +530,7 @@ export function TeamEventRegistration({
         setEventsData(true);
         setShowSuccess(true);
         triggerConfetti();
+        onRegistrationWithInviteCode?.(invite_code, team_status);
 
         const emailData = {
           eventName: eventData?.name,
@@ -344,39 +581,63 @@ export function TeamEventRegistration({
   const registerForSWCPaid = async () => {
     setIsRegistering(true);
     setRegisterLoading(true);
-    const registrationParams: RegisterTeamParams = {
-      userId: userData?.id!,
-      eventId: eventID,
-      transactionId: null,
-      teamName: teamLeadData!.teamName,
-      college: teamLeadData!.collegeName,
-      transactionScreenshot: '',
-      teamLeadName: teamLeadData!.name,
-      teamLeadPhone: teamLeadData!.phone,
-      teamLeadEmail: teamLeadData!.email,
-      teamLeadExtras: teamLeadData!.extras,
-      teamMembers: teamMembers,
-      ref:
-        searchParams.get('ref') ||
-        userData?.referral ||
-        (typeof document !== 'undefined'
-          ? document.cookie
-              .split('; ')
-              .find((row) => row.startsWith('tt_referral='))
-              ?.split('=')[1]
-          : null) ||
-        null,
-      account_holder_name: teamLeadData!.name,
-      paymentMode: 'SWC_PAID',
-      regMode: 'ONLINE',
-    };
     try {
-      const teamId = await registerTeamWithParticipants(
-        registrationParams,
-        eventFees === 0
-      );
+      let teamId: string | null = null;
+
+      if (initialData?.team_id) {
+        // Edit mode — update existing team
+        const ok = await updateExistingTeam({
+          teamId: initialData.team_id,
+          teamName: teamLeadData!.teamName,
+          college: teamLeadData!.collegeName,
+          teamLeadName: teamLeadData!.name,
+          teamMembers,
+          accountHolderName: teamLeadData!.name,
+        });
+        if (ok) teamId = initialData.team_id;
+      } else {
+        const registrationParams: RegisterTeamParams = {
+          userId: userData?.id!,
+          eventId: eventID,
+          transactionId: null,
+          teamName: teamLeadData!.teamName,
+          college: teamLeadData!.collegeName,
+          transactionScreenshot: '',
+          teamLeadName: teamLeadData!.name,
+          teamLeadPhone: teamLeadData!.phone,
+          teamLeadEmail: teamLeadData!.email,
+          teamLeadExtras: teamLeadData!.extras,
+          teamMembers,
+          ref:
+            searchParams.get('ref') ||
+            userData?.referral ||
+            (typeof document !== 'undefined'
+              ? document.cookie
+                  .split('; ')
+                  .find((row) => row.startsWith('tt_referral='))
+                  ?.split('=')[1]
+              : null) ||
+            null,
+          account_holder_name: teamLeadData!.name,
+          paymentMode: 'SWC_PAID',
+          regMode: 'ONLINE',
+        };
+        teamId = await registerTeamWithParticipants(
+          registrationParams,
+          eventFees === 0
+        );
+      }
+
       if (teamId) {
         markEventAsPending(eventID, teamId);
+        const { invite_code, team_status } = await finalizeTeamRegistration(
+          teamId,
+          totalTeamCount,
+          minTeamSize,
+          eventID,
+          userData?.id
+        );
+        onRegistrationWithInviteCode?.(invite_code, team_status);
       }
       const eventData = eventsData?.find(
         (event) => event.id === eventID || event.event_id === eventID
@@ -441,6 +702,8 @@ export function TeamEventRegistration({
     setEditingMemberIndex(null);
     setIsRegistering(false);
     setShowSuccess(false);
+    setRegistrationResult(null);
+    setIsPostingOpen(false);
     onPaymentPhaseChange?.(null);
   };
 
@@ -566,28 +829,129 @@ export function TeamEventRegistration({
                   exit={{ scale: 0.9, opacity: 0 }}
                   className="flex-1 flex flex-col items-center justify-center p-6 md:p-8"
                 >
-                  <div className="w-16 h-16 bg-green-500/20 border border-green-500/50 rounded-full flex items-center justify-center mb-6">
-                    <Check size={32} className="text-green-500" />
-                  </div>
-                  <h2
-                    className="text-2xl text-white mb-2 tracking-wide text-center"
-                    style={{ fontFamily: "'Metal Mania'" }}
-                  >
-                    Registration Successful!
-                  </h2>
-                  <p className="text-white/60 text-center mb-4 text-sm px-4">
-                    Your team "{teamLeadData?.teamName}" has been registered.
-                  </p>
-                  <p className="text-yellow-400 font-medium text-sm mb-6">
-                    Get ready for the battle!
-                  </p>
-                  <Button
-                    onClick={handleDialogClose}
-                    className="bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center gap-2 px-6 rounded-full transition-all duration-300"
-                  >
-                    <X size={16} />
-                    <span>Close</span>
-                  </Button>
+                  {registrationResult?.teamStatus === 'pending' ? (
+                    <>
+                      <div className="w-16 h-16 bg-yellow-500/20 border border-yellow-500/50 rounded-full flex items-center justify-center mb-4">
+                        <Users size={28} className="text-yellow-400" />
+                      </div>
+                      <h2
+                        className="text-2xl text-white mb-2 tracking-wide text-center"
+                        style={{ fontFamily: "'Metal Mania'" }}
+                      >
+                        Team Created!
+                      </h2>
+                      <p className="text-white/60 text-center mb-1 text-sm px-4">
+                        "{teamLeadData?.teamName}" is ready.
+                      </p>
+                      <p className="text-yellow-400/80 text-xs text-center mb-5 px-4">
+                        Add {minTeamSize - totalTeamCount} more member
+                        {minTeamSize - totalTeamCount !== 1 ? 's' : ''} via
+                        invite code to unlock payment.
+                      </p>
+                      <button
+                        onClick={() => {
+                          if (!registrationResult?.inviteCode) return;
+                          navigator.clipboard.writeText(
+                            registrationResult.inviteCode
+                          );
+                          toast.success('Invite code copied!');
+                        }}
+                        className="flex items-center gap-3 bg-white/5 border border-yellow-400/30 rounded-xl px-6 py-3 mb-5 hover:bg-white/10 transition-colors group"
+                      >
+                        <span className="font-mono text-yellow-300 text-lg tracking-widest">
+                          {registrationResult?.inviteCode}
+                        </span>
+                        <Copy
+                          size={16}
+                          className="text-yellow-400/60 group-hover:text-yellow-400 transition-colors"
+                        />
+                      </button>
+                      <p className="text-white/30 text-xs mb-4">
+                        Tap code to copy &amp; share with teammates
+                      </p>
+
+                      {/* Post as Open Team CTA — only if not already posted */}
+                      {!registrationResult?.postedAsOpen && (
+                        <button
+                          onClick={async () => {
+                            if (!userData?.id || !registrationResult?.teamId)
+                              return;
+                            setIsPostingOpen(true);
+                            const slotsAvailable = maxTeamSize - totalTeamCount;
+                            const ok = await postOpenTeam(
+                              eventID,
+                              userData.id,
+                              registrationResult.teamId,
+                              slotsAvailable,
+                              ''
+                            );
+                            setIsPostingOpen(false);
+                            if (ok) {
+                              setRegistrationResult((prev) =>
+                                prev ? { ...prev, postedAsOpen: true } : prev
+                              );
+                              toast.success(
+                                'Your team is now visible on the discovery board!'
+                              );
+                            } else {
+                              toast.error('Failed to post. Try again.');
+                            }
+                          }}
+                          disabled={isPostingOpen}
+                          className="w-full mb-3 py-2.5 rounded-full text-xs border border-yellow-400/30 text-yellow-300 hover:bg-yellow-400/10 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        >
+                          {isPostingOpen ? (
+                            <>
+                              <Loader2 size={13} className="animate-spin" />{' '}
+                              Posting...
+                            </>
+                          ) : (
+                            '+ Post as Open Team'
+                          )}
+                        </button>
+                      )}
+
+                      {registrationResult?.postedAsOpen && (
+                        <p className="text-green-400/70 text-xs mb-3 flex items-center gap-1.5">
+                          <Check size={12} /> Team posted on discovery board
+                        </p>
+                      )}
+
+                      <Button
+                        onClick={handleDialogClose}
+                        className="bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center gap-2 px-6 rounded-full transition-all duration-300"
+                      >
+                        <X size={16} />
+                        <span>Done</span>
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-16 h-16 bg-green-500/20 border border-green-500/50 rounded-full flex items-center justify-center mb-6">
+                        <Check size={32} className="text-green-500" />
+                      </div>
+                      <h2
+                        className="text-2xl text-white mb-2 tracking-wide text-center"
+                        style={{ fontFamily: "'Metal Mania'" }}
+                      >
+                        Registration Successful!
+                      </h2>
+                      <p className="text-white/60 text-center mb-4 text-sm px-4">
+                        Your team "{teamLeadData?.teamName}" has been
+                        registered.
+                      </p>
+                      <p className="text-yellow-400 font-medium text-sm mb-6">
+                        Get ready for the battle!
+                      </p>
+                      <Button
+                        onClick={handleDialogClose}
+                        className="bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center gap-2 px-6 rounded-full transition-all duration-300"
+                      >
+                        <X size={16} />
+                        <span>Close</span>
+                      </Button>
+                    </>
+                  )}
                 </motion.div>
               ) : (
                 <>
@@ -614,7 +978,6 @@ export function TeamEventRegistration({
                             <input
                               id="teamName"
                               {...registerTeamLead('teamName')}
-                              defaultValue={teamLeadData?.teamName}
                               className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/20 focus:outline-none text-white rounded-lg p-2.5 pl-9 text-sm transition-all duration-300 placeholder:text-white/20"
                               placeholder="Enter team name"
                               autoFocus
@@ -641,7 +1004,6 @@ export function TeamEventRegistration({
                               readOnly
                               {...registerTeamLead('name')}
                               className="w-full bg-white/5 border border-white/10 text-white/70 rounded-lg p-2.5 pl-9 text-sm"
-                              defaultValue={userData?.name}
                             />
                             <UserCheck
                               size={16}
@@ -658,7 +1020,6 @@ export function TeamEventRegistration({
                           <div className="relative">
                             <input
                               readOnly
-                              defaultValue={userData?.phone}
                               {...registerTeamLead('phone')}
                               className="w-full bg-white/5 border border-white/10 text-white/70 rounded-lg p-2.5 pl-9 text-sm"
                             />
@@ -677,10 +1038,9 @@ export function TeamEventRegistration({
                           <div className="relative">
                             <input
                               type="email"
-                              defaultValue={userData?.email}
+                              readOnly
                               {...registerTeamLead('email')}
                               className="w-full bg-white/5 border border-white/10 text-white/70 rounded-lg p-2.5 pl-9 text-sm"
-                              readOnly
                             />
                             <Mail
                               size={16}
@@ -701,9 +1061,6 @@ export function TeamEventRegistration({
                             <input
                               id="collegeName"
                               {...registerTeamLead('collegeName')}
-                              defaultValue={
-                                teamLeadData?.collegeName || userData?.college
-                              }
                               className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/20 focus:outline-none text-white rounded-lg p-2.5 pl-9 text-sm transition-all duration-300 placeholder:text-white/20"
                               placeholder="Enter college name"
                             />
@@ -941,7 +1298,7 @@ export function TeamEventRegistration({
                         )}
                       </div>
 
-                      <div className="flex justify-end gap-3 p-6 md:p-8 pt-4 md:pt-4 flex-shrink-0 border-t border-white/10">
+                      <div className="p-6 md:p-8 pt-4 md:pt-4 flex-shrink-0 border-t border-white/10 space-y-3">
                         {isAddingMember ? (
                           <>
                             <Button
@@ -979,29 +1336,75 @@ export function TeamEventRegistration({
                           </>
                         ) : (
                           <>
-                            <Button
-                              variant="ghost"
-                              onClick={() => setStep(1)}
-                              className="bg-transparent hover:bg-white/10 text-white/60 hover:text-white flex items-center gap-2 px-4 rounded-full transition-all duration-300"
-                            >
-                              <ArrowLeft size={16} />
-                              <span>Back</span>
-                            </Button>
-                            <Button
-                              onClick={handleProceedToPayment}
-                              className="bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center gap-2 px-6 rounded-full transition-all duration-300 disabled:opacity-50"
-                              disabled={
-                                totalTeamCount < minTeamSize ||
-                                totalTeamCount > maxTeamSize
-                              }
-                            >
-                              <span>
-                                {eventFees === 0
-                                  ? 'Review & Register'
-                                  : 'Review & Pay'}
-                              </span>
-                              <ArrowRight size={16} />
-                            </Button>
+                            <div className="flex justify-end gap-3">
+                              <Button
+                                variant="ghost"
+                                onClick={() => setStep(1)}
+                                className="bg-transparent hover:bg-white/10 text-white/60 hover:text-white flex items-center gap-2 px-4 rounded-full transition-all duration-300"
+                              >
+                                <ArrowLeft size={16} />
+                                <span>Back</span>
+                              </Button>
+                              <Button
+                                onClick={handleProceedToPayment}
+                                className="bg-white/10 hover:bg-white/20 border border-white/10 text-white flex items-center gap-2 px-6 rounded-full transition-all duration-300 disabled:opacity-50"
+                                disabled={
+                                  totalTeamCount < minTeamSize ||
+                                  totalTeamCount > maxTeamSize
+                                }
+                              >
+                                <span>
+                                  {eventFees === 0
+                                    ? 'Review & Register'
+                                    : 'Review & Pay'}
+                                </span>
+                                <ArrowRight size={16} />
+                              </Button>
+                            </div>
+
+                            {/* Discovery hints — only when onOpenFindTeammates is wired and not editing an existing team */}
+                            {onOpenFindTeammates && !initialData && (
+                              <>
+                                {/* Solo — no members at all */}
+                                {teamMembers.length === 0 && (
+                                  <div className="flex items-center justify-between gap-3 bg-white/3 border border-white/8 rounded-xl px-4 py-2.5">
+                                    <p className="text-white/35 text-[11px] leading-snug">
+                                      No teammates yet? We'll help you find one.
+                                    </p>
+                                    <button
+                                      onClick={() =>
+                                        onOpenFindTeammates('waitlist')
+                                      }
+                                      className="shrink-0 text-[11px] text-white/50 hover:text-white border border-white/15 hover:border-white/30 rounded-full px-3 py-1 transition-colors whitespace-nowrap"
+                                    >
+                                      Join Waitlist
+                                    </button>
+                                  </div>
+                                )}
+
+                                {/* Has at least 1 member added + still has open slots */}
+                                {totalTeamCount > 1 &&
+                                  totalTeamCount < maxTeamSize && (
+                                    <div className="flex items-center justify-between gap-3 bg-white/3 border border-white/8 rounded-xl px-4 py-2.5">
+                                      <p className="text-white/35 text-[11px] leading-snug">
+                                        Room for {maxTeamSize - totalTeamCount}{' '}
+                                        more? Post as open team.
+                                      </p>
+                                      <button
+                                        onClick={() =>
+                                          onOpenFindTeammates(
+                                            'open_team',
+                                            handleRegisterAndPostOpen
+                                          )
+                                        }
+                                        className="shrink-0 text-[11px] text-white/50 hover:text-white border border-white/15 hover:border-white/30 rounded-full px-3 py-1 transition-colors whitespace-nowrap"
+                                      >
+                                        Find Members
+                                      </button>
+                                    </div>
+                                  )}
+                              </>
+                            )}
                           </>
                         )}
                       </div>

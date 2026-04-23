@@ -403,7 +403,7 @@ export default function EventDetails({ event }: Props) {
 
                 {/* Register Button */}
                 <div className="shrink-0">
-                  <RegisterButton eventId={event.id || ''} />
+                  <RegisterButton eventId={event.id || ''} event={event} />
                 </div>
               </div>
 

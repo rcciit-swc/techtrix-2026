@@ -149,6 +149,17 @@ export const getSWCData = async (collegeRoll: string, email: string) => {
   }
 };
 
+export async function checkAllMembersSWC(emails: string[]): Promise<boolean> {
+  if (!emails.length) return false;
+  const { data, error } = await supabase
+    .from('SWC-2026')
+    .select('email')
+    .in('email', emails);
+  if (error || !data) return false;
+  // Every email in the list must have a matching SWC row
+  return data.length >= emails.length;
+}
+
 export async function fetchRegistrationDetails(
   eventId: string,
   userId: string
