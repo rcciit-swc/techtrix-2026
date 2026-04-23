@@ -224,9 +224,13 @@ export default function RegisterButton({
   const UNSTOP_EVENT_ID = '1b0af2ef-1101-4f43-8061-3ac42db45167';
   const UNSTOP_FORM_URL =
     'https://unstop.com/o/vGiOo53?lb=N84Gpz8e&utm_medium=Share&utm_source=techt2024854&utm_campaign=Competitions';
+  const MINDS_EYE_EVENT_ID = 'a8953835-cec2-49dc-bdf1-453d0a03bd20';
+  const MINDS_EYE_FORM_URL =
+    'https://unstop.com/p/minds-eye-2026-innovate-for-real-world-impact-rcc-institute-of-information-technology-rcciit-kolkata-1678811?lb=N84Gpz8e';
 
   const isShutterscape = eventId === SHUTTERSCAPE_EVENT_ID;
   const isUnstopEvent = eventId === UNSTOP_EVENT_ID;
+  const isMindsEye = eventId === MINDS_EYE_EVENT_ID;
 
   const openShuttercapeForm = () => {
     if (isShutterscape) window.open(SHUTTERSCAPE_FORM_URL, '_blank');
@@ -235,6 +239,10 @@ export default function RegisterButton({
   const handleRegister = async () => {
     if (isUnstopEvent) {
       window.open(UNSTOP_FORM_URL, '_blank');
+      return;
+    }
+    if (isMindsEye) {
+      window.open(MINDS_EYE_FORM_URL, '_blank');
       return;
     }
     if (isShutterscape) {
@@ -557,7 +565,7 @@ export default function RegisterButton({
         </motion.button>
 
         {/* Secondary actions for team events */}
-        {isTeamEvent && !isUnstopEvent && !isShutterscape && (
+        {isTeamEvent && !isUnstopEvent && !isMindsEye && !isShutterscape && (
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsFindTeammatesOpen(true)}
