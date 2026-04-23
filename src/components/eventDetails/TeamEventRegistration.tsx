@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { useRazorpay } from '@/hooks/useRazorpay';
 import { postOpenTeam } from '@/lib/services/discovery';
+import { verifySWCStudent } from '@/lib/actions/swc';
 import {
   createTeamDirect,
   ExistingTeamData,
@@ -141,6 +142,12 @@ export function TeamEventRegistration({
   );
   const [isRegistering, setIsRegistering] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isLeadSWCVerified, setIsLeadSWCVerified] = useState(false);
+  const [isVerifyingLead, setIsVerifyingLead] = useState(false);
+  const [memberVerificationCache, setMemberVerificationCache] = useState<
+    Record<string, boolean>
+  >({});
+  const [isVerifyingMember, setIsVerifyingMember] = useState(false);
   const [registerLoading, setRegisterLoading] = useState(false);
   const [registrationResult, setRegistrationResult] = useState<{
     inviteCode: string;
@@ -222,6 +229,7 @@ export function TeamEventRegistration({
     handleSubmit: handleTeamLeadSubmit,
     formState: { errors: teamLeadErrors },
     reset: resetTeamLead,
+    watch: watchTeamLead,
   } = useForm<TeamLeadFormValues>({
     resolver: zodResolver(teamLeadSchema),
     defaultValues: {
@@ -244,9 +252,86 @@ export function TeamEventRegistration({
     handleSubmit: handleTeamMemberSubmit,
     formState: { errors: teamMemberErrors },
     reset: resetTeamMember,
+    watch: watchTeamMember,
   } = useForm<TeamMemberFormValues>({
     resolver: zodResolver(teamMemberSchema),
   });
+
+  const watchLeadEmail = watchTeamLead('email');
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (watchLeadEmail) {
+      setIsVerifyingLead(true);
+      timeoutId = setTimeout(async () => {
+        const verified = await verifySWCStudent(watchLeadEmail);
+        setIsLeadSWCVerified(verified);
+        setIsVerifyingLead(false);
+      }, 500);
+    } else {
+      setIsLeadSWCVerified(false);
+      setIsVerifyingLead(false);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [watchLeadEmail]);
+
+  const watchMemberEmail = watchTeamMember('email');
+  const watchMemberEmailValue = isAddingMember ? watchMemberEmail : null;
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (watchMemberEmailValue) {
+      if (memberVerificationCache[watchMemberEmailValue] !== undefined) {
+        return;
+      }
+      setIsVerifyingMember(true);
+      timeoutId = setTimeout(async () => {
+        const verified = await verifySWCStudent(watchMemberEmailValue);
+        setMemberVerificationCache((prev) => ({
+          ...prev,
+          [watchMemberEmailValue]: verified,
+        }));
+        setIsVerifyingMember(false);
+      }, 500);
+    } else {
+      setIsVerifyingMember(false);
+    }
+    return () => clearTimeout(timeoutId);
+  }, [watchMemberEmailValue, memberVerificationCache]);
+
+  useEffect(() => {
+    const verifyUncached = async () => {
+      const updates: Record<string, boolean> = {};
+      let needsUpdate = false;
+      for (const member of teamMembers) {
+        if (
+          memberVerificationCache[member.email] === undefined &&
+          updates[member.email] === undefined
+        ) {
+          const verified = await verifySWCStudent(member.email);
+          updates[member.email] = verified;
+          needsUpdate = true;
+        }
+      }
+      if (needsUpdate) {
+        setMemberVerificationCache((prev) => ({ ...prev, ...updates }));
+      }
+    };
+    verifyUncached();
+  }, [teamMembers, memberVerificationCache]);
+
+  const FREE_CATEGORIES = [
+    'fb17b092-1622-4a3d-90a9-650fd860f6a0',
+    '441aa4ca-49ad-4b57-bb7f-6a1c5cc63a32',
+    'a8609025-6132-4d69-8c61-3313ef082db4',
+  ];
+  const isFreeCategory = eventData?.event_category_id
+    ? FREE_CATEGORIES.includes(eventData.event_category_id)
+    : false;
+  const allMembersVerified = teamMembers.every(
+    (m) => memberVerificationCache[m.email]
+  );
+  const isFreeEvent =
+    eventFees === 0 ||
+    (isFreeCategory && isLeadSWCVerified && allMembersVerified);
 
   const onAddTeamMember = (data: TeamMemberFormValues) => {
     if (teamLeadData && teamLeadData.email === data.email) {
@@ -619,12 +704,12 @@ export function TeamEventRegistration({
               : null) ||
             null,
           account_holder_name: teamLeadData!.name,
-          paymentMode: 'SWC_PAID',
+          paymentMode: isFreeEvent ? 'SWC_PAID' : 'RAZORPAY',
           regMode: 'ONLINE',
         };
         teamId = await registerTeamWithParticipants(
           registrationParams,
-          eventFees === 0
+          isFreeEvent
         );
       }
 
@@ -1040,12 +1125,24 @@ export function TeamEventRegistration({
                               type="email"
                               readOnly
                               {...registerTeamLead('email')}
-                              className="w-full bg-white/5 border border-white/10 text-white/70 rounded-lg p-2.5 pl-9 text-sm"
+                              className="w-full bg-white/5 border border-white/10 text-white/70 rounded-lg p-2.5 pl-9 pr-9 text-sm"
                             />
                             <Mail
                               size={16}
                               className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
                             />
+                            {isVerifyingLead && (
+                              <Loader2
+                                size={16}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-400 animate-spin"
+                              />
+                            )}
+                            {!isVerifyingLead && isLeadSWCVerified && (
+                              <Check
+                                size={16}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 text-green-400"
+                              />
+                            )}
                           </div>
                         </div>
 
@@ -1178,12 +1275,30 @@ export function TeamEventRegistration({
                               <label className="text-white/60 text-xs uppercase tracking-wider pl-1 font-medium">
                                 Email
                               </label>
-                              <input
-                                type="email"
-                                {...registerTeamMember('email')}
-                                className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 text-white rounded-lg p-2.5 text-sm transition-all duration-300"
-                                placeholder="Email Address"
-                              />
+                              <div className="relative">
+                                <input
+                                  type="email"
+                                  {...registerTeamMember('email')}
+                                  className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 text-white rounded-lg p-2.5 pr-9 text-sm transition-all duration-300"
+                                  placeholder="Email Address"
+                                />
+                                {isVerifyingMember && (
+                                  <Loader2
+                                    size={16}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-yellow-400 animate-spin"
+                                  />
+                                )}
+                                {!isVerifyingMember &&
+                                  watchMemberEmailValue &&
+                                  memberVerificationCache[
+                                    watchMemberEmailValue
+                                  ] && (
+                                    <Check
+                                      size={16}
+                                      className="absolute right-3 top-1/2 -translate-y-1/2 text-green-400"
+                                    />
+                                  )}
+                              </div>
                               {teamMemberErrors.email && (
                                 <p className="text-red-400 text-xs">
                                   {teamMemberErrors.email.message}
@@ -1256,6 +1371,14 @@ export function TeamEventRegistration({
                                         <span className="text-white/80 text-sm">
                                           {member.name}
                                         </span>
+                                        {memberVerificationCache[
+                                          member.email
+                                        ] && (
+                                          <Check
+                                            size={14}
+                                            className="text-green-400 ml-1"
+                                          />
+                                        )}
                                       </div>
                                       <div className="flex gap-1">
                                         <button
@@ -1354,7 +1477,7 @@ export function TeamEventRegistration({
                                 }
                               >
                                 <span>
-                                  {eventFees === 0
+                                  {isFreeEvent
                                     ? 'Review & Register'
                                     : 'Review & Pay'}
                                 </span>
@@ -1445,7 +1568,7 @@ export function TeamEventRegistration({
                                 {totalTeamCount}
                               </span>
                             </div>
-                            {eventFees > 0 &&
+                            {!isFreeEvent &&
                               (() => {
                                 const { gatewayFee, totalAmount } =
                                   calculateGatewayFee(eventFees);
@@ -1480,7 +1603,7 @@ export function TeamEventRegistration({
                                   </>
                                 );
                               })()}
-                            {eventFees === 0 && (
+                            {isFreeEvent && (
                               <div className="flex justify-between text-sm py-2">
                                 <span className="text-white/40">Total Fee</span>
                                 <span className="font-bold text-green-400">
@@ -1507,9 +1630,9 @@ export function TeamEventRegistration({
                             <>
                               <CreditCard className="mr-2 h-4 w-4" />
                               <span className="tracking-wide">
-                                {eventFees === 0
+                                {isFreeEvent
                                   ? 'CONFIRM REGISTRATION'
-                                  : `PAY ₹${eventFees > 0 ? calculateGatewayFee(eventFees).totalAmount : 0} & REGISTER`}
+                                  : `PAY ₹${!isFreeEvent ? calculateGatewayFee(eventFees).totalAmount : 0} & REGISTER`}
                               </span>
                               <div className="absolute inset-0 bg-white/20 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out" />
                             </>
@@ -1542,9 +1665,9 @@ export function TeamEventRegistration({
         showConfirmTeam={showConfirmTeam}
         registerLoading={registerLoading || isRegistering}
         onRemoveMember={onRemoveMember}
-        isFree={eventFees === 0}
+        isFree={isFreeEvent}
         confirmTeam={async () => {
-          if (eventFees === 0) {
+          if (isFreeEvent) {
             setRegisterLoading(true);
             const success = await registerForSWCPaid();
             setRegisterLoading(false);

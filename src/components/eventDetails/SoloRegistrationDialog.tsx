@@ -9,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { useRazorpay } from '@/hooks/useRazorpay';
 import { registerSoloEvent } from '@/lib/services/register';
+import { verifySWCStudent } from '@/lib/actions/swc';
 import { useEvents, useUser } from '@/lib/stores';
 import { calculateGatewayFee } from '@/lib/utils/razorpay';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -84,6 +85,8 @@ export function SoloEventRegistration({
   );
   const [showSuccess, setShowSuccess] = useState(false);
   const [isRegistering, setIsRegistering] = useState(false);
+  const [isSWCVerified, setIsSWCVerified] = useState(false);
+  const [isVerifyingSWC, setIsVerifyingSWC] = useState(false);
   const { initiatePayment, isProcessing, isLoading, isVerifying } =
     useRazorpay();
 
@@ -123,6 +126,7 @@ export function SoloEventRegistration({
     handleSubmit: handleSoloLeadSubmit,
     formState: { errors: soloLeadErrors },
     reset: resetSoloLead,
+    watch: watchSoloLead,
   } = useForm<SoloLeadFormValues>({
     resolver: zodResolver(soloLeadSchema),
     defaultValues: {
@@ -133,6 +137,27 @@ export function SoloEventRegistration({
       extras: {},
     },
   });
+
+  const watchEmail = watchSoloLead('email');
+
+  // Debounced SWC Verification
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+
+    if (watchEmail) {
+      setIsVerifyingSWC(true);
+      timeoutId = setTimeout(async () => {
+        const verified = await verifySWCStudent(watchEmail);
+        setIsSWCVerified(verified);
+        setIsVerifyingSWC(false);
+      }, 500);
+    } else {
+      setIsSWCVerified(false);
+      setIsVerifyingSWC(false);
+    }
+
+    return () => clearTimeout(timeoutId);
+  }, [watchEmail]);
 
   // Reset form when userData loads
   useEffect(() => {
@@ -161,7 +186,15 @@ export function SoloEventRegistration({
     });
   };
 
-  const isFreeEvent = eventFees === 0;
+  const FREE_CATEGORIES = [
+    'fb17b092-1622-4a3d-90a9-650fd860f6a0',
+    '441aa4ca-49ad-4b57-bb7f-6a1c5cc63a32',
+    'a8609025-6132-4d69-8c61-3313ef082db4',
+  ];
+  const isFreeCategory = eventData?.event_category_id
+    ? FREE_CATEGORIES.includes(eventData.event_category_id)
+    : false;
+  const isFreeEvent = eventFees === 0 || (isFreeCategory && isSWCVerified);
 
   const sendConfirmationEmail = async () => {
     const emailData = {
@@ -439,7 +472,7 @@ export function SoloEventRegistration({
                       id="email"
                       type="email"
                       {...registerSoloLead('email')}
-                      className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/20 focus:outline-none text-white rounded-lg p-2.5 pl-9 text-sm transition-all duration-300 placeholder:text-white/20"
+                      className="w-full bg-white/5 border border-white/10 focus:border-yellow-400/50 focus:ring-1 focus:ring-yellow-400/20 focus:outline-none text-white rounded-lg p-2.5 pl-9 pr-9 text-sm transition-all duration-300 placeholder:text-white/20"
                       placeholder="Enter your email"
                       readOnly
                     />
@@ -447,6 +480,18 @@ export function SoloEventRegistration({
                       size={16}
                       className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/30 group-focus-within:text-yellow-400/70 transition-colors"
                     />
+                    {isVerifyingSWC && (
+                      <Loader2
+                        size={16}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-yellow-400 animate-spin"
+                      />
+                    )}
+                    {!isVerifyingSWC && isSWCVerified && (
+                      <Check
+                        size={16}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-400"
+                      />
+                    )}
                   </div>
                   {soloLeadErrors.email && (
                     <p className="text-red-400 text-xs ml-1">
