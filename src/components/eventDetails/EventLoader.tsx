@@ -1,70 +1,61 @@
 'use client';
 
-import { motion } from 'framer-motion';
-import Image from 'next/image';
-
 export default function EventLoader() {
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black">
-      <div className="relative flex flex-col items-center">
-        {/* Pulsing Aura */}
-        <motion.div
-          className="absolute inset-0 rounded-full bg-yellow-500/20 blur-3xl will-change-transform"
-          animate={{
-            scale: [0.8, 1.2, 0.8],
-            opacity: [0.2, 0.5, 0.2],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: 'easeInOut',
-          }}
-        />
+    <div className="min-h-screen bg-black overflow-hidden">
+      {/* shimmer keyframe via inline style — no Framer Motion overhead */}
+      <style>{`
+        @keyframes ev-shimmer {
+          0%   { background-position: -600px 0; }
+          100% { background-position: 600px 0; }
+        }
+        .ev-shimmer {
+          background: linear-gradient(90deg, #1a1a1a 25%, #2a2a2a 50%, #1a1a1a 75%);
+          background-size: 600px 100%;
+          animation: ev-shimmer 1.4s ease-in-out infinite;
+        }
+      `}</style>
 
-        {/* Logo Container */}
-        <motion.div
-          className="relative w-40 h-40 md:w-56 md:h-56"
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.5, ease: 'easeOut' }}
-        >
-          <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-yellow-500/50 shadow-[0_0_30px_rgba(234,179,8,0.3)] bg-black/50 backdrop-blur-sm">
-            <div className="absolute inset-4">
-              <Image
-                src="https://i.postimg.cc/j20BjMhq/logo.png"
-                alt="Techtrix Logo"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div>
+      {/* Hero image placeholder */}
+      <div className="relative w-full h-[45vh] sm:h-[55vh] ev-shimmer" />
 
-          {/* Spinning Rings */}
-          <motion.div
-            className="absolute -inset-2 rounded-full border-t-2 border-r-2 border-yellow-400/80 will-change-transform"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1.5, repeat: Infinity, ease: 'linear' }}
-          />
-          <motion.div
-            className="absolute -inset-4 rounded-full border-b-2 border-l-2 border-cyan-500/60 will-change-transform"
-            animate={{ rotate: -360 }}
-            transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
-          />
-        </motion.div>
+      {/* Content area */}
+      <div className="relative -mt-20 px-4 sm:px-8 max-w-4xl mx-auto space-y-5 pb-16">
+        {/* Category chip */}
+        <div className="ev-shimmer h-5 w-24 rounded-full" />
 
-        {/* Loading Text */}
-        <motion.h2
-          className="mt-8 text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-100 to-yellow-300 tracking-wider uppercase"
-          style={{
-            fontFamily: "'Metal Mania', cursive",
-            textShadow: '0 0 10px rgba(234, 179, 8, 0.5)',
-          }}
-          animate={{ opacity: [0.5, 1, 0.5] }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-        >
-          Loading Legacy...
-        </motion.h2>
+        {/* Event title */}
+        <div className="ev-shimmer h-9 w-3/4 rounded-lg" />
+        <div className="ev-shimmer h-6 w-1/2 rounded-lg" />
+
+        {/* Info row */}
+        <div className="flex gap-3 pt-2">
+          <div className="ev-shimmer h-8 w-28 rounded-full" />
+          <div className="ev-shimmer h-8 w-24 rounded-full" />
+          <div className="ev-shimmer h-8 w-20 rounded-full" />
+        </div>
+
+        {/* Divider */}
+        <div className="ev-shimmer h-px w-full rounded" />
+
+        {/* Description lines */}
+        <div className="space-y-2.5">
+          <div className="ev-shimmer h-4 w-full rounded" />
+          <div className="ev-shimmer h-4 w-5/6 rounded" />
+          <div className="ev-shimmer h-4 w-4/6 rounded" />
+        </div>
+
+        {/* Details cards row */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="ev-shimmer h-20 rounded-xl" />
+          ))}
+        </div>
+
+        {/* Register button */}
+        <div className="flex justify-end pt-4">
+          <div className="ev-shimmer h-11 w-44 rounded-full" />
+        </div>
       </div>
     </div>
   );

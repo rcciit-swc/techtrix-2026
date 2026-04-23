@@ -12,40 +12,29 @@ import SplashLoader from '@/components/SplashLoader';
 import SponsorSection from '@/components/SponsorSection';
 import SponsorshipProposition from '@/components/SponsorshipProposition';
 import { useUser } from '@/lib/stores';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const page = () => {
-  const [showSplash, setShowSplash] = useState(true);
   const [loading, setLoading] = useState(true);
   const { isLoaded, setLoaded } = useUser();
 
   useEffect(() => {
-    // If user has already loaded (e.g., navigated back to home), skip splash
+    // Skip splash on repeat visits
     if (isLoaded) {
-      setShowSplash(false);
       setLoading(false);
       return;
     }
-
-    // Set timer for splash screen duration
-    const timer = setTimeout(() => {
-      setLoading(false); // Trigger exit animation
-    }, 3500);
-
+    // 1.8s display + 0.35s fade = ~2.15s total
+    const timer = setTimeout(() => setLoading(false), 1800);
     return () => clearTimeout(timer);
   }, [isLoaded]);
 
-  const handleSplashComplete = useCallback(() => {
-    setShowSplash(false);
-    setLoaded(true);
-  }, [setLoaded]);
-
   return (
     <>
-      {showSplash && (
-        <SplashLoader isLoading={loading} onComplete={handleSplashComplete} />
-      )}
-      <div className="animate-fade-in">
+      {/* Splash sits on top (z-9999, position:fixed) — content renders behind it
+          so there is no flash when the splash fades out */}
+      <SplashLoader isLoading={loading} onComplete={() => setLoaded(true)} />
+      <div>
         <Hero />
         <AboutSection />
         <EventsSection />

@@ -20,18 +20,21 @@ const orbitron = Orbitron({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-orbitron',
+  display: 'swap',
 });
 
 const cinzel = Cinzel({
   subsets: ['latin'],
   weight: ['400', '700', '900'],
   variable: '--font-cinzel',
+  display: 'swap',
 });
 
 const rajdhani = Rajdhani({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   variable: '--font-rajdhani',
+  display: 'swap',
 });
 
 import AudioPlayer from '@/components/AudioPlayer';
@@ -46,7 +49,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${orbitron.className} ${cinzel.variable} ${rajdhani.variable} antialiased`}
+        className={`${orbitron.variable} ${cinzel.variable} ${rajdhani.variable} antialiased`}
       >
         <AudioPlayer />
         <Suspense fallback={null}>

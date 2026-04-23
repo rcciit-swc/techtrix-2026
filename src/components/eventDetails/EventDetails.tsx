@@ -4,7 +4,6 @@
 import { getEventImages } from '@/lib/constants/eventImages';
 import { useEvents, useUser } from '@/lib/stores';
 import { events } from '@/lib/types/events';
-import { AnimatePresence } from 'framer-motion';
 import { ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -13,7 +12,6 @@ import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
 import { EventTab } from './event';
-import EventLoader from './EventLoader';
 import EventSidebar from './EventSidebar';
 import EventTabs from './EventTabs';
 import RegisterButton from './RegisterButton';
@@ -41,13 +39,6 @@ export default function EventDetails({ event }: Props) {
   ];
   const isEligibleForSWCFree =
     isSWCPaid && SWC_FREE_CATEGORY_IDS.includes(event?.event_category_id ?? '');
-
-  // Asset loading state
-  const [bgLoaded, setBgLoaded] = useState(false);
-  const [charLoaded, setCharLoaded] = useState(true); // decorative only, don't block page
-  const [posterLoaded, setPosterLoaded] = useState(!event.image_url);
-
-  const isFullyLoaded = bgLoaded && charLoaded && posterLoaded;
 
   // Get event images from mapping
   const eventImages = getEventImages(event.id || 'default', event.name);
@@ -342,12 +333,7 @@ export default function EventDetails({ event }: Props) {
 
   return (
     <>
-      {/* Loading Overlay */}
-      <AnimatePresence>{!isFullyLoaded && <EventLoader />}</AnimatePresence>
-
-      <div
-        className={`relative min-h-screen overflow-y-auto py-20 md:py-0 transition-opacity duration-700 ${isFullyLoaded ? 'opacity-100' : 'opacity-0'}`}
-      >
+      <div className="relative min-h-screen overflow-y-auto py-20 md:py-0">
         {/* Background Image - Fixed */}
         <div className="fixed inset-0" style={{ zIndex: 0 }}>
           <Image
@@ -355,8 +341,6 @@ export default function EventDetails({ event }: Props) {
             alt="Background"
             fill
             className="object-cover"
-            onLoad={() => setBgLoaded(true)}
-            onError={() => setBgLoaded(true)}
             priority
           />
         </div>
@@ -423,8 +407,6 @@ export default function EventDetails({ event }: Props) {
                         alt={event.name}
                         fill
                         className="object-cover"
-                        onLoad={() => setPosterLoaded(true)}
-                        onError={() => setPosterLoaded(true)}
                         priority
                       />
                     </div>
@@ -462,7 +444,6 @@ export default function EventDetails({ event }: Props) {
             src={eventImages.char}
             alt="Character"
             className="h-full w-auto object-contain object-right-bottom"
-            onLoad={() => setCharLoaded(true)}
           />
         </div>
 

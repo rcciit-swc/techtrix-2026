@@ -177,20 +177,6 @@ export default function FeaturedEvents() {
         <div className="w-1 h-1 bg-[#00f7ff] rounded-full blur-[2px] animate-pulse delay-150" />
         <div className="w-2.5 h-2.5 bg-[#00f7ff] rounded-full blur-[3px] animate-bounce delay-300" />
       </div>
-
-      <style jsx>{`
-        @keyframes spin-slow {
-          from {
-            transform: rotate(0deg);
-          }
-          to {
-            transform: rotate(360deg);
-          }
-        }
-        .animate-spin-slow {
-          animation: spin-slow 120s linear infinite;
-        }
-      `}</style>
     </section>
   );
 }

@@ -53,14 +53,16 @@ export const getEventsData = async (): Promise<events[] | null> => {
 export const getEventByID = async (id: string): Promise<events | null> => {
   const { data, error } = await supabase
     .from('events')
-    .select('*')
-    .eq('id', id);
+    .select(
+      'id, name, description, event_category_id, min_team_size, max_team_size, registration_fees, prize_pool, schedule, rules, reg_status, image_url, links, coordinators, convenors, extra_fields'
+    )
+    .eq('id', id)
+    .maybeSingle();
 
   if (error) {
     console.error('Error fetching event:', error);
     return null;
   }
 
-  // Return the first result, since the RPC returns a table (array)
-  return data && data.length > 0 ? data[0] : null;
+  return data as events | null;
 };

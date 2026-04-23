@@ -560,10 +560,18 @@ export const approveRegistration = async (registrationId: string) => {
   }
 };
 
+export interface PaymentStatusType {
+  status: 'not_started' | 'pending' | 'paid' | 'failed';
+  razorpay_order_id?: string;
+  verified_at?: string;
+}
+
 /**
  * Check if a team has a pending or completed payment
  */
-export async function getPaymentStatus(teamId: string) {
+export async function getPaymentStatus(
+  teamId: string
+): Promise<PaymentStatusType> {
   const { data, error } = await supabase
     .from('payments')
     .select('status, razorpay_order_id, verified_at')
@@ -576,13 +584,7 @@ export async function getPaymentStatus(teamId: string) {
     return { status: 'not_started' as const };
   }
 
-  return data;
-}
-
-export interface PaymentStatusType {
-  status: 'not_started' | 'pending' | 'paid' | 'failed';
-  razorpay_order_id?: string;
-  verified_at?: string;
+  return data as unknown as PaymentStatusType;
 }
 
 export interface RegistrationParticipant {

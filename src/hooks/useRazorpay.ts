@@ -55,6 +55,25 @@ interface InitiatePaymentParams {
   userPhone: string;
 }
 
+function waitForRazorpay(timeoutMs = 5000): Promise<boolean> {
+  if (typeof window !== 'undefined' && typeof window.Razorpay !== 'undefined') {
+    return Promise.resolve(true);
+  }
+  return new Promise((resolve) => {
+    const start = Date.now();
+    const check = () => {
+      if (typeof window.Razorpay !== 'undefined') {
+        resolve(true);
+      } else if (Date.now() - start > timeoutMs) {
+        resolve(false);
+      } else {
+        setTimeout(check, 100);
+      }
+    };
+    check();
+  });
+}
+
 export function useRazorpay() {
   const [isLoading, setIsLoading] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -84,7 +103,7 @@ export function useRazorpay() {
         setIsProcessing(true);
 
         // Step 2: Open Razorpay checkout
-        return new Promise((resolve) => {
+        return new Promise(async (resolve) => {
           const options: RazorpayOptions = {
             key: orderData.keyId,
             order_id: orderData.orderId,
@@ -145,8 +164,9 @@ export function useRazorpay() {
             },
           };
 
-          if (typeof window.Razorpay === 'undefined') {
-            toast.error('Payment system is loading. Please try again.');
+          const sdkReady = await waitForRazorpay(5000);
+          if (!sdkReady) {
+            toast.error('Payment system failed to load. Please try again.');
             setIsProcessing(false);
             resolve({ success: false, error: 'Razorpay not loaded' });
             return;

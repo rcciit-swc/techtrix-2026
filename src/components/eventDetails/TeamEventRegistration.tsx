@@ -59,7 +59,7 @@ interface EventRegistrationDialogProps {
   onRegistrationComplete?: () => void;
   onRegistrationWithInviteCode?: (
     inviteCode: string,
-    teamStatus: 'pending' | 'active'
+    teamStatus: 'pending' | 'active' | 'closed'
   ) => void;
   onPaymentPhaseChange?: (
     phase: 'creating-order' | 'verifying-payment' | null
@@ -442,7 +442,7 @@ export function TeamEventRegistration({
     try {
       let teamId: string;
       let invite_code: string;
-      let team_status: 'pending' | 'active';
+      let team_status: 'pending' | 'active' | 'closed';
 
       if (initialData?.team_id) {
         // Edit mode — reuse existing team_id; updates happen only after payment succeeds
