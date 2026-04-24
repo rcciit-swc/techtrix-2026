@@ -100,10 +100,88 @@ export async function generateMetadata({
   }
 }
 
-export default function EventPage() {
+async function EventJsonLd({
+  params,
+}: {
+  params: Promise<{ eventId: string }>;
+}) {
+  const { eventId } = await params;
+  const pageUrl = `${BASE_URL}/event/${eventId}`;
+
+  try {
+    const supabase = await createServer();
+    const { data: event } = await supabase
+      .from('events')
+      .select('name, description, image_url, registration_fees')
+      .eq('id', eventId)
+      .maybeSingle();
+
+    if (!event) return null;
+
+    const plainDescription = event.description
+      ? event.description
+          .replace(/<[^>]*>/g, '')
+          .trim()
+          .slice(0, 300)
+      : FALLBACK_DESCRIPTION;
+
+    const jsonLd = {
+      '@context': 'https://schema.org',
+      '@type': 'Event',
+      name: event.name,
+      description: plainDescription,
+      url: pageUrl,
+      image: event.image_url || FALLBACK_IMAGE,
+      eventStatus: 'https://schema.org/EventScheduled',
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      location: {
+        '@type': 'Place',
+        name: 'RCC Institute of Information Technology',
+        address: {
+          '@type': 'PostalAddress',
+          streetAddress: 'Canal South Road, Beliaghata',
+          addressLocality: 'Kolkata',
+          addressRegion: 'West Bengal',
+          postalCode: '700015',
+          addressCountry: 'IN',
+        },
+      },
+      organizer: {
+        '@type': 'Organization',
+        name: 'Techtrix 2026',
+        url: BASE_URL,
+      },
+      offers: {
+        '@type': 'Offer',
+        price: event.registration_fees ?? 0,
+        priceCurrency: 'INR',
+        url: pageUrl,
+        availability: 'https://schema.org/InStock',
+      },
+    };
+
+    return (
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+    );
+  } catch {
+    return null;
+  }
+}
+
+export default async function EventPage({
+  params,
+}: {
+  params: Promise<{ eventId: string }>;
+}) {
   return (
-    <Suspense fallback={<EventLoader />}>
-      <EventPageClient />
-    </Suspense>
+    <>
+      <EventJsonLd params={params} />
+      <Suspense fallback={<EventLoader />}>
+        <EventPageClient />
+      </Suspense>
+    </>
   );
 }

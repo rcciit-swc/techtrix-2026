@@ -10,7 +10,7 @@ export function constructMetaData({
   creator = 'Techtrix RCCIIT Team 2026',
   generator = 'Next.js',
   publisher = 'RCC Institute of Information Technology',
-  icons = '/favicon.ico',
+  icons = '/favicon.jpg',
   robots = {
     index: true,
     follow: true,
@@ -24,22 +24,26 @@ export function constructMetaData({
   },
   image = '/favicon.jpg',
   keywords = [
-    'Techtrix',
-    'GOT 2026',
-    'RCCIIT',
-    'RCC Institute',
-    'Technical Fest',
-    'College Technical',
-    'Technical Festival',
-    'Kolkata Technical Event',
-    'College Events',
-    'Technical Competition',
-    'Annual Technical Meet',
-    'RCCIIT Events',
+    'Techtrix 2026',
+    'Techtrix RCCIIT',
+    'RCCIIT Tech Fest',
+    'RCC Institute of Information Technology',
+    'Technical Fest Kolkata',
+    'National Level Technical Festival',
+    'Inter College Technical Competition',
+    'Engineering Fest Kolkata 2026',
+    'College Technical Competition India',
+    'Automata Events Kolkata',
+    'Robotics Competition RCCIIT',
+    'Technical Fest West Bengal',
+    'Annual Technical Meet Kolkata',
+    'RCCIIT Events 2026',
+    'Technical Competition India',
   ],
   category = 'Technical & Events',
   openGraphType = 'website' as const,
   twitterCard = 'summary_large_image' as const,
+  canonical = undefined as string | undefined,
   verification = {
     google: undefined,
     yandex: undefined,
@@ -59,6 +63,7 @@ export function constructMetaData({
   category?: string;
   openGraphType?: 'website' | 'article';
   twitterCard?: 'summary' | 'summary_large_image' | 'app' | 'player';
+  canonical?: string;
   verification?: {
     google?: string;
     yandex?: string;
@@ -114,10 +119,8 @@ export function constructMetaData({
       site: '@RCCIIT',
     },
 
-    // Additional metadata
-    alternates: {
-      canonical: metadataBase,
-    },
+    // Additional metadata — only set canonical when explicitly provided
+    ...(canonical ? { alternates: { canonical } } : {}),
 
     // App-specific metadata
     applicationName: 'Techtrix 2026',

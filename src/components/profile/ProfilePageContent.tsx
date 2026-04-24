@@ -76,7 +76,11 @@ export default function ProfilePage() {
   };
 
   const handleProfileSave = async (formData: FormData) => {
-    const next = searchParams.get('next');
+    // searchParams.get('next') is the primary source; sessionStorage is the fallback
+    // for when the OAuth flow drops the ?next= query param
+    const next =
+      searchParams.get('next') || sessionStorage.getItem('login_redirect');
+    sessionStorage.removeItem('login_redirect');
     if (next) {
       router.replace(next);
     } else if (isOnboarding) {

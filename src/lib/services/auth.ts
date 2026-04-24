@@ -3,6 +3,10 @@ import { supabase } from '@/lib/supabase/client';
 export const login = async (next?: string) => {
   const redirectPath =
     next || window.location.pathname + window.location.search;
+  // Store as a client-side fallback in case the OAuth flow strips the ?next= param
+  if (redirectPath && redirectPath !== '/') {
+    sessionStorage.setItem('login_redirect', redirectPath);
+  }
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {

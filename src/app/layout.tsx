@@ -10,10 +10,11 @@ import './globals.css';
 
 export const metadata: Metadata = constructMetaData({
   image: '/favicon.jpg',
-  icons: '/favicon.jpg', // Explicitly use the jpg file as favicon
-  title: 'Techtrix 2026',
+  icons: '/favicon.jpg',
+  title: 'Techtrix 2026 | Annual Technical Fest of RCCIIT',
   description:
-    'The Annual Inter-College National Level Technical Fest of RCCIIT.',
+    'Techtrix 2026 — The Annual Inter-College National Level Technical Fest of RCC Institute of Information Technology, Kolkata. Compete in Automata, Robotics, Flagship events and more.',
+  canonical: 'https://techtrix.rcciit.org.in',
 });
 
 const orbitron = Orbitron({
@@ -51,6 +52,79 @@ export default function RootLayout({
       <body
         className={`${orbitron.variable} ${cinzel.variable} ${rajdhani.variable} antialiased`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@graph': [
+                {
+                  '@type': 'Organization',
+                  '@id': 'https://techtrix.rcciit.org.in/#organization',
+                  name: 'Techtrix 2026',
+                  url: 'https://techtrix.rcciit.org.in',
+                  logo: {
+                    '@type': 'ImageObject',
+                    url: 'https://techtrix.rcciit.org.in/favicon.jpg',
+                  },
+                  description:
+                    'Techtrix is the Annual Inter-College National Level Technical Fest of RCC Institute of Information Technology, Kolkata.',
+                  parentOrganization: {
+                    '@type': 'EducationalOrganization',
+                    name: 'RCC Institute of Information Technology',
+                    alternateName: 'RCCIIT',
+                    address: {
+                      '@type': 'PostalAddress',
+                      streetAddress: 'Canal South Road, Beliaghata',
+                      addressLocality: 'Kolkata',
+                      addressRegion: 'West Bengal',
+                      postalCode: '700015',
+                      addressCountry: 'IN',
+                    },
+                  },
+                },
+                {
+                  '@type': 'WebSite',
+                  '@id': 'https://techtrix.rcciit.org.in/#website',
+                  url: 'https://techtrix.rcciit.org.in',
+                  name: 'Techtrix 2026',
+                  description:
+                    'Official website of Techtrix 2026 — Annual Technical Fest of RCCIIT',
+                  publisher: {
+                    '@id': 'https://techtrix.rcciit.org.in/#organization',
+                  },
+                },
+                {
+                  '@type': 'Event',
+                  '@id': 'https://techtrix.rcciit.org.in/#event',
+                  name: 'Techtrix 2026',
+                  description:
+                    'Techtrix 2026 is the premier Annual Inter-College National Level Technical Fest of RCC Institute of Information Technology, Kolkata. Featuring competitions in Automata, Robotics, Flagship events, and more.',
+                  url: 'https://techtrix.rcciit.org.in',
+                  image: 'https://techtrix.rcciit.org.in/favicon.jpg',
+                  eventStatus: 'https://schema.org/EventScheduled',
+                  eventAttendanceMode:
+                    'https://schema.org/OfflineEventAttendanceMode',
+                  location: {
+                    '@type': 'Place',
+                    name: 'RCC Institute of Information Technology',
+                    address: {
+                      '@type': 'PostalAddress',
+                      streetAddress: 'Canal South Road, Beliaghata',
+                      addressLocality: 'Kolkata',
+                      addressRegion: 'West Bengal',
+                      postalCode: '700015',
+                      addressCountry: 'IN',
+                    },
+                  },
+                  organizer: {
+                    '@id': 'https://techtrix.rcciit.org.in/#organization',
+                  },
+                },
+              ],
+            }),
+          }}
+        />
         <AudioPlayer />
         <Suspense fallback={null}>
           <ReferralTracker />
