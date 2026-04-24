@@ -18,12 +18,10 @@ import { toast } from 'sonner';
 import EditCommunityDialog from './EditCommunityDialog';
 import EditEvangelistDialog from './EditEvangelistDialog';
 import EditProfileDialog from './EditProfileDialog';
-import GoogleFormDialog from './GoogleFormDialog';
 import ProfileSkeleton from './ProfileSkeleton';
 
 export default function ProfilePage() {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isGoogleFormOpen, setIsGoogleFormOpen] = useState(false);
   const [isCommunityEditOpen, setIsCommunityEditOpen] = useState(false);
   const [isEvangelistEditOpen, setIsEvangelistEditOpen] = useState(false);
   const {
@@ -78,18 +76,6 @@ export default function ProfilePage() {
   };
 
   const handleProfileSave = async (formData: FormData) => {
-    if (isOnboarding) {
-      setIsGoogleFormOpen(true);
-      return;
-    }
-    const next = searchParams.get('next');
-    if (next) {
-      router.replace(next);
-    }
-  };
-
-  const handleGoogleFormProceed = () => {
-    setIsGoogleFormOpen(false);
     const next = searchParams.get('next');
     if (next) {
       router.replace(next);
@@ -536,11 +522,6 @@ export default function ProfilePage() {
         profileImage={profileImage}
         onSave={handleProfileSave}
         name={name}
-      />
-
-      <GoogleFormDialog
-        open={isGoogleFormOpen}
-        onProceed={handleGoogleFormProceed}
       />
 
       {communityData && (
