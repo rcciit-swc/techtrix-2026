@@ -39,6 +39,7 @@ const rajdhani = Rajdhani({
 });
 
 import AudioPlayer from '@/components/AudioPlayer';
+import MerchFloatingBadge from '@/components/MerchFloatingBadge';
 import { ReferralTracker } from '@/components/ReferralTracker';
 import { Suspense } from 'react';
 
@@ -130,6 +131,7 @@ export default function RootLayout({
           <ReferralTracker />
         </Suspense>
         {children}
+        <MerchFloatingBadge />
         <Navbar />
         <Footer />
         <Toaster position="bottom-right" richColors duration={5000} />
