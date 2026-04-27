@@ -27,7 +27,10 @@ const Evangelists = () => {
 
   if (loading) {
     return (
-      <section className="relative w-full py-16 md:py-24 bg-gradient-to-b from-black via-[#0a0a0a] to-black overflow-hidden">
+      <section
+        id="ttevangelists"
+        className="relative w-full py-16 md:py-24 bg-gradient-to-b from-black via-[#0a0a0a] to-black overflow-hidden"
+      >
         <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-8">
           <div className="text-center mb-12 md:mb-16">
             <div className="h-10 w-64 bg-white/5 rounded-lg mx-auto mb-4 animate-pulse" />
@@ -62,6 +65,7 @@ const Evangelists = () => {
           className="text-center mb-12 md:mb-16"
         >
           <h2
+            id="ttevangelists"
             className="text-3xl md:text-5xl lg:text-6xl font-bold text-white uppercase tracking-wide mb-4"
             style={{ fontFamily: 'Metal Mania' }}
           >

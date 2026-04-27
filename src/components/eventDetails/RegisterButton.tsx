@@ -223,7 +223,7 @@ export default function RegisterButton({
     'https://docs.google.com/forms/d/e/1FAIpQLSd4VjRSB1kp0NTcSKPwFQRG6J2l9YK-sc5jc1GO50JipbNUjQ/viewform';
   const UNSTOP_EVENT_ID = '1b0af2ef-1101-4f43-8061-3ac42db45167';
   const UNSTOP_FORM_URL =
-    'https://unstop.com/o/vGiOo53?lb=N84Gpz8e&utm_medium=Share&utm_source=techt2024854&utm_campaign=Competitions';
+    'https://unstop.com/competitions/startup-autopsy-techtrix-2026-rcc-institute-of-information-technology-rcciit-kolkata-1678211';
   const MINDS_EYE_EVENT_ID = 'a8953835-cec2-49dc-bdf1-453d0a03bd20';
   const MINDS_EYE_FORM_URL =
     'https://unstop.com/p/minds-eye-2026-innovate-for-real-world-impact-rcc-institute-of-information-technology-rcciit-kolkata-1678811?lb=N84Gpz8e';

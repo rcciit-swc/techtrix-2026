@@ -318,6 +318,10 @@ export function TeamEventRegistration({
     verifyUncached();
   }, [teamMembers, memberVerificationCache]);
 
+  // When false: only the team lead's SWC clearance is required for free registration.
+  // When true: every team member's SWC clearance must also be verified.
+  const REQUIRE_ALL_MEMBERS_SWC = false;
+
   const FREE_CATEGORIES = [
     'fb17b092-1622-4a3d-90a9-650fd860f6a0',
     '441aa4ca-49ad-4b57-bb7f-6a1c5cc63a32',
@@ -331,7 +335,9 @@ export function TeamEventRegistration({
   );
   const isFreeEvent =
     eventFees === 0 ||
-    (isFreeCategory && isLeadSWCVerified && allMembersVerified);
+    (isFreeCategory &&
+      isLeadSWCVerified &&
+      (!REQUIRE_ALL_MEMBERS_SWC || allMembersVerified));
 
   const onAddTeamMember = (data: TeamMemberFormValues) => {
     if (teamLeadData && teamLeadData.email === data.email) {
