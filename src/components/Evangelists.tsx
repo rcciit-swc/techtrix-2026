@@ -1,8 +1,11 @@
 'use client';
 
 import { getEvangelistsList } from '@/lib/actions/evangelists';
+import { supabase } from '@/lib/supabase/client';
 import { motion } from 'framer-motion';
+import { BarChart2 } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { DynamicBackground } from './AnimatedBackground';
@@ -17,12 +20,29 @@ interface EvangelistItem {
 const Evangelists = () => {
   const [evangelists, setEvangelists] = useState<EvangelistItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isEvangelist, setIsEvangelist] = useState(false);
 
   useEffect(() => {
-    getEvangelistsList().then((data) => {
+    const init = async () => {
+      const [data, sessionResult] = await Promise.all([
+        getEvangelistsList(),
+        supabase.auth.getSession(),
+      ]);
       setEvangelists(data);
+
+      const email = sessionResult.data.session?.user?.email;
+      if (email) {
+        const { data: row } = await supabase
+          .from('evangelists')
+          .select('referral_code')
+          .eq('email', email)
+          .maybeSingle();
+        setIsEvangelist(!!row);
+      }
+
       setLoading(false);
-    });
+    };
+    init();
   }, []);
 
   if (loading) {
@@ -75,6 +95,16 @@ const Evangelists = () => {
           <p className="mt-4 text-white/50 text-sm md:text-base max-w-lg mx-auto">
             The faces spreading the word about TechTrix 2026
           </p>
+          {isEvangelist && (
+            <div className="mt-6">
+              <Link href="/evangelist/leaderboard">
+                <button className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-cyan-600 to-blue-600 text-white text-sm font-bold rounded-lg shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 transition-all uppercase tracking-wider">
+                  <BarChart2 className="w-4 h-4" />
+                  View Leaderboard
+                </button>
+              </Link>
+            </div>
+          )}
         </motion.div>
 
         {/* Evangelists Grid */}
