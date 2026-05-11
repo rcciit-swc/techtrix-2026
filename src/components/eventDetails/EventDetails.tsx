@@ -15,6 +15,8 @@ import { EventTab } from './event';
 import EventSidebar from './EventSidebar';
 import EventTabs from './EventTabs';
 import RegisterButton from './RegisterButton';
+import { isOfferEvent } from '@/lib/constants/avengersOffer';
+import { AvengersOfferBanner } from '../avengersOffer/AvengersOfferBanner';
 
 interface Props {
   event: events;
@@ -143,6 +145,16 @@ export default function EventDetails({ event }: Props) {
                 </div>
               </div>
             </div>
+
+            {/* Avengers Initiative Offer Banner */}
+            {isOfferEvent(event.id || '') && (
+              <div className="mt-3 sm:mt-4">
+                <AvengersOfferBanner
+                  eventId={event.id || ''}
+                  isEligibleForSWCFree={isEligibleForSWCFree}
+                />
+              </div>
+            )}
 
             {/* Schedule Section */}
             {event.schedule && (

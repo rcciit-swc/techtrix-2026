@@ -4,11 +4,16 @@ import { createServer } from '@/lib/supabase/server';
 import { createRazorpayOrder } from '@/lib/services/razorpay';
 import { calculateRazorpayChargeInPaise } from '@/lib/utils/razorpay';
 import { verifyTeamMembership } from '../auth';
+import {
+  OFFER_EVENT_IDS,
+  OFFER_PER_EVENT,
+  getOtherOfferEvent,
+} from '@/lib/constants/avengersOffer';
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { teamId, eventId } = body;
+    const { teamId, eventId, offerOptIn } = body;
 
     if (!teamId || !eventId) {
       return NextResponse.json(
@@ -93,7 +98,79 @@ export async function POST(request: NextRequest) {
 
     let finalRegistrationFee = event.registration_fees;
 
-    // Anime Fiesta pricing calculation
+    // ── Avengers Initiative offer pricing ────────────────────────────
+    if (OFFER_EVENT_IDS.includes(eventId)) {
+      const otherEventId = getOtherOfferEvent(eventId);
+
+      // Check if user already has a verified registration for the other offer event
+      const { data: otherTeam } = await supabaseAdmin
+        .from('teams')
+        .select('team_id, transaction_verified')
+        .eq('event_id', otherEventId)
+        .eq('team_lead_id', user.id)
+        .not('transaction_verified', 'is', null)
+        .maybeSingle();
+
+      if (otherTeam) {
+        // Check if they paid full price for the other event
+        const { data: otherPayment } = await supabaseAdmin
+          .from('payments')
+          .select('amount')
+          .eq('team_id', otherTeam.team_id)
+          .eq('status', 'paid')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        // amount is stored in paise; ₹50 = 5000+ paise (with gateway fee)
+        const paidFullPrice = otherPayment && otherPayment.amount >= 5000;
+
+        if (paidFullPrice) {
+          // Early registrant who paid full price → this event is FREE
+          finalRegistrationFee = 0;
+        } else {
+          // Other event was paid at offer price → this event also at offer price
+          finalRegistrationFee = OFFER_PER_EVENT;
+        }
+      } else if (offerOptIn === true) {
+        // User explicitly opted into the offer
+        finalRegistrationFee = OFFER_PER_EVENT; // ₹25
+      }
+
+      console.log(
+        `[Avengers Offer] eventId=${eventId} offerOptIn=${offerOptIn} fee=₹${finalRegistrationFee}`
+      );
+
+      // Free registration — skip Razorpay entirely
+      if (finalRegistrationFee === 0) {
+        // Mark team as verified
+        await supabaseAdmin
+          .from('teams')
+          .update({ transaction_verified: new Date().toISOString() })
+          .eq('team_id', teamId);
+
+        // Create a payment record for bookkeeping
+        await supabaseAdmin.from('payments').insert({
+          user_id: user.id,
+          event_id: eventId,
+          team_id: teamId,
+          razorpay_order_id: `free_offer_${teamId}`,
+          amount: 0,
+          currency: 'INR',
+          status: 'paid',
+          verified_at: new Date().toISOString(),
+          updated_at: new Date().toISOString(),
+        });
+
+        return NextResponse.json({
+          free: true,
+          teamId,
+          eventName: event.name,
+        });
+      }
+    }
+
+    // ── Anime Fiesta pricing calculation ─────────────────────────────
     const ANIME_FIESTA_EVENT_ID = 'fccf6fad-0e49-4a5c-a971-3ab874dc923a';
     if (eventId === ANIME_FIESTA_EVENT_ID) {
       const { count: memberCount, error: participantsError } =
