@@ -9,7 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { updateUserData } from '@/lib/services/user';
+import { useUser } from '@/lib/stores';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Check } from 'lucide-react';
@@ -34,6 +34,7 @@ export default function EditProfileDialog({
 }: EditProfileDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const { updateUserData } = useUser();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -57,8 +58,16 @@ export default function EditProfileDialog({
       setIsSubmitting(false);
       return;
     }
-    if (!/^\d{10}$/.test(formDataObj.phone as string)) {
-      toast.error('Invalid phone number');
+
+    // Clean phone number: remove all non-numeric characters
+    const cleanPhone = (formDataObj.phone as string).replace(/\D/g, '');
+
+    // If it has a country code (like 91), take the last 10 digits
+    const finalPhone =
+      cleanPhone.length > 10 ? cleanPhone.slice(-10) : cleanPhone;
+
+    if (finalPhone.length !== 10) {
+      toast.error('Invalid phone number. Please enter a 10-digit number.');
       setIsSubmitting(false);
       return;
     }
@@ -92,7 +101,7 @@ export default function EditProfileDialog({
     const updatedData = {
       id: userData.id,
       full_name: formDataObj.fullName,
-      phone: formDataObj.phone,
+      phone: finalPhone,
       gender: formDataObj.gender,
       stream: formDataObj.stream,
       college: formDataObj.college,

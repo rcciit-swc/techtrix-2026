@@ -102,6 +102,11 @@ export default function RegistrationCard({
     setTimeout(() => setCodeCopied(false), 2000);
   };
 
+  const uniqueParticipants = registration.participants.filter(
+    (p) => p.email !== registration.team_lead_email
+  );
+  const totalMemberCount = uniqueParticipants.length + 1;
+
   const allMembers = [
     {
       label: 'Team Lead',
@@ -111,7 +116,7 @@ export default function RegistrationCard({
       college: registration.college,
       isLead: true,
     },
-    ...registration.participants.map((p, i) => ({
+    ...uniqueParticipants.map((p, i) => ({
       label: `Member ${i + 2}`,
       name: p.name,
       email: p.email,
@@ -222,9 +227,7 @@ export default function RegistrationCard({
                             <p className="text-white/40 text-[10px] uppercase tracking-wider mb-0.5">
                               Members
                             </p>
-                            <p className="text-white">
-                              {registration.member_count}
-                            </p>
+                            <p className="text-white">{totalMemberCount}</p>
                           </div>
                           <div className="bg-black/30 rounded-lg px-3 py-2">
                             <p className="text-white/40 text-[10px] uppercase tracking-wider mb-0.5">
@@ -595,8 +598,8 @@ export default function RegistrationCard({
             <div className="flex items-center gap-2 px-3 py-2 bg-black/40 backdrop-blur-md rounded-xl border border-white/10">
               <Users size={13} className="text-white/40" />
               <span className="text-white/50 text-xs">
-                {registration.member_count} member
-                {registration.member_count !== 1 ? 's' : ''}
+                {totalMemberCount} member
+                {totalMemberCount !== 1 ? 's' : ''}
               </span>
             </div>
 

@@ -53,6 +53,7 @@ interface InitiatePaymentParams {
   userName: string;
   userEmail: string;
   userPhone: string;
+  offerOptIn?: boolean;
 }
 
 function waitForRazorpay(timeoutMs = 5000): Promise<boolean> {
@@ -81,7 +82,8 @@ export function useRazorpay() {
 
   const initiatePayment = useCallback(
     async (params: InitiatePaymentParams): Promise<PaymentResult> => {
-      const { teamId, eventId, userName, userEmail, userPhone } = params;
+      const { teamId, eventId, userName, userEmail, userPhone, offerOptIn } =
+        params;
 
       setIsLoading(true);
 
@@ -90,7 +92,7 @@ export function useRazorpay() {
         const orderResponse = await fetch('/api/payments/create-order', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ teamId, eventId }),
+          body: JSON.stringify({ teamId, eventId, offerOptIn }),
         });
 
         const orderData = await orderResponse.json();

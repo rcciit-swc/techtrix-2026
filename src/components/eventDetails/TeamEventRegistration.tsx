@@ -21,6 +21,8 @@ import {
 } from '@/lib/services/register';
 import { useEvents, useUser } from '@/lib/stores';
 import { calculateGatewayFee } from '@/lib/utils/razorpay';
+import { isOfferEvent } from '@/lib/constants/avengersOffer';
+import { AvengersOfferCard } from '../avengersOffer/AvengersOfferCard';
 import { zodResolver } from '@hookform/resolvers/zod';
 import confetti from 'canvas-confetti';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -70,6 +72,7 @@ interface EventRegistrationDialogProps {
     registerAndPost?: () => Promise<void>
   ) => void;
   initialData?: ExistingTeamData;
+  onOfferApplied?: () => void;
 }
 
 // Zod schema for the Team Lead (Step 1)
@@ -96,6 +99,7 @@ export function TeamEventRegistration({
   onPaymentPhaseChange,
   onOpenFindTeammates,
   initialData,
+  onOfferApplied,
 }: EventRegistrationDialogProps) {
   const searchParams = useSearchParams();
   const { userData } = useUser();
@@ -140,6 +144,24 @@ export function TeamEventRegistration({
   const [editingMemberIndex, setEditingMemberIndex] = useState<number | null>(
     null
   );
+
+  // Avengers Offer state
+  const [offerStatus, setOfferStatus] = useState<{
+    otherRegistered: boolean;
+    paidFullPrice: boolean;
+  }>({ otherRegistered: false, paidFullPrice: false });
+
+  const isCurrentOfferEvent = isOfferEvent(eventID);
+
+  useEffect(() => {
+    if (!isOpen || !isCurrentOfferEvent) return;
+    fetch(`/api/payments/check-offer-status?eventId=${eventID}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data && !data.error) setOfferStatus(data);
+      })
+      .catch(() => {});
+  }, [isOpen, eventID, isCurrentOfferEvent]);
   const [isRegistering, setIsRegistering] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isLeadSWCVerified, setIsLeadSWCVerified] = useState(false);
@@ -1057,6 +1079,21 @@ export function TeamEventRegistration({
                       className="flex-1 flex flex-col min-h-0"
                     >
                       <div className="flex-1 overflow-y-auto px-6 md:px-8 space-y-3 custom-scrollbar">
+                        {/* Avengers Initiative Offer Card */}
+                        {isCurrentOfferEvent && (
+                          <div className="pt-2">
+                            <AvengersOfferCard
+                              currentEventId={eventID}
+                              isEligibleForSWCFree={isFreeEvent}
+                              otherAlreadyRegistered={
+                                offerStatus.otherRegistered
+                              }
+                              otherPaidFullPrice={offerStatus.paidFullPrice}
+                              onOfferApplied={onOfferApplied || (() => {})}
+                              onOfferRemoved={() => {}}
+                            />
+                          </div>
+                        )}
                         <div className="space-y-1.5 pt-2">
                           <label
                             htmlFor="teamName"

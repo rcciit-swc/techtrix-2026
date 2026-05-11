@@ -92,8 +92,14 @@ export const handleSaveChanges = async (
   } else if (!formDataObj.phone) {
     toast.error('Phone number is required');
     throw new Error('Phone number is required');
-  } else if (!/^\d{10}$/.test(formDataObj.phone as string)) {
-    toast.error('Invalid phone number');
+  }
+
+  const cleanPhone = (formDataObj.phone as string).replace(/\D/g, '');
+  const finalPhone =
+    cleanPhone.length > 10 ? cleanPhone.slice(-10) : cleanPhone;
+
+  if (finalPhone.length !== 10) {
+    toast.error('Invalid phone number. Please enter a 10-digit number.');
     throw new Error('Invalid phone number');
   } else if (!formDataObj.stream) {
     toast.error('Stream is required');
@@ -117,7 +123,7 @@ export const handleSaveChanges = async (
   const updatedData = {
     id: userData.id,
     full_name: formDataObj.fullName,
-    phone: formDataObj.phone,
+    phone: finalPhone,
     gender: formDataObj.gender,
     stream: formDataObj.stream,
     college: formDataObj.college,
