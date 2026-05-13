@@ -334,7 +334,7 @@ export default function RegisterButton({
             >
               🔒
             </motion.span>
-            Register Soon
+            Registration Closed
           </span>
           <motion.div
             className="absolute inset-0 rounded-[50px] border-2 border-red-500"
