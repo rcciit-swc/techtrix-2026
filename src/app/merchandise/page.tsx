@@ -8,7 +8,7 @@ const ORDER_FORM_URL = 'https://forms.gle/yKR4Zb2ggvY4yQ4i7';
 
 const views = [
   { id: 1, label: 'Front', image: 'https://i.postimg.cc/pTzN4kRk/image.png' },
-  { id: 2, label: 'Back', image: 'https://i.postimg.cc/Kzzk5kbh/back2.png' },
+  { id: 2, label: 'Back', image: 'https://i.postimg.cc/fTbQPpJ0/back.png' },
 ];
 
 export default function MerchandisePage() {
