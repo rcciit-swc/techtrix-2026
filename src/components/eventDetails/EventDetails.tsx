@@ -8,15 +8,16 @@ import { ChevronLeft } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '../ui/button';
-import { EventTab } from './event';
+import { EventTab, MAP_EVENT_ID } from './event';
 import EventSidebar from './EventSidebar';
 import EventTabs from './EventTabs';
 import RegisterButton from './RegisterButton';
 import { isOfferEvent } from '@/lib/constants/avengersOffer';
 import { AvengersOfferBanner } from '../avengersOffer/AvengersOfferBanner';
+import { getMapMode } from '@/lib/actions/map';
 
 interface Props {
   event: events;
@@ -26,6 +27,23 @@ export default function EventDetails({ event }: Props) {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<EventTab>('info');
   const eventsData = useEvents((state) => state.eventsData);
+
+  const showMapTab = event.id === MAP_EVENT_ID;
+  const [mapImage, setMapImage] = useState<{
+    mode: 'full' | 'half';
+    url: string;
+  } | null>(null);
+
+  useEffect(() => {
+    if (!showMapTab) return;
+    let cancelled = false;
+    getMapMode().then((res) => {
+      if (!cancelled) setMapImage(res);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [showMapTab]);
 
   // Get registration status from store (updated after registration)
   const storeEvent = eventsData.find((e) => e.id === event.id);
@@ -416,6 +434,42 @@ export default function EventDetails({ event }: Props) {
             )}
           </div>
         );
+      case 'map':
+        return (
+          <div className="animate-fadeIn">
+            <h3
+              className="text-sm sm:text-lg text-[#EDF526] mb-3 tracking-[0.1em] flex items-center gap-3 drop-shadow-[0_0_5px_rgba(237,245,38,0.5)]"
+              style={{ fontFamily: "'Metal Mania', cursive" }}
+            >
+              <span className="inline-block w-1.5 h-5 sm:h-6 bg-gradient-to-b from-[#EDF526] to-[#d4a847] rounded-sm shadow-[0_0_8px_rgba(237,245,38,0.8)]" />
+              TRACK MAP
+              {mapImage && (
+                <span className="ml-auto text-[10px] sm:text-xs uppercase tracking-widest text-white/50 font-sans">
+                  {mapImage.mode === 'full'
+                    ? 'Full Map Unlocked'
+                    : 'Preview — Full Map Unlocks May 16'}
+                </span>
+              )}
+            </h3>
+            <div className="relative w-full rounded-xl overflow-hidden border border-white/10 bg-[#0a0a0a]/70 backdrop-blur-md">
+              {mapImage ? (
+                <img
+                  src={mapImage.url}
+                  alt={
+                    mapImage.mode === 'full'
+                      ? 'Full venue map'
+                      : 'Half venue map preview'
+                  }
+                  className="w-full h-auto object-contain"
+                />
+              ) : (
+                <div className="aspect-video flex items-center justify-center text-white/40 text-sm">
+                  Loading map…
+                </div>
+              )}
+            </div>
+          </div>
+        );
       case 'rules':
         return (
           <div
@@ -518,17 +572,18 @@ export default function EventDetails({ event }: Props) {
 
                   {/* Right: Tabs + Scrollable Content */}
                   <div
-                    className={`flex flex-col space-y-3 ${activeTab === 'info' ? 'lg:min-h-[450px]' : 'lg:h-[450px]'}`}
+                    className={`flex flex-col space-y-3 ${activeTab === 'info' || activeTab === 'map' ? 'lg:min-h-[450px]' : 'lg:h-[450px]'}`}
                   >
                     {/* Tabs */}
                     <EventTabs
                       activeTab={activeTab}
                       setActiveTab={setActiveTab}
+                      showMap={showMapTab}
                     />
 
                     {/* Scrollable Content Area */}
                     <div
-                      className={`custom-scrollbar ${activeTab === 'info' ? 'lg:pr-2' : 'lg:overflow-y-auto lg:flex-1 lg:pr-2'}`}
+                      className={`custom-scrollbar ${activeTab === 'info' || activeTab === 'map' ? 'lg:pr-2' : 'lg:overflow-y-auto lg:flex-1 lg:pr-2'}`}
                     >
                       {getTabContent()}
                     </div>
