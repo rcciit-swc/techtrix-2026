@@ -168,6 +168,49 @@ body {
   animation: spin-slow 120s linear infinite;
 }
 
+@keyframes map-tab-sweep {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+.map-tab-shine {
+  color: #edf526 !important;
+}
+.map-tab-halo {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  width: 180%;
+  height: 320%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(237, 245, 38, 0.55) 0%,
+    rgba(237, 245, 38, 0.25) 30%,
+    rgba(237, 245, 38, 0.08) 55%,
+    transparent 75%
+  );
+  filter: blur(14px);
+  border-radius: 9999px;
+  pointer-events: none;
+  animation: map-tab-halo-pulse 1.8s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+@keyframes map-tab-halo-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  50% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1.12);
+  }
+}
+
 /* Glitch animation for hero title */
 @keyframes glitch {
   0% {

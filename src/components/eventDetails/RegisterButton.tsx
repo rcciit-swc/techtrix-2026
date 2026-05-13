@@ -23,6 +23,8 @@ import { PaymentLoadingOverlay } from './PaymentLoadingOverlay';
 import { SoloEventRegistration } from './SoloRegistrationDialog';
 import { TeamDetailsModal } from './TeamDetailsModal';
 import { TeamEventRegistration } from './TeamEventRegistration';
+import { isOfferEvent } from '@/lib/constants/avengersOffer';
+import { AvengersOfferFlow } from '../avengersOffer/AvengersOfferFlow';
 
 interface RegisterButtonProps {
   eventId: string;
@@ -51,6 +53,7 @@ export default function RegisterButton({
   const [isJoinTeamOpen, setIsJoinTeamOpen] = useState(false);
   const [isTeamDetailsOpen, setIsTeamDetailsOpen] = useState(false);
   const [isEditingExistingTeam, setIsEditingExistingTeam] = useState(false);
+  const [offerFlowOpen, setOfferFlowOpen] = useState(false);
 
   // Local registration state — sourced exclusively from get_my_registrations_by_fest
   const [isRegistered, setIsRegistered] = useState(false);
@@ -103,16 +106,17 @@ export default function RegisterButton({
   // Default true (teamLeadId null = not loaded yet, treat as lead to avoid wrong participant UI)
   const isLead = !teamLeadId || teamLeadId === userData?.id;
 
+  // Awaiting min members before payment can proceed.
+  // Special case: if it's an offer event and not paid, we still want to show "Register Now"
+  // so they can access the registration dialog and see the offer.
   const isAwaitingMembers =
     isTeamEvent &&
     (teamStatus === 'pending' || teamStatus === 'active') &&
-    !!registeredTeamId;
+    !!registeredTeamId &&
+    (!isOfferEvent(eventId) || isPaymentVerified);
 
   const isPendingPayment =
-    isRegistered &&
-    !isFullyRegistered &&
-    !!registeredTeamId &&
-    (!isTeamEvent ? true : teamStatus === 'closed');
+    isTeamEvent && teamStatus === 'closed' && !isPaymentVerified;
 
   // Helper: build ExistingTeamData from a MyRegistration row
   const buildExistingTeamData = (
@@ -221,15 +225,11 @@ export default function RegisterButton({
   const SHUTTERSCAPE_EVENT_ID = '49c435f3-ddca-412b-bb9a-b652af49315e';
   const SHUTTERSCAPE_FORM_URL =
     'https://docs.google.com/forms/d/e/1FAIpQLSd4VjRSB1kp0NTcSKPwFQRG6J2l9YK-sc5jc1GO50JipbNUjQ/viewform';
-  const UNSTOP_EVENT_ID = '1b0af2ef-1101-4f43-8061-3ac42db45167';
-  const UNSTOP_FORM_URL =
-    'https://unstop.com/competitions/startup-autopsy-techtrix-2026-rcc-institute-of-information-technology-rcciit-kolkata-1678211';
   const MINDS_EYE_EVENT_ID = 'a8953835-cec2-49dc-bdf1-453d0a03bd20';
   const MINDS_EYE_FORM_URL =
     'https://unstop.com/p/minds-eye-2026-innovate-for-real-world-impact-rcc-institute-of-information-technology-rcciit-kolkata-1678811?lb=N84Gpz8e';
 
   const isShutterscape = eventId === SHUTTERSCAPE_EVENT_ID;
-  const isUnstopEvent = eventId === UNSTOP_EVENT_ID;
   const isMindsEye = eventId === MINDS_EYE_EVENT_ID;
 
   const openShuttercapeForm = () => {
@@ -237,10 +237,6 @@ export default function RegisterButton({
   };
 
   const handleRegister = async () => {
-    if (isUnstopEvent) {
-      window.open(UNSTOP_FORM_URL, '_blank');
-      return;
-    }
     if (isMindsEye) {
       window.open(MINDS_EYE_FORM_URL, '_blank');
       return;
@@ -329,7 +325,7 @@ export default function RegisterButton({
           transition={{ duration: 2.5, repeat: Infinity }}
           type="button"
           disabled
-          className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-gradient-to-r from-gray-600 to-gray-700 text-gray-300 text-[12px] sm:text-[16px] md:text-[18px] cursor-not-allowed font-['Metal_Mania'] rounded-[50px] border-2 border-red-500/50 overflow-hidden opacity-75"
+          className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-linear-to-r from-gray-600 to-gray-700 text-gray-300 text-[12px] sm:text-[16px] md:text-[18px] cursor-not-allowed font-['Metal_Mania'] rounded-[50px] border-2 border-red-500/50 overflow-hidden opacity-75"
         >
           <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
             <motion.span
@@ -373,7 +369,7 @@ export default function RegisterButton({
                 💬
               </motion.span>
             </motion.a>
-            <div className="flex items-center justify-center px-5 py-2.5 sm:px-6 sm:py-3 bg-gradient-to-r from-[#4FC879] to-[#1E8A4A] text-white text-[16px] sm:text-[18px] font-['Metal_Mania']">
+            <div className="flex items-center justify-center px-5 py-2.5 sm:px-6 sm:py-3 bg-linear-to-r from-[#4FC879] to-[#1E8A4A] text-white text-[16px] sm:text-[18px] font-['Metal_Mania']">
               Registered
             </div>
           </div>
@@ -394,7 +390,7 @@ export default function RegisterButton({
           transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
           type="button"
           disabled
-          className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-gradient-to-r from-emerald-600 to-green-600 text-white text-[12px] sm:text-[16px] md:text-[18px] cursor-not-allowed font-['Metal_Mania'] rounded-[50px] border-2 border-emerald-400/50 overflow-hidden"
+          className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-linear-to-r from-emerald-600 to-green-600 text-white text-[12px] sm:text-[16px] md:text-[18px] cursor-not-allowed font-['Metal_Mania'] rounded-[50px] border-2 border-emerald-400/50 overflow-hidden"
         >
           <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
             <motion.span
@@ -406,7 +402,7 @@ export default function RegisterButton({
             Already Registered
           </span>
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-emerald-400/0 via-emerald-400/20 to-emerald-400/0"
+            className="absolute inset-0 bg-linear-to-r from-emerald-400/0 via-emerald-400/20 to-emerald-400/0"
             animate={{ x: ['-100%', '100%'] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
           />
@@ -431,7 +427,7 @@ export default function RegisterButton({
             transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
             type="button"
             onClick={() => setIsTeamDetailsOpen(true)}
-            className="relative px-4 py-1.5 sm:px-6 sm:py-2.5 bg-gradient-to-r from-yellow-600 to-yellow-700 text-black text-[11px] sm:text-[14px] cursor-pointer font-['Metal_Mania'] rounded-[50px] border-2 border-yellow-400/50 overflow-hidden"
+            className="relative px-4 py-1.5 sm:px-6 sm:py-2.5 bg-linear-to-r from-yellow-600 to-yellow-700 text-black text-[11px] sm:text-[14px] cursor-pointer font-['Metal_Mania'] rounded-[50px] border-2 border-yellow-400/50 overflow-hidden"
           >
             <span className="relative z-10 flex items-center gap-1.5 whitespace-nowrap">
               <motion.span
@@ -443,7 +439,7 @@ export default function RegisterButton({
               {isLead ? 'Invite Members' : 'Awaiting Members'}
             </span>
             <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-yellow-300/0 via-yellow-300/20 to-yellow-300/0"
+              className="absolute inset-0 bg-linear-to-r from-yellow-300/0 via-yellow-300/20 to-yellow-300/0"
               animate={{ x: ['-100%', '100%'] }}
               transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
             />
@@ -497,7 +493,7 @@ export default function RegisterButton({
           type="button"
           onClick={handleCompletePayment}
           disabled={isProcessing || isLoading}
-          className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-gradient-to-r from-[#CCA855] to-[#a8892e] text-black text-[12px] sm:text-[16px] md:text-[18px] cursor-pointer font-['Metal_Mania'] rounded-[50px] border-2 border-[#CCA855]/50 overflow-hidden"
+          className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-linear-to-r from-[#CCA855] to-[#a8892e] text-black text-[12px] sm:text-[16px] md:text-[18px] cursor-pointer font-['Metal_Mania'] rounded-[50px] border-2 border-[#CCA855]/50 overflow-hidden"
         >
           <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
             {isProcessing || isLoading ? (
@@ -518,7 +514,7 @@ export default function RegisterButton({
             )}
           </span>
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-[#CCA855]/0 via-white/20 to-[#CCA855]/0"
+            className="absolute inset-0 bg-linear-to-r from-[#CCA855]/0 via-white/20 to-[#CCA855]/0"
             animate={{ x: ['-100%', '100%'] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
           />
@@ -546,7 +542,7 @@ export default function RegisterButton({
           transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
           type="button"
           onClick={handleRegister}
-          className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-gradient-to-r from-[#B60302] to-[#8f0202] text-[#FAFAFA] text-[12px] sm:text-[16px] md:text-[18px] cursor-pointer font-['Metal_Mania'] rounded-[50px] border-2 border-[#FF003C]/30 overflow-hidden group"
+          className="relative px-4 py-1.5 sm:px-7 sm:py-3 bg-linear-to-r from-[#B60302] to-[#8f0202] text-[#FAFAFA] text-[12px] sm:text-[16px] md:text-[18px] cursor-pointer font-['Metal_Mania'] rounded-[50px] border-2 border-[#FF003C]/30 overflow-hidden group"
         >
           <span className="relative z-10 flex items-center gap-2 whitespace-nowrap">
             Register Now
@@ -558,14 +554,14 @@ export default function RegisterButton({
             </motion.span>
           </span>
           <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-[#FF003C]/0 via-[#FF003C]/20 to-[#FF003C]/0"
+            className="absolute inset-0 bg-linear-to-r from-[#FF003C]/0 via-[#FF003C]/20 to-[#FF003C]/0"
             animate={{ x: ['-100%', '100%'] }}
             transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
           />
         </motion.button>
 
         {/* Secondary actions for team events */}
-        {isTeamEvent && !isUnstopEvent && !isMindsEye && !isShutterscape && (
+        {isTeamEvent && !isMindsEye && !isShutterscape && (
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsFindTeammatesOpen(true)}
@@ -602,6 +598,10 @@ export default function RegisterButton({
         eventID={event.id || ''}
         eventFees={effectiveFees}
         onRegistrationComplete={openShuttercapeForm}
+        onOfferApplied={() => {
+          setIsSoloOpen(false);
+          setOfferFlowOpen(true);
+        }}
       />
 
       <TeamEventRegistration
@@ -646,6 +646,10 @@ export default function RegisterButton({
         initialData={
           isEditingExistingTeam ? (existingTeamData ?? undefined) : undefined
         }
+        onOfferApplied={() => {
+          setIsTeamOpen(false);
+          setOfferFlowOpen(true);
+        }}
       />
 
       <FindTeammatesModal
@@ -726,6 +730,21 @@ export default function RegisterButton({
                 }
               : undefined
           }
+        />
+      )}
+
+      {/* Avengers Offer Flow — rendered at common level to survive child unmounts */}
+      {isOfferEvent(eventId) && (
+        <AvengersOfferFlow
+          isOpen={offerFlowOpen}
+          onClose={() => setOfferFlowOpen(false)}
+          startingEventId={eventId}
+          prefillData={{
+            name: userData?.name || '',
+            phone: userData?.phone || '',
+            email: userData?.email || '',
+            college: userData?.college || '',
+          }}
         />
       )}
     </>

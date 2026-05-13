@@ -1,6 +1,7 @@
 'use client';
 
 import { getEventImages } from '@/lib/constants/eventImages';
+import { FLAGSHIP_CATEGORY_ID } from '@/lib/constants/avengersOffer';
 import { useEvents } from '@/lib/stores';
 import { events } from '@/lib/types/events';
 import { motion } from 'motion/react';
@@ -10,6 +11,11 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import { categories } from './EventsSection';
 import GenericLoader from './GenericLoader';
+import {
+  AvengersInitiativePopup,
+  useAvengersPopup,
+} from './avengersOffer/AvengersInitiativePopup';
+import { AvengersOfferTab } from './avengersOffer/AvengersOfferTab';
 
 export default function EventCardsCluster() {
   const params = useParams();
@@ -40,6 +46,19 @@ export default function EventCardsCluster() {
     return category?.name || 'Events';
   }, [categoryId]);
 
+  const isFlagshipCategory = categoryId === FLAGSHIP_CATEGORY_ID;
+  const avengersPopup = useAvengersPopup();
+
+  // Auto-open offer popup for flagship category
+  useEffect(() => {
+    if (isFlagshipCategory && !avengersPopup.isOpen) {
+      const timer = setTimeout(() => {
+        avengersPopup.open();
+      }, 1000); // Small delay for better UX
+      return () => clearTimeout(timer);
+    }
+  }, [isFlagshipCategory]); // Only trigger when entering category
+
   if (eventsLoading || eventsData.length === 0) {
     return (
       <div className="relative w-full min-h-screen flex items-center justify-center">
@@ -65,6 +84,16 @@ export default function EventCardsCluster() {
 
   return (
     <>
+      {/* Avengers Initiative — Flagship category only */}
+      {isFlagshipCategory && (
+        <>
+          <AvengersInitiativePopup
+            isOpen={avengersPopup.isOpen}
+            onClose={avengersPopup.close}
+          />
+          <AvengersOfferTab onClick={avengersPopup.open} />
+        </>
+      )}
       {/* Desktop: Grid layout */}
       <div className="hidden md:block relative w-full min-h-screen py-24 px-8">
         {/* Section header */}

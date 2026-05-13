@@ -65,6 +65,10 @@ export function TeamDetailsModal({
   };
 
   const statusStyle = STATUS_STYLES[teamData.team_status ?? 'pending'];
+  const uniqueParticipants = teamData.participants.filter(
+    (p) => p.email !== teamData.team_lead_email
+  );
+  const totalMemberCount = uniqueParticipants.length + 1;
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && onClose()}>
@@ -157,7 +161,7 @@ export function TeamDetailsModal({
           {/* Members list */}
           <div className="space-y-2">
             <p className="text-white/40 text-xs uppercase tracking-wider flex items-center gap-1.5">
-              <Users size={11} /> Members ({teamData.member_count})
+              <Users size={11} /> Members ({totalMemberCount})
             </p>
 
             {/* Team lead */}
@@ -171,7 +175,7 @@ export function TeamDetailsModal({
             />
 
             {/* Participants */}
-            {teamData.participants.map((p, i) => (
+            {uniqueParticipants.map((p, i) => (
               <MemberCard
                 key={p.email}
                 label={`Member ${i + 2}`}
