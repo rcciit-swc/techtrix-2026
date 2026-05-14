@@ -3,8 +3,8 @@
 const MAP_FULL_URL = 'https://files.catbox.moe/kouum9.jpeg';
 const MAP_HALF_URL = 'https://files.catbox.moe/70vtjb.jpeg';
 
-// May 16 2026 00:00 IST == May 15 2026 18:30 UTC
-const FULL_UNLOCK_UTC_MS = Date.UTC(2026, 4, 15, 18, 30, 0);
+// May 15 2026 00:00 IST == May 14 2026 18:30 UTC
+const FULL_UNLOCK_UTC_MS = Date.UTC(2026, 4, 14, 18, 30, 0);
 
 export async function getMapMode(): Promise<{
   mode: 'full' | 'half';
